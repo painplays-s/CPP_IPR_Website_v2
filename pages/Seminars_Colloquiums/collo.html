@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Colloquiums - CPP-IPR</title>
+
+    <style>
+        :root {
+            --coll-bg: #ffffff;
+            --coll-border: #d0d7e2;
+            --coll-text: #111827;
+            --coll-muted: #6b7280;
+            --coll-accent: #2563eb;
+            --coll-radius-lg: 16px;
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            font-family: Arial, sans-serif;
+        }
+
+        #header-container,
+        #footer-container {
+            flex-shrink: 0;
+        }
+
+        main {
+            flex: 1;
+            padding: 1.5rem 5vw;
+            box-sizing: border-box;
+        }
+
+        /* ---------- GLOBAL SECTION WIDTH ---------- */
+        .page-section {
+            max-width: 1600px;
+            margin: 0 auto 2rem auto;
+        }
+
+        /* ---------- COLLOQUIUM SECTION STYLES ---------- */
+        .colloquium-section {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            box-sizing: border-box;
+        }
+
+        /* BANNER IMAGE */
+        .colloquium-banner {
+            width: 100%;
+            height: auto;
+            border-radius: var(--coll-radius-lg);
+            object-fit: cover;
+        }
+
+        /* MAIN BODY */
+        .colloquium-main {
+            position: relative;
+            width: 100%;
+            background: var(--coll-bg);
+            border: 1.5px solid var(--coll-border);
+            border-radius: var(--coll-radius-lg);
+            overflow: hidden;
+        }
+
+        /* HEADER INSIDE BOX */
+        .colloquium-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem 1.75rem 1rem 1.75rem;
+            position: relative;
+        }
+
+        /* Horizontal line with custom width */
+        .colloquium-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            height: 2px;
+            background-color: var(--coll-border);
+        }
+
+        .colloquium-title {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--coll-text);
+            text-align: center;
+            margin: 0;
+        }
+
+        /* CONTENT AREA */
+        .colloquium-content {
+            padding: 1.75rem 1.75rem;
+            box-sizing: border-box;
+        }
+
+        /* COLLOQUIUM CONTAINER */
+        .colloquium-container {
+            margin-bottom: 3rem;
+            border-bottom: 1px solid var(--coll-border);
+            padding-bottom: 2rem;
+        }
+
+        .colloquium-container:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .colloquium-header-title {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .colloquium-header-title h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--coll-text);
+            margin: 0;
+            padding-bottom: 0.5rem;
+        }
+
+        .colloquium-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .speaker-image {
+            flex: 0 0 130px;
+            text-align: center;
+        }
+
+        .speaker-image img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid var(--coll-border);
+        }
+
+        .speaker-info {
+            flex: 3;
+            min-width: 300px;
+            background: #f9fafb;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 3px solid var(--coll-accent);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .speaker-info .bilingual-text {
+            display: block;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--coll-text);
+            margin-bottom: 0.5rem;
+        }
+
+        .speaker-info .bilingual-text:last-child {
+            margin-bottom: 0;
+        }
+
+        .speaker-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--coll-text);
+            margin-bottom: 0.25rem;
+        }
+
+        .speaker-institute {
+            font-size: 1rem;
+            color: var(--coll-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .talk-datetime {
+            font-size: 1rem;
+            color: var(--coll-text);
+        }
+
+        .abstract-section {
+            margin-top: 1.5rem;
+        }
+
+        .abstract-section h5 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--coll-text);
+            margin: 0 0 1rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--coll-border);
+        }
+
+        .abstract-text {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: var(--coll-text);
+            text-align: justify;
+        }
+
+        .abstract-paragraph {
+            margin-bottom: 1.5rem;
+        }
+
+        .abstract-paragraph:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Biography section for special talks */
+        .bio-section {
+            margin-top: 1.5rem;
+        }
+
+        .bio-section h5 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--coll-text);
+            margin: 0 0 1rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--coll-border);
+        }
+
+        .bio-text {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: var(--coll-text);
+            text-align: justify;
+        }
+
+        /* SECTION TITLE */
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--coll-text);
+            margin: 1rem 0 2rem 0;
+            text-align: center;
+        }
+
+        /* ---------- MOBILE ---------- */
+        @media (max-width: 900px) {
+            .colloquium-title {
+                font-size: 1.35rem;
+            }
+
+            .colloquium-header {
+                padding: 1.25rem 1.25rem 0.85rem 1.25rem;
+            }
+
+            .colloquium-header::after {
+                width: 80%;
+            }
+
+            .colloquium-content {
+                padding: 1.5rem 1.25rem;
+            }
+
+            .colloquium-details {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .speaker-image {
+                flex: 0 0 auto;
+                text-align: center;
+            }
+
+            .speaker-image img {
+                margin: 0 auto;
+            }
+
+            .speaker-info {
+                min-width: 100%;
+            }
+
+            .abstract-text,
+            .bio-text {
+                font-size: 0.95rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <div id="header-container"></div>
+
+    <!-- PAGE CONTENT -->
+    <main>
+        <div class="page-section colloquium-section">
+
+            <!-- BANNER IMAGE -->
+            <img src="/assets/images/images/misc/seminar_banner.jpg" alt="Colloquiums Banner" class="colloquium-banner">
+
+            <!-- MAIN BODY -->
+            <div class="colloquium-main">
+
+                <!-- HEADER INSIDE BOX -->
+                <div class="colloquium-header">
+                    <h1 class="colloquium-title bilingual-title" data-hi="कोलोकीयम" data-en="Colloquiums"></h1>
+                </div>
+
+                <!-- CONTENT -->
+                <div class="colloquium-content">
+
+                    <!-- SECTION TITLE -->
+                    <div class="section-title bilingual-text" data-hi="कोलोकीयम" data-en="Colloquiums"></div>
+
+                    <!-- COLLOQUIUM 01/2025 -->
+                    <div class="colloquium-container">
+                        <div class="colloquium-header-title">
+                            <h3 class="bilingual-text" data-hi="CPP-IPR कोलोकीयम 01/2025"
+                                data-en="CPP-IPR Colloquium 01/2025"></h3>
+                        </div>
+
+                        <div class="colloquium-details">
+                            <div class="speaker-image">
+                                <img src="/assets/images/images/collo/indranil.jpg" alt="Indranil Bandyopadhyay"
+                                    onerror="this.style.display='none'">
+                            </div>
+                            <div class="speaker-info">
+                                <span class="bilingual-text"
+                                    data-hi="शीर्षक: नाभिकीय संलयन ऊर्जा की खोज – ITER और उससे आगे"
+                                    data-en="Title: Quest for Nuclear Fusion Energy - ITER and Beyond"></span>
+                                <span class="bilingual-text"
+                                    data-hi="वक्ता: इन्द्रनील बंद्योपाध्याय (Head-CSKM, ITER India)"
+                                    data-en="Speaker: Indranil Bandyopadhyay (Head-CSKM, ITER India)"></span>
+                                <span class="bilingual-text"
+                                    data-hi="संस्थान: ITER-India, Institute for Plasma Research, भाट, गांधीनगर"
+                                    data-en="Institute: ITER-India, Institute for Plasma Research, Bhat, Gandhinagar"></span>
+                                <span class="bilingual-text"
+                                    data-hi="दिनांक, समय एवं स्थान: 24/03/2025, 3.00 PM, CPP-IPR सेमिनार हॉल"
+                                    data-en="Date, time & venue: 24/03/2025, 3.00 pm, CPP-IPR Seminar Hall"></span>
+                            </div>
+                        </div>
+
+                        <div class="abstract-section">
+                            <h5 class="bilingual-text" data-hi="सारांश" data-en="Abstract"></h5>
+                            <div class="abstract-text">
+                                <p class="abstract-paragraph bilingual-text"
+                                    data-hi="1958 में आयोजित द्वितीय संयुक्त राष्ट्र 'Atoms for Peace' सम्मेलन के बाद से नाभिकीय संलयन अनुसंधान उल्लेखनीय रूप से अवर्गीकृत (declassified) रहा है। नाभिकीय संलयन अभिक्रियाओं से ऊर्जा उत्पादन के अत्यधिक संभावित लाभ हैं। संलयन में ड्यूटेरियम और ट्रिटियम जैसे हल्के नाभिकों के आयनों का विलयन होकर हीलियम जैसे भारी नाभिक बनते हैं, जो नाभिकीय विखंडन (fission) से भिन्न है, जहाँ यूरेनियम जैसे भारी नाभिक टूटते हैं।"
+                                    data-en="Ever since the Second United Nations International Conference on the Peaceful Uses of Atomic Energy held in 1958, better known as the Atom for Peace conference, nuclear fusion research has remained remarkably declassified. There are tremendous potential benefits of energy production from nuclear fusion reactions - merging of ions of lighter nuclei like those of deuterium and tritium into heavier nuclei like Helium - in contrast to breaking down of heavy nuclei like Uranium in nuclear fission reaction.">
+                                </p>
+                                <p class="abstract-paragraph bilingual-text"
+                                    data-hi="संलयन ऊर्जा मानव जाति को हजारों वर्षों तक लगभग असीमित ऊर्जा प्रदान कर सकती है, लगभग शून्य कार्बन उत्सर्जन के साथ तथा विखंडन की तुलना में बहुत कम रेडियोधर्मिता के साथ। तथापि, चुनौतियाँ अत्यंत विशाल हैं। हल्के नाभिकों का संलयन कराने हेतु उन्हें प्लाज़्मा अवस्था में 100 मिलियन केल्विन से अधिक तापमान तक गर्म करना तथा लगभग 10²⁰ प्रति घन मीटर के उच्च घनत्व पर कई सेकंड तक सीमित रखना आवश्यक है। वर्तमान में यह कार्य चुंबकीय परिरोधन संलयन (Magnetic Confinement Fusion) में टोकामक विन्यास द्वारा सर्वाधिक प्रभावी रूप से किया जाता है।"
+                                    data-en="It can virtually give the human race unlimited amounts of energy for thousands of years with virtually zero carbon emission and much lesser radioactivity than in fission. However, the challenges are enormous, as to fuse the light nuclei, one must heat them in a plasma state to more than 100 million degrees Kelvin, simultaneously confining them at sufficiently high density of about 1020/m3 for several seconds. This is presently most efficiently done in magnetic confinement fusion using the tokamak configuration.">
+                                </p>
+                                <p class="abstract-paragraph bilingual-text"
+                                    data-hi="पिछले 6–7 दशकों में संलयन अनुसंधान में उल्लेखनीय प्रगति हुई है, जिससे इस शताब्दी के मध्य तक संलयन-आधारित पावर रिएक्टर विकसित करना एक वास्तविक संभावना बन गई है। यूके का JET टोकामक (अब डीकमीशनिंग के अंतर्गत) लगभग ब्रेक-ईवन स्थिति में 16 MW संलयन शक्ति उत्पन्न कर चुका है।"
+                                    data-en="The last 6-7 decades have seen remarkable progress in nuclear fusion research, which makes developing nuclear fusion-based power reactors a distinct possibility around the middle of this century. The JET tokamak in UK (now under decommissioning) has already produced 16 MW of fusion power in nearly break-even condition.">
+                                </p>
+                                <p class="abstract-paragraph bilingual-text"
+                                    data-hi="ITER संलयन अनुसंधान में अगला विशाल कदम है, जिसे फ्रांस के दक्षिण में निर्मित किया जा रहा है। यह लगभग 50 MW हीटिंग पावर का उपयोग करते हुए 500 MW संलयन शक्ति उत्पन्न करेगा, अर्थात संलयन ऊर्जा लाभ (energy gain) 10। यद्यपि ITER उत्पन्न संलयन ऊर्जा को विद्युत में परिवर्तित नहीं करेगा।"
+                                    data-en="ITER is the next giant step in fusion research, being built in the South of France; it will produce 500 MW of fusion power consuming about 50 MW of heating power, implying a fusion energy gain of 10; although ITER will not convert the output fusion energy into electricity.">
+                                </p>
+                                <p class="abstract-paragraph bilingual-text"
+                                    data-hi="ITER एक अभूतपूर्व अंतरराष्ट्रीय सहयोगी परियोजना है जिसमें यूरोपीय संघ, चीन, भारत, जापान, दक्षिण कोरिया, रूस और संयुक्त राज्य अमेरिका सम्मिलित हैं। यह विज्ञान और प्रौद्योगिकी का अत्यंत जटिल एवं महत्वाकांक्षी वैश्विक प्रयास है। ITER के अधिकांश घटक प्रथम-प्रकार (first-of-a-kind) हैं। भारत, एक समान भागीदार के रूप में, ITER की कुल लागत का लगभग 9% योगदान मुख्यतः इन-काइंड घटकों के रूप में कर रहा है, जिनका निर्माण भारत में किया जा रहा है। भारत द्वारा निर्धारित आपूर्ति का 70% से अधिक पहले ही प्रदान किया जा चुका है। ITER वर्तमान में असेम्बली चरण में है तथा 2034 से संचालन निर्धारित है। इस प्रस्तुति में ITER परियोजना की वर्तमान स्थिति, उसके कार्यक्रमगत लक्ष्य एवं चुनौतियाँ प्रस्तुत की जाएँगी।"
+                                    data-en="ITER is an unprecedented international collaborative project involving the European Union, China, India, Japan, South Korea, Russia and the United States, thus involving more than half of the humanity into an unbelievably complex and ambitious science and technology project. All major components in ITER are first of a kind. India as an equal partner in the project is contributing about 9% of the cost of ITER, mostly as in-kind components manufactured in India. We have already delivered more than 70% of our deliveries to ITER. ITER is presently under assembly and operation is scheduled to start from 2034. A brief status of the ITER project, its programmatic goals and challenges will be presented in this presentation.">
+                                </p>
+                                <p class="abstract-paragraph bilingual-text"
+                                    data-hi="सभी ITER सदस्य लगभग 2050 तक DEMO (डेमोंस्ट्रेशन) रिएक्टरों के माध्यम से संलयन ऊर्जा को विद्युत ग्रिड में लाने की योजना रखते हैं। इस लक्ष्य की प्राप्ति ITER या SPARC जैसे नए उपकरणों के अनुसंधान परिणामों पर निर्भर करेगी। प्रस्तुति में वैश्विक संलयन अनुसंधान की वर्तमान स्थिति, वैकल्पिक अवधारणाएँ तथा प्रमुख विज्ञान एवं प्रौद्योगिकी अनुसंधान क्षेत्रों की समीक्षा की जाएगी, जो भविष्य में DEMO एवं संलयन पावर प्लांट्स की दिशा तय करेंगे।"
+                                    data-en="All ITER members have plans to put fusion power into the grid around 2050 through demonstration DEMO reactors and achieving that goal depends on the research outcome of ITER or newer machines like SPARC. We shall review the present worldwide status of fusion research, including in India, the alternate concepts and their status, including key science and technology R&D areas that will critically decide DEMO and fusion power plants in the future.">
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COLLOQUIUM 09 -->
+                    <div class="colloquium-container">
+                        <div class="colloquium-header-title">
+                            <h3 class="bilingual-text" data-hi="CPP-IPR कोलोकीयम 09" data-en="CPP-IPR Colloquium 09">
+                            </h3>
+                        </div>
+
+                        <div class="colloquium-details">
+                            <div class="speaker-image">
+                                <img src="/assets/images/images/collo/swamy.jpg" alt="H. L. Swami"
+                                    onerror="this.style.display='none'">
+                            </div>
+                            <div class="speaker-info">
+                                <span class="bilingual-text"
+                                    data-hi="शीर्षक: न्यूट्रॉन स्रोत सुविधाओं के लिए नाभिकीय सुरक्षा"
+                                    data-en="Title: Nuclear Safety for Neutron Source Facilities"></span>
+                                <span class="bilingual-text" data-hi="वक्ता: श्री एच. एल. स्वामी, Scientific Officer–E"
+                                    data-en="Speaker: Mr. H. L. Swami, Scientific Officer–E"></span>
+                                <span class="bilingual-text"
+                                    data-hi="संस्थान: Fusion Reactor Design Division, Institute for Plasma Research, गांधीनगर, गुजरात"
+                                    data-en="Institute: Fusion Reactor Design Division, Institute for Plasma Research, Gandhinagar, Gujarat"></span>
+                                <span class="bilingual-text"
+                                    data-hi="दिनांक, समय एवं स्थान: 17/10/2019, 3.00 PM, CPP-IPR सेमिनार हॉल"
+                                    data-en="Date, time & venue: 17/10/2019, 3.00 pm, CPP-IPR Seminar Hall"></span>
+                            </div>
+                        </div>
+
+                        <div class="abstract-section">
+                            <h5 class="bilingual-text" data-hi="सारांश" data-en="Abstract"></h5>
+                            <div class="abstract-text">
+                                <p class="abstract-paragraph bilingual-text"
+                                    data-hi="न्यूट्रॉन स्रोत सुविधाएँ विभिन्न उद्देश्यों — जैसे डिज़ाइन मॉक-अप प्रयोग, चिकित्सा उपचार, विशेष नाभिकीय सामग्री का पता लगाना आदि — के लिए विकसित की जा रही हैं। इन सुविधाओं के डिज़ाइन एवं विकास में न्यूट्रॉन विकिरण से जुड़े जोखिमों के संदर्भ में मानव सुरक्षा को प्राथमिकता देना आवश्यक है। न्यूट्रॉन मानव शरीर पर प्रत्यक्ष एवं अप्रत्यक्ष प्रभाव डाल सकते हैं।"
+                                    data-en="Neutron source facilities are being developed for various kinds of purposes such as design mock-up experiments, medical treatment, detection of special nuclear materials, etc. The design and development of neutron source should be done by considering the human safety from associated radiation risk of neutrons exposure. The neutrons can cause a direct and indirect effect on the human.">
+                                </p>
+                                <p class="abstract-paragraph bilingual-text"
+                                    data-hi="विकिरण जोखिमों में विकिरण-जनित बीमारी, अस्थि-मज्जा (hematopoietic) सिंड्रोम, गैस्ट्रोइंटेस्टाइनल सिंड्रोम तथा अन्य घातक समस्याएँ सम्मिलित हैं। स्वास्थ्य प्रभाव मानव शरीर द्वारा अवशोषित विकिरण खुराक पर निर्भर करते हैं। न्यूट्रॉन स्रोत के सुरक्षित एवं सुचारु संचालन हेतु नाभिकीय सुरक्षा मूल्यांकन अत्यावश्यक है। राष्ट्रीय नाभिकीय नियामक संस्थाएँ मानव-सुलभ क्षेत्रों के लिए विकिरण खुराक सीमाएँ निर्धारित करती हैं।"
+                                    data-en="There are various risks to humans from radiation exposure like sickness, bone-marrow (hematopoietic) syndrome, gastrointestinal syndrome and fatal problems. The health issues due to the radiation depend on the radiation dose consumed by the human body. For the safe and smooth operation of a neutron source, nuclear safety evaluation is essential to avoid human health risks. The national nuclear regulatory is imposed a regulation for the radiation doses for human accessible zones of nuclear facilities.">
+                                </p>
+                                <p class="abstract-paragraph bilingual-text"
+                                    data-hi="मानवों को विकिरण से सुरक्षित रखने हेतु स्रोत सुविधाओं में उपयुक्त शील्डिंग आवश्यक है तथा खुराक को नियामक मानकों के अनुरूप सीमित रखा जाना चाहिए। यह वार्ता विकिरण-जोखिम, नियामक खुराक सीमाएँ तथा न्यूट्रॉन शील्डिंग डिज़ाइन एवं न्यूट्रॉनिक्स से जुड़े कार्यों की चर्चा करती है।"
+                                    data-en="In order to protect humans from radiation exposure, the human accessible area source should be well shielded and have limited doses as per the regulatory design. The talk covers the human health risk due to radiation exposure and the regulatory dose limits for human radiation exposure. The remedies to overcome the radiation doses are included in the talk. It also gives a glimpse of the neutron shielding design of the facility and neutronics related associated work for operational clearance from regulatory.">
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COLLOQUIUM 08 -->
+                    <div class="colloquium-container">
+                        <div class="colloquium-header-title">
+                            <h3 class="bilingual-text" data-hi="CPP-IPR कोलोकीयम 08" data-en="CPP-IPR Colloquium 08">
+                            </h3>
+                        </div>
+
+                        <div class="colloquium-details">
+                            <div class="speaker-image">
+                                <img src="/assets/images/images/collo/asen.jpg" alt="Prof. Asoke Kumar Sen"
+                                    onerror="this.style.display='none'">
+                            </div>
+                            <div class="speaker-info">
+                                <span class="bilingual-text"
+                                    data-hi="शीर्षक: धूमकेतुओं पर हालिया अंतरिक्ष मिशन और सौरमंडल संबंधी ज्ञान"
+                                    data-en="Title: Recent space missions to comets and our knowledge about Solar System"></span>
+                                <span class="bilingual-text" data-hi="वक्ता: प्रो. असीम कुमार सेन"
+                                    data-en="Speaker: Prof. Asoke Kumar Sen"></span>
+                                <span class="bilingual-text"
+                                    data-hi="संस्थान: भौतिकी विभाग, असम विश्वविद्यालय, सिलचर, भारत"
+                                    data-en="Institute: Department of Physics, Assam University, Silchar, India"></span>
+                                <span class="bilingual-text"
+                                    data-hi="दिनांक, समय एवं स्थान: 03/05/2019, 3.00 PM, CPP-IPR सेमिनार हॉल"
+                                    data-en="Date, time & venue: 03/05/2019, 3.00 pm, CPP-IPR Seminar Hall"></span>
+                            </div>
+                        </div>
+
+                        <div class="abstract-section">
+                            <h5 class="bilingual-text" data-hi="सारांश" data-en="Abstract"></h5>
+                            <div class="abstract-text">
+                                <p class="abstract-paragraph bilingual-text"
+                                    data-hi="धूमकेतुओं का अध्ययन कई दशकों से ग्राउंड-बेस्ड टेलिस्कोपों द्वारा किया जा रहा है, जिससे उनकी कक्षाएँ, गैस एवं धूल सामग्री तथा अन्य गतिशील गुणों को समझा जा सके। धूमकेतुओं को सौरमंडल के सर्वाधिक प्राचीन पदार्थों का वाहक माना जाता है, जिनसे लगभग 4.6 अरब वर्ष पूर्व सूर्य एवं ग्रहों का निर्माण हुआ।"
+                                    data-en="Comets are being studied for last several decades using ground based telescopes , to understand their orbits, gas and dust contents and other dynamical properties. Since the comets are believed to contain the most pristine materials of our solar system out of which Sun and other planets were born some 4.6 billion years ago, the above studies help us to understand the origin and evolution of our solar system.">
+                                </p>
+                                <p class="abstract-paragraph bilingual-text"
+                                    data-hi="धूमकेतु नाभिक से मुक्त धूल कण सौर विकिरण का प्रकीर्णन करते हैं, जिससे धूमकेतु उज्ज्वल एवं आकर्षक दिखाई देते हैं। इन प्रकीर्णित विकिरणों का अध्ययन फोटोमेट्री एवं पोलारिमेट्री तकनीकों द्वारा किया जाता है। हाल के वर्षों में अनेक अंतरिक्ष यानों ने धूमकेतुओं के समीप जाकर इन-सिटू मापन किए हैं।"
+                                    data-en="The dust particles which are released from the comet nucleus, contain most of these pristine materials. These particles scatter the solar radiation and are responsible to give the comets a bright spectacular appearance. Such scattered radiations are studied through photometry and polarimetry by the ground based telescopes to understand the properties of cometary dust and also the scattering processes in general. In addition, in recent years a number spacecrafts had flown very close to some of the comets and made very interesting in situ measurements on cometary dusts.">
+                                </p>
+                                <p class="abstract-paragraph bilingual-text"
+                                    data-hi="ये अंतरिक्ष मापन तथा ग्राउंड-बेस्ड अवलोकन मिलकर धूमकेतुओं एवं सौरमंडल की उत्पत्ति एवं विकास के बारे में नई अंतर्दृष्टियाँ प्रदान कर रहे हैं।"
+                                    data-en="These spacecraft measurements, together with the ground based observations on cometary dusts are providing us now, new insights into the processes which led to the formation of the comets and other members of the solar system.">
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COLLOQUIUM 07 -->
+                    <div class="colloquium-container">
+                        <div class="colloquium-header-title">
+                            <h3 class="bilingual-text" data-hi="CPP-IPR कोलोकीयम 07" data-en="CPP-IPR Colloquium 07">
+                            </h3>
+                        </div>
+
+                        <div class="colloquium-details">
+                            <div class="speaker-image">
+                                <img src="/assets/images/images/collo/upal.jpg" alt="Dr. U. N. Pal"
+                                    onerror="this.style.display='none'">
+                            </div>
+                            <div class="speaker-info">
+                                <span class="bilingual-text"
+                                    data-hi="शीर्षक: पल्स्ड पावर प्लाज़्मा प्रौद्योगिकियाँ एवं उनके अनुप्रयोग"
+                                    data-en="Title: Pulsed Power Plasma Technologies and their Applications"></span>
+                                <span class="bilingual-text" data-hi="वक्ता: डॉ. यू. एन. पाल, Principal Scientist"
+                                    data-en="Speaker: Dr. U. N. Pal, Principal Scientist"></span>
+                                <span class="bilingual-text"
+                                    data-hi="संस्थान: CSIR-Central Electronics Engineering Research Institute (CEERI), पिलानी, राजस्थान"
+                                    data-en="Institute: CSIR- Central Electronics Engineering Research Institute, Pilani, Rajasthan"></span>
+                                <span class="bilingual-text"
+                                    data-hi="दिनांक, समय एवं स्थान: 22/11/2018, 11:30 AM, CPP-IPR सेमिनार हॉल"
+                                    data-en="Date, time & venue: 22/11/2018, 11:30 am, CPP-IPR Seminar Hall"></span>
+                            </div>
+                        </div>
+
+                        <div class="abstract-section">
+                            <h5 class="bilingual-text" data-hi="सारांश" data-en="Abstract"></h5>
+                            <div class="abstract-text">
+                                <p class="abstract-paragraph bilingual-text"
+                                    data-hi="पल्स्ड प्लाज़्मा उपकरणों — जैसे थायराट्रॉन एवं प्सूडोस्पार्क स्विच — का उपयोग उच्च ऊर्जा भौतिकी, माइक्रोवेव, सतह संशोधन तथा EUV/X-ray स्रोतों में बढ़ रहा है। इस वार्ता में उच्च शक्ति प्लाज़्मा स्विचों के डिज़ाइन, विकास, निर्माण एवं अनुप्रयोगों पर चर्चा की गई है।"
+                                    data-en="Presently, there is growing concern in pulsed plasma devices and technologies, such as, high power plasma switches (Thyratron and pseudospark switch (PSS)) for different pulse modulators and high energy physics applications; high density and energetic electron beam sources for microwave and surface modification applications; Extreme Ultraviolet (EUV)/X-ray sources for surface modification of polymers, X-ray Crystal Spectroscopy (XRCS) and radiography of small objects for potential biological applications; and plasma assisted compact microwave and THz sources.">
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COLLOQUIUM 06 -->
+                    <div class="colloquium-container">
+                        <div class="colloquium-header-title">
+                            <h3 class="bilingual-text" data-hi="CPP-IPR कोलोकीयम 06" data-en="CPP-IPR Colloquium 06">
+                            </h3>
+                        </div>
+
+                        <div class="colloquium-details">
+                            <div class="speaker-image">
+                                <img src="/assets/images/images/collo/arajput.jpg" alt="Prof. Amarendra Rajput"
+                                    onerror="this.style.display='none'">
+                            </div>
+                            <div class="speaker-info">
+                                <span class="bilingual-text"
+                                    data-hi="शीर्षक: आधुनिक भौतिकी का मानव मस्तिष्क एवं चिंतन पर प्रभाव"
+                                    data-en="Title: Impact of Modern Physics on Human Mind and Thinking"></span>
+                                <span class="bilingual-text" data-hi="वक्ता: प्रो. अमरेन्द्र राजपूत, पूर्व प्रोफेसर"
+                                    data-en="Speaker: Prof. Amarendra Rajput, Former Professor"></span>
+                                <span class="bilingual-text"
+                                    data-hi="दिनांक, समय एवं स्थान: 02/11/2018, 3.00 PM, CPP-IPR सेमिनार हॉल"
+                                    data-en="Date, time & venue: 02/11/2018, 3:00 pm, CPP-IPR Seminar Hall"></span>
+                            </div>
+                        </div>
+
+                        <div class="bio-section">
+                            <h5 class="bilingual-text" data-hi="संक्षिप्त जीवनी" data-en="Brief Biography"></h5>
+                            <div class="bio-text">
+                                <p class="bilingual-text"
+                                    data-hi="प्रो. राजपूत ने B.Sc. एवं M.Sc. (दिल्ली विश्वविद्यालय) तथा Ph.D. (IIT मद्रास) प्राप्त की। उनके शोध क्षेत्र क्वांटम यांत्रिकी, कॉस्मोलॉजी एवं ठोस अवस्था सिद्धांत हैं।"
+                                    data-en="Professor Rajput earned his B.Sc. and M.Sc. degree from University of Delhi and Ph.D. Degree from IIT Madras. His research interest includes Quantum Mechanics, Cosmology and Solid State Theory. He taught at postgraduate level for almost 37 years at Dibrugarh University and Assam University. Then he moved to Haramaya University in Ethiopia on the invitation from Ministry of Education, Ethiopia in 2008 and spent around 10 years in Ethiopia. At present, he is teaching at Royal Global University, Guwahati.">
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COLLOQUIUM 05 -->
+                    <div class="colloquium-container">
+                        <div class="colloquium-header-title">
+                            <h3 class="bilingual-text" data-hi="CPP-IPR कोलोकीयम 05" data-en="CPP-IPR Colloquium 05">
+                            </h3>
+                        </div>
+
+                        <div class="colloquium-details">
+                            <div class="speaker-image">
+                                <img src="/assets/images/images/collo/partha.jpg" alt="Dr. Partha Saikia"
+                                    onerror="this.style.display='none'">
+                            </div>
+                            <div class="speaker-info">
+                                <span class="bilingual-text"
+                                    data-hi="शीर्षक: ज्यामितीय रूप से असममित द्वि-आवृत्ति कैपेसिटिवली कपल्ड प्लाज़्मा का प्रायोगिक एवं विश्लेषणात्मक अध्ययन"
+                                    data-en="Title: Experimental Study and Analytical Modeling of the Geometrically Asymmetric Dual Frequency Capacitively Coupled Plasmas"></span>
+                                <span class="bilingual-text" data-hi="वक्ता: डॉ. पार्थ सैकिया"
+                                    data-en="Speaker: Dr. Partha Saikia"></span>
+                                <span class="bilingual-text"
+                                    data-hi="दिनांक, समय एवं स्थान: 05/10/2018, 3.00 PM, CPP-IPR सेमिनार हॉल"
+                                    data-en="Date, time & venue: 05/10/2018, 3.00 PM, CPP-IPR Seminar Hall"></span>
+                            </div>
+                        </div>
+
+                        <div class="abstract-section">
+                            <h5 class="bilingual-text" data-hi="सारांश" data-en="Abstract"></h5>
+                            <div class="abstract-text">
+                                <p class="abstract-paragraph bilingual-text"
+                                    data-hi="द्वि-आवृत्ति (2.26 एवं 13.56 MHz) कैपेसिटिवली कपल्ड प्लाज़्मा का प्रायोगिक एवं मॉडल-आधारित अध्ययन किया गया। इलेक्ट्रॉन घनत्व, तापमान तथा DC self-bias का विश्लेषण प्रस्तुत किया गया।"
+                                    data-en="We investigate the discharge behavior of dual frequency capacitively coupled plasmas driven at 2.26 and 13.56 MHz experimentally and by a non-linear global model. In the experiment, the pressure is varied from 1 mtorr to 60 mtorr. The electron density, electron temperature as well as the ion current are measured as a function of the low frequency power at fixed values of the high frequency power for different pressures.">
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COLLOQUIUM 04 -->
+                    <div class="colloquium-container">
+                        <div class="colloquium-header-title">
+                            <h3 class="bilingual-text" data-hi="CPP-IPR कोलोकीयम 04" data-en="CPP-IPR Colloquium 04">
+                            </h3>
+                        </div>
+
+                        <div class="colloquium-details">
+                            <div class="speaker-image">
+                                <img src="/assets/images/images/collo/arun.jpg" alt="Prof. Arun Sarma"
+                                    onerror="this.style.display='none'">
+                            </div>
+                            <div class="speaker-info">
+                                <span class="bilingual-text"
+                                    data-hi="शीर्षक: औद्योगिक अनुप्रयोगों हेतु डायमंड लाइक कार्बन (DLC) कोटिंग"
+                                    data-en="Title: Diamond like Carbon Coating for Industrial Applications"></span>
+                                <span class="bilingual-text" data-hi="वक्ता: प्रो. अरुण शर्मा"
+                                    data-en="Speaker: Prof. Arun Sarma"></span>
+                                <span class="bilingual-text"
+                                    data-hi="दिनांक, समय एवं स्थान: 21/05/2018, 3.00 PM, CPP-IPR सेमिनार हॉल"
+                                    data-en="Date, time & venue: 21/05/2018, 3.00 PM, CPP-IPR Seminar Hall"></span>
+                            </div>
+                        </div>
+
+                        <div class="abstract-section">
+                            <h5 class="bilingual-text" data-hi="सारांश" data-en="Abstract"></h5>
+                            <div class="abstract-text">
+                                <p class="abstract-paragraph bilingual-text"
+                                    data-hi="DLC कोटिंग घिसाव कम करने, कठोरता बढ़ाने एवं उत्पाद आयु सुधारने में उपयोगी है। स्पटरिंग एवं PECVD तकनीकों द्वारा कोटिंग और उसके ऑप्टिकल, संरचनात्मक एवं यांत्रिक गुणों का अध्ययन किया गया।"
+                                    data-en="Diamond like carbon (DLC) coating worked as an abrasive coating to reduce wear and increase life time of products, normally used in presence of lubricant. DLC coating can also be used to strength mechanical properties such as hardness and toughness. Looking these advantages of DLC coating, coating has been done on samples used in automobile industries to enhance the life time of samples in presence of lubricant.">
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COLLOQUIUM 03 -->
+                    <div class="colloquium-container">
+                        <div class="colloquium-header-title">
+                            <h3 class="bilingual-text" data-hi="CPP-IPR कोलोकीयम 03" data-en="CPP-IPR Colloquium 03">
+                            </h3>
+                        </div>
+
+                        <div class="colloquium-details">
+                            <div class="speaker-image">
+                                <img src="/assets/images/images/collo/nilakshi.jpg" alt="Prof. Nilakshi Das"
+                                    onerror="this.style.display='none'">
+                            </div>
+                            <div class="speaker-info">
+                                <span class="bilingual-text"
+                                    data-hi="शीर्षक: स्ट्रॉन्गली कपल्ड डस्टी प्लाज़्मा में आयन गतिकी के प्रभाव"
+                                    data-en="Title: The effects of ion dynamics on strongly coupled dusty plasma"></span>
+                                <span class="bilingual-text" data-hi="वक्ता: प्रो. नीलाक्षी दास"
+                                    data-en="Speaker: Prof. Nilakshi Das"></span>
+                                <span class="bilingual-text" data-hi="दिनांक: 29/01/2016"
+                                    data-en="Date: 29/01/2016"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COLLOQUIUM 02 -->
+                    <div class="colloquium-container">
+                        <div class="colloquium-header-title">
+                            <h3 class="bilingual-text" data-hi="CPP-IPR कोलोकीयम 02" data-en="CPP-IPR Colloquium 02">
+                            </h3>
+                        </div>
+
+                        <div class="colloquium-details">
+                            <div class="speaker-image">
+                                <img src="/assets/images/images/collo/djsaikia.jpg" alt="Prof. D. J. Saikia"
+                                    onerror="this.style.display='none'">
+                            </div>
+                            <div class="speaker-info">
+                                <span class="bilingual-text" data-hi="शीर्षक: ब्रह्मांड से प्रकाश"
+                                    data-en="Title: Light from the Universe"></span>
+                                <span class="bilingual-text" data-hi="वक्ता: प्रो. डी. जे. सैकिया"
+                                    data-en="Speaker: Prof. D. J. Saikia"></span>
+                                <span class="bilingual-text" data-hi="दिनांक: 21/12/2015"
+                                    data-en="Date: 21/12/2015"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COLLOQUIUM 01 -->
+                    <div class="colloquium-container">
+                        <div class="colloquium-header-title">
+                            <h3 class="bilingual-text" data-hi="CPP-IPR कोलोकीयम 01" data-en="CPP-IPR Colloquium 01">
+                            </h3>
+                        </div>
+
+                        <div class="colloquium-details">
+                            <div class="speaker-image">
+                                <img src="/assets/images/images/collo/srini.jpg" alt="Prof. A. Srinivasan"
+                                    onerror="this.style.display='none'">
+                            </div>
+                            <div class="speaker-info">
+                                <span class="bilingual-text" data-hi="शीर्षक: नैनो-स्केल पर चुंबकत्व"
+                                    data-en="Title: Magnetism at Nano-scale"></span>
+                                <span class="bilingual-text" data-hi="वक्ता: प्रो. ए. श्रीनिवासन"
+                                    data-en="Speaker: Prof. A. Srinivasan"></span>
+                                <span class="bilingual-text"
+                                    data-hi="दिनांक, समय एवं स्थान: 09/11/2015, 3.00 PM, CPP-IPR सेमिनार हॉल"
+                                    data-en="Date, time & venue: 09/11/2015, 3.00 PM, CPP-IPR Seminar Hall"></span>
+                            </div>
+                        </div>
+
+                        <div class="abstract-section">
+                            <h5 class="bilingual-text" data-hi="सारांश" data-en="Abstract"></h5>
+                            <div class="abstract-text">
+                                <p class="abstract-paragraph bilingual-text"
+                                    data-hi="नैनो-स्केल पर पदार्थों के चुंबकीय गुण विशिष्ट होते हैं। सुपरपैरामैग्नेटिज़्म, जाइंट मैग्नेटो-रेज़िस्टेंस एवं एक्सचेंज बायस जैसी घटनाएँ क्वांटम प्रभावों पर आधारित हैं। इनका स्वास्थ्य, इलेक्ट्रॉनिक्स एवं स्पिन्ट्रॉनिक्स में महत्वपूर्ण अनुप्रयोग है।"
+                                    data-en="We know that the behaviour of materials with size in between microscopic and macroscopic length scales is very different. While most of us understand how the optical and catalytic properties of materials vary with size and dimension dependence in this mesoscale (or nanoscale), magnetic properties of nanoscale materials is not well known. There are some very unique magnetic phenomena displayed by certain nanoscale magnetic particles which have no equivalence in the other two length scales such as superparamagnetism, giant magneto-resistance, exchange bias, 2-d electron gas, etc. Since these phenomena are exhibited by materials with different degrees of quantum confinement, they have their foundations in quantum physics. Such novel phenomena have many applications ranging from health sector to new generation electronic and spintronic devices.">
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <div id="footer-container"></div>
+
+    <!-- FRAGMENT LOADER -->
+    <script>
+        function loadFragment(url, containerId) {
+            fetch(url)
+                .then(res => res.text())
+                .then(html => {
+                    const container = document.getElementById(containerId);
+                    container.innerHTML = html;
+
+                    container.querySelectorAll('script').forEach(oldScript => {
+                        const newScript = document.createElement('script');
+                        if (oldScript.src) {
+                            newScript.src = oldScript.src;
+                        } else {
+                            newScript.textContent = oldScript.textContent;
+                        }
+                        oldScript.replaceWith(newScript);
+                    });
+                })
+                .catch(err => console.error('Error loading fragment:', url, err));
+        }
+
+        loadFragment('/UI/header.html', 'header-container');
+        loadFragment('/UI/footer.html', 'footer-container');
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About - CPP-IPR</title>
+
+  <style>
+    :root {
+      --about-bg: #ffffff;
+      --about-border: #d0d7e2;
+      --about-text: #111827;
+      --about-muted: #6b7280;
+      --about-accent: #2563eb;
+      --about-radius-lg: 16px;
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      font-family: Arial, sans-serif;
+    }
+
+    #header-container,
+    #footer-container {
+      flex-shrink: 0;
+    }
+
+    main {
+      flex: 1;
+      padding: 1.5rem 5vw;
+      box-sizing: border-box;
+    }
+
+    /* ---------- GLOBAL SECTION WIDTH ---------- */
+    .page-section {
+      max-width: 1600px;
+      margin: 0 auto 2rem auto;
+    }
+
+    /* ---------- ABOUT SECTION STYLES ---------- */
+    .about-section {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      box-sizing: border-box;
+    }
+
+    /* BANNER IMAGE */
+    .about-banner {
+      width: 100%;
+      height: auto;
+      border-radius: var(--about-radius-lg);
+      object-fit: cover;
+    }
+
+    /* MAIN BODY */
+    .about-main {
+      position: relative;
+      width: 100%;
+      background: var(--about-bg);
+      border: 1.5px solid var(--about-border);
+      border-radius: var(--about-radius-lg);
+      overflow: hidden;
+    }
+
+    /* HEADER INSIDE BOX */
+    .about-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem 1.75rem 1rem 1.75rem;
+      position: relative;
+    }
+
+    /* Horizontal line with custom width */
+    .about-header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      height: 2px;
+      background-color: var(--about-border);
+    }
+
+    .about-title {
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: var(--about-text);
+      text-align: center;
+      margin: 0;
+    }
+
+    /* CONTENT AREA */
+    .about-content {
+      padding: 1.75rem 1.75rem;
+      box-sizing: border-box;
+    }
+
+    .about-content p {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: var(--about-text);
+      margin-bottom: 1.5rem;
+      text-align: justify;
+      text-justify: inter-word;
+      /* Better justification */
+      hyphens: auto;
+      /* Enable hyphenation for better text flow */
+    }
+
+    .about-content p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* FOOTER LINK */
+    .about-footer {
+      padding: 0 0.25rem;
+      display: flex;
+      justify-content: flex-start;
+    }
+
+    .history-link {
+      font-size: 0.95rem;
+      color: var(--about-accent);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+
+    .history-link:hover {
+      color: #1d4ed8;
+      text-decoration: underline;
+    }
+
+    /* ---------- MOBILE ---------- */
+    @media (max-width: 900px) {
+      .about-title {
+        font-size: 1.35rem;
+      }
+
+      .about-header {
+        padding: 1.25rem 1.25rem 0.85rem 1.25rem;
+      }
+
+      .about-header::after {
+        width: 80%;
+      }
+
+      .about-content {
+        padding: 1.5rem 1.25rem;
+      }
+
+      .about-content p {
+        font-size: 0.95rem;
+        /* Changed from text-align: left to text-align: justify */
+        text-align: justify;
+        text-justify: inter-word;
+        hyphens: auto;
+        /* Optional: Adjust word spacing for better mobile justification */
+        word-spacing: -0.5px;
+      }
+    }
+
+    /* Small mobile screens */
+    @media (max-width: 480px) {
+      .about-content p {
+        font-size: 0.9rem;
+        line-height: 1.6;
+        /* Further adjustments for very small screens */
+        letter-spacing: 0.2px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <div id="header-container"></div>
+
+  <!-- PAGE CONTENT -->
+  <main>
+    <div class="page-section about-section">
+
+      <!-- BANNER IMAGE -->
+      <img src="/assets/images/about_banner.jpg" alt="CPP-IPR Banner" class="about-banner">
+
+      <!-- MAIN BODY -->
+      <div class="about-main">
+
+        <!-- HEADER INSIDE BOX -->
+        <div class="about-header">
+          <h1 class="about-title bilingual-title" data-hi="प्रोफाइल" data-en="Profile">
+            Profile
+          </h1>
+        </div>
+
+        <!-- CONTENT -->
+        <div class="about-content">
+          <p class="bilingual-text"
+            data-hi="प्लाज़्मा भौतिकी केंद्र - प्लाज़्मा अनुसंधान संस्थान (सीपीपी-आईपीआर), प्लाज़्मा अनुसंधान संस्थान (आईपीआर), गांधीनगर, गुजरात का एक अनुसंधान केंद्र है, जो परमाणु ऊर्जा विभाग (पऊवि), भारत सरकार के अंतर्गत एक स्वायत्त संस्थान है।"
+            data-en="Centre of Plasma Physics – Institute for Plasma Research (CPP-IPR) is a research centre of Institute for Plasma Research (IPR), Gandhinagar, Gujarat, an autonomous institute under the Department of Atomic Energy (DAE), Govt. of India.">
+            Centre of Plasma Physics – Institute for Plasma Research (CPP-IPR) is a research centre of Institute for
+            Plasma Research (IPR), Gandhinagar, Gujarat, an autonomous institute under the Department of Atomic Energy
+            (DAE), Govt. of India.
+          </p>
+
+          <p class="bilingual-text"
+            data-hi="केंद्र की शुरुआत 1991 में असम सरकार की एक परियोजना के रूप में वैज्ञानिकों के एक छोटे समूह के साथ की गई थी, और 29 मई, 2009 तक असम सरकार के विज्ञान और प्रौद्योगिकी विभाग के तहत एक स्वायत्त संस्थान के रूप में कार्य किया। इसके बाद, संस्थान को पऊवि, भारत सरकार के अंतर्गत प्लाज़्मा अनुसंधान संस्थान के केंद्र के रूप में लिया गया।"
+            data-en="The centre was initially formed with a small group of scientists in 1991 as a project of Govt. of Assam, and functioned as an autonomous institute under the Department of Science & Technology, Govt. of Assam, till May 29, 2009. Hereon upon, the institute was taken as a centre of Institute for Plasma Research under DAE, Govt. of India.">
+            The centre was initially formed with a small group of scientists in 1991 as a project of Govt. of Assam, and
+            functioned as an autonomous institute under the Department of Science & Technology, Govt. of Assam, till May
+            29, 2009. Hereon upon, the institute was taken as a centre of Institute for Plasma Research under DAE, Govt.
+            of India.
+          </p>
+        </div>
+      </div>
+
+      <!-- FOOTER LINK -->
+      <div class="about-footer">
+        <a href="/pages/Profile/history.html" class="history-link bilingual-text" data-hi="इतिहास के लिए देखें"
+          data-en="View for History">
+          View for History
+        </a>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <div id="footer-container"></div>
+
+  <!-- FRAGMENT LOADER -->
+  <script>
+    function loadFragment(url, containerId) {
+      fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const container = document.getElementById(containerId);
+          container.innerHTML = html;
+
+          container.querySelectorAll('script').forEach(oldScript => {
+            const newScript = document.createElement('script');
+            if (oldScript.src) {
+              newScript.src = oldScript.src;
+            } else {
+              newScript.textContent = oldScript.textContent;
+            }
+            oldScript.replaceWith(newScript);
+          });
+        })
+        .catch(err => console.error('Error loading fragment:', url, err));
+    }
+
+    loadFragment('/UI/header.html', 'header-container');
+    loadFragment('/UI/footer.html', 'footer-container');
+  </script>
+
+  <!-- INCLUDE BILINGUAL LOGIC -->
+  <script src="/UI/bilingual.js"></script>
+
+</body>
+
+</html>

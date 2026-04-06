@@ -1,0 +1,382 @@
+<!-- UI/current_notice.html -->
+
+<style>
+  :root {
+    --notice-bg: #ffffff;
+    --notice-border: #d8dee9;
+    --notice-text: #1f2937;
+    --notice-muted: #6b7280;
+    --notice-accent: #1d4ed8;
+    --notice-radius-lg: 16px;
+  }
+
+  /* OUTER WRAPPER */
+  .current-notice {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    box-sizing: border-box;
+  }
+
+  /* HEADER */
+  .notice-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  .notice-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    color: var(--notice-text);
+  }
+
+  .notice-subtitle {
+    font-size: 0.9rem;
+    color: var(--notice-muted);
+  }
+
+  /* MAIN CARD */
+  .notice-main {
+    position: relative;
+    width: 100%;
+    background: var(--notice-bg);
+    border: 1.5px solid var(--notice-border);
+    border-radius: var(--notice-radius-lg);
+    overflow: hidden;
+    min-height: 260px;
+  }
+
+  /* SCROLL AREA */
+  .notice-scroll {
+    position: absolute;
+    inset: 0;
+    padding: 1.2rem 1.4rem;
+    box-sizing: border-box;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+  }
+
+  .notice-scroll::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .notice-scroll::-webkit-scrollbar-thumb {
+    background: rgba(31, 41, 55, 0.3);
+    border-radius: 999px;
+  }
+
+  /* NOTICE LIST */
+  .notice-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+
+  /* NOTICE ITEM - Type on top */
+  .notice-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--notice-text);
+    text-align: left;
+    word-break: break-word;
+    padding: 0.5rem 0 0.7rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    width: 100%;
+  }
+
+  .notice-item:last-child {
+    border-bottom: none;
+  }
+
+  /* Type header with NEW badge on right */
+  .notice-type-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.1rem;
+    flex-wrap: wrap;
+  }
+
+  /* Type on top left */
+  .notice-type {
+    font-weight: 600;
+    color: var(--notice-accent);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-block;
+    width: fit-content;
+    padding: 0.15rem 0.5rem;
+    background-color: rgba(29, 78, 216, 0.05);
+    border-radius: 4px;
+  }
+
+  /* New badge/image - moved to right of type */
+  .notice-new {
+    height: 14px;
+    width: auto;
+    vertical-align: middle;
+  }
+
+  /* Content wrapper */
+  .notice-content-wrapper {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    width: 100%;
+  }
+
+  /* Link container */
+  .notice-link {
+    flex: 1;
+    color: var(--notice-text);
+    text-decoration: none;
+    transition: color 0.2s ease;
+    word-break: break-word;
+    display: inline-block;
+    text-align: justify;
+    text-justify: inter-word;
+  }
+
+  .notice-link:hover {
+    color: var(--notice-accent);
+    text-decoration: underline;
+  }
+
+  .notice-empty {
+    font-size: 0.9rem;
+    color: var(--notice-muted);
+    text-align: center;
+    padding: 1rem 0;
+  }
+
+  /* ---------- TABLET ---------- */
+  @media (max-width: 1024px) {
+    .current-notice {
+      max-width: 100%;
+    }
+  }
+
+  /* ---------- MOBILE ---------- */
+  @media (max-width: 900px) {
+    .notice-main {
+      position: relative;
+      height: auto !important;
+      min-height: 220px;
+    }
+
+    .notice-scroll {
+      position: relative;
+      max-height: 320px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .notice-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .notice-subtitle {
+      text-align: left;
+    }
+
+    /* Mobile adjustments */
+    .notice-content-wrapper {
+      flex-wrap: wrap;
+    }
+  }
+
+  /* Small mobile screens */
+  @media (max-width: 480px) {
+    .notice-content-wrapper {
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .notice-type-header {
+      flex-wrap: wrap;
+    }
+  }
+</style>
+
+<div class="current-notice" id="current-notice-root">
+
+  <div class="notice-header">
+    <div class="notice-title" id="notice-title-text">Current Notices</div>
+    <div class="notice-subtitle" id="notice-subtitle-text">
+      Latest official announcements
+    </div>
+  </div>
+
+  <div class="notice-main" id="notice-main">
+    <div class="notice-scroll" id="notice-scroll">
+      <div class="notice-list" id="notice-list"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  (function () {
+
+    const DATA_URL = '/api/current-notice';
+
+    const listEl = document.getElementById('notice-list');
+    const scrollEl = document.getElementById('notice-scroll');
+    const noticeMain = document.getElementById('notice-main');
+
+    let cachedData = [];
+
+    const headerText = {
+      en: {
+        title: 'Current Notices',
+        subtitle: 'Latest official announcements'
+      },
+      hi: {
+        title: 'वर्तमान सूचनाएँ',
+        subtitle: 'नवीनतम आधिकारिक घोषणाएँ'
+      }
+    };
+
+    function getCurrentLang() {
+      return localStorage.getItem('preferred-language') || 'en';
+    }
+
+    function applyHeaderLang(lang) {
+      const set = headerText[lang] || headerText.en;
+      document.getElementById('notice-title-text').textContent = set.title;
+      document.getElementById('notice-subtitle-text').textContent = set.subtitle;
+    }
+
+    function getDescription(item, lang) {
+      if (lang === 'hi' && item.description_hi) return item.description_hi;
+      return item.description_en || '';
+    }
+
+    // Create notice item with type on top and NEW badge on right
+    function createNoticeItem(item, lang) {
+      const div = document.createElement('div');
+      div.className = 'notice-item';
+
+      // Type header with NEW badge on right
+      const typeHeader = document.createElement('div');
+      typeHeader.className = 'notice-type-header';
+
+      // Type span first
+      const typeSpan = document.createElement('span');
+      typeSpan.className = 'notice-type';
+      typeSpan.textContent = item.type;
+      typeHeader.appendChild(typeSpan);
+
+      // Add NEW badge after type if item is new
+      if (item.is_new) {
+        const img = document.createElement('img');
+        img.src = '/assets/images/new.gif';
+        img.className = 'notice-new';
+        img.alt = 'New';
+        typeHeader.appendChild(img);
+      }
+
+      // Content wrapper for link
+      const contentWrapper = document.createElement('div');
+      contentWrapper.className = 'notice-content-wrapper';
+
+      // Link
+      const link = document.createElement('a');
+      link.className = 'notice-link';
+      link.href = '/assets/files/currentNotice/' + item.filename;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.textContent = getDescription(item, lang);
+
+      contentWrapper.appendChild(link);
+
+      div.appendChild(typeHeader);
+      div.appendChild(contentWrapper);
+
+      return div;
+    }
+
+    /* HEIGHT SYNC — EXACT SAME LOGIC AS BEFORE */
+    function syncHeightWithCarousel() {
+      if (window.innerWidth < 900) {
+        noticeMain.style.height = 'auto';
+        return;
+      }
+
+      const carouselMain = document.querySelector('.carousel-main');
+      if (!carouselMain || !noticeMain) return;
+
+      noticeMain.style.height =
+        carouselMain.getBoundingClientRect().height + 'px';
+    }
+
+    // Build list with type on top and NEW badge on right
+    function buildList(data) {
+      listEl.innerHTML = '';
+
+      if (!Array.isArray(data) || data.length === 0) {
+        const emptyDiv = document.createElement('div');
+        emptyDiv.className = 'notice-empty';
+        emptyDiv.textContent = 'No notices available.';
+        listEl.appendChild(emptyDiv);
+        return;
+      }
+
+      const lang = getCurrentLang();
+
+      // Sort data - new notices first
+      const sortedData = [...data].sort((a, b) => {
+        if (a.is_new && !b.is_new) return -1;
+        if (!a.is_new && b.is_new) return 1;
+        return 0;
+      });
+
+      // Create all notice items
+      sortedData.forEach(item => {
+        listEl.appendChild(createNoticeItem(item, lang));
+      });
+
+      syncHeightWithCarousel();
+    }
+
+    window.applyCurrentNoticeLang = function (lang) {
+      applyHeaderLang(lang);
+      buildList(cachedData);
+    };
+
+    function init() {
+      applyHeaderLang(getCurrentLang());
+
+      fetch(DATA_URL)
+        .then(res => res.json())
+        .then(data => {
+          cachedData = Array.isArray(data) ? data : [];
+          buildList(cachedData);
+        })
+        .catch(() => {
+          const emptyDiv = document.createElement('div');
+          emptyDiv.className = 'notice-empty';
+          emptyDiv.textContent = 'Unable to load notices.';
+          listEl.appendChild(emptyDiv);
+        });
+
+      window.addEventListener('resize', () => {
+        syncHeightWithCarousel();
+      });
+    }
+
+    init();
+
+  })();
+</script>

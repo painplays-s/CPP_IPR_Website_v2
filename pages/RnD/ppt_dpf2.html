@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pulsed Power Technology Laboratory - CPP-IPR</title>
+
+    <style>
+        :root {
+            --lab-bg: #ffffff;
+            --lab-border: #d0d7e2;
+            --lab-text: #111827;
+            --lab-muted: #6b7280;
+            --lab-accent: #2563eb;
+            --lab-radius-lg: 16px;
+            --lab-tab-active: #2563eb;
+            --lab-tab-hover: #e5e7eb;
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+        }
+
+        #header-container,
+        #footer-container {
+            flex-shrink: 0;
+        }
+
+        main {
+            flex: 1;
+            padding: 1.5rem 5vw;
+            box-sizing: border-box;
+            background: #f9fafb;
+        }
+
+        .page-section {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .lab-banner {
+            width: 100%;
+            height: auto;
+            max-height: 300px;
+            border-radius: var(--lab-radius-lg);
+            object-fit: cover;
+            margin-bottom: 1.5rem;
+        }
+
+        .lab-container {
+            background: var(--lab-bg);
+            border: 1.5px solid var(--lab-border);
+            border-radius: var(--lab-radius-lg);
+            overflow: hidden;
+        }
+
+        .lab-header {
+            padding: 2rem 2rem 1.5rem;
+            text-align: center;
+            border-bottom: 2px solid var(--lab-border);
+        }
+
+        .lab-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--lab-text);
+            margin: 0;
+        }
+
+        .lab-subtitle {
+            color: var(--lab-muted);
+            margin-top: 0.5rem;
+        }
+
+        .lab-tabs-wrapper {
+            position: relative;
+            border-bottom: 2px solid var(--lab-border);
+            background: #f9fafb;
+        }
+
+        .lab-tabs {
+            display: flex;
+            gap: 0.5rem;
+            padding: 1.5rem 2rem 0;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scrollbar-width: thin;
+            -ms-overflow-style: auto;
+        }
+
+        .lab-tabs::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .lab-tabs::-webkit-scrollbar-track {
+            background: var(--lab-border);
+            border-radius: 10px;
+        }
+
+        .lab-tabs::-webkit-scrollbar-thumb {
+            background: var(--lab-accent);
+            border-radius: 10px;
+        }
+
+        .lab-tab {
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: none;
+            border-radius: 8px 8px 0 0;
+            color: var(--lab-muted);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .lab-tab:hover {
+            background: var(--lab-tab-hover);
+            color: var(--lab-text);
+        }
+
+        .lab-tab.active {
+            background: var(--lab-tab-active);
+            color: #ffffff;
+        }
+
+        .lab-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--lab-accent);
+        }
+
+        .scroll-indicator {
+            display: none;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(37, 99, 235, 0.9);
+            color: white;
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            pointer-events: none;
+            z-index: 10;
+            animation: fadeInOut 2s infinite;
+        }
+
+        .scroll-indicator.left {
+            left: 0.5rem;
+        }
+
+        .scroll-indicator.right {
+            right: 0.5rem;
+        }
+
+        @keyframes fadeInOut {
+
+            0%,
+            100% {
+                opacity: 0.7;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        .lab-content {
+            padding: 2rem 5%;
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .overview-section {
+            max-width: 100%;
+        }
+
+        .overview-section h3 {
+            font-size: 1.5rem;
+            color: var(--lab-text);
+            margin: 0 0 1rem;
+            font-weight: 600;
+        }
+
+        .overview-section p {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: var(--lab-text);
+            margin-bottom: 1.2rem;
+            text-align: justify;
+        }
+
+        .research-item {
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--lab-border);
+        }
+
+        .research-item:last-child {
+            border-bottom: none;
+        }
+
+        .research-item h3 {
+            font-size: 1.4rem;
+            color: var(--lab-accent);
+            margin: 0 0 1rem;
+            font-weight: 600;
+        }
+
+        .research-item h4 {
+            font-size: 1.2rem;
+            color: var(--lab-text);
+            margin: 1.5rem 0 0.75rem;
+            font-weight: 600;
+        }
+
+        .research-item p {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: var(--lab-text);
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+
+        .research-figure {
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+
+        .research-figure img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            border: 1px solid var(--lab-border);
+        }
+
+        .research-figure figcaption {
+            font-size: 0.95rem;
+            color: var(--lab-muted);
+            font-style: italic;
+            margin-top: 0.75rem;
+            padding: 0.5rem;
+            text-align: center;
+            background-color: #f3f4f6;
+            border-radius: 4px;
+        }
+
+        .float-right {
+            float: right;
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+            max-width: 200px;
+            border-radius: 8px;
+            border: 1px solid var(--lab-border);
+        }
+
+        .clearfix::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+
+        .publications-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .publications-list li {
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            background: #f9fafb;
+            border-radius: 8px;
+            border-left: 3px solid var(--lab-accent);
+            font-size: 0.95rem;
+            line-height: 1.7;
+            text-align: justify;
+        }
+
+        .conference-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .conference-list li {
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            background: #f9fafb;
+            border-radius: 8px;
+            border-left: 3px solid #8b5cf6;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            text-align: justify;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            color: var(--lab-text);
+            margin: 2rem 0 1rem;
+            font-weight: 600;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--lab-border);
+        }
+
+        .subsection-title {
+            font-size: 1.1rem;
+            color: var(--lab-text);
+            margin: 1.5rem 0 1rem;
+            font-weight: 600;
+        }
+
+        .image-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 1.5rem 0;
+        }
+
+        .image-grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 1.5rem 0;
+        }
+
+        @media (max-width: 768px) {
+
+            .image-grid-2,
+            .image-grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .image-card {
+            text-align: center;
+        }
+
+        .image-card img {
+            max-width: 100%;
+            border-radius: 12px;
+            border: 1px solid var(--lab-border);
+        }
+
+        .image-card p {
+            font-size: 0.9rem;
+            color: var(--lab-muted);
+            font-style: italic;
+            margin-top: 0.5rem;
+        }
+
+        .manpower-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+        }
+
+        .manpower-table td {
+            padding: 1rem;
+            vertical-align: top;
+            background: #f9fafb;
+            border-radius: 8px;
+        }
+
+        .manpower-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .manpower-item img {
+            width: 70px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid var(--lab-border);
+        }
+
+        .style8 {
+            color: #FF0000;
+            font-size: 1.2rem;
+            margin-right: 0.5rem;
+        }
+
+        /* ---------- BILINGUAL TEXT STYLES ---------- */
+        .bilingual-title,
+        .bilingual-text {
+            transition: all 0.2s ease;
+        }
+
+        @media (max-width: 900px) {
+            .lab-title {
+                font-size: 1.5rem;
+            }
+
+            .lab-header {
+                padding: 1.5rem 1.25rem 1rem;
+            }
+
+            .lab-tabs-wrapper {
+                padding: 0;
+            }
+
+            .lab-tabs {
+                padding: 1rem 1rem 0;
+                gap: 0.75rem;
+                -webkit-overflow-scrolling: touch;
+                scroll-behavior: smooth;
+            }
+
+            .lab-tab {
+                font-size: 0.9rem;
+                padding: 0.6rem 1rem;
+            }
+
+            .lab-content {
+                padding: 1.5rem 5%;
+            }
+
+            .scroll-indicator {
+                display: block;
+            }
+
+            .float-right {
+                float: none;
+                margin: 1rem auto;
+                display: block;
+                max-width: 80%;
+            }
+
+            .manpower-item {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        @media (orientation: portrait) {
+            .lab-tabs {
+                -webkit-overflow-scrolling: touch;
+                scroll-behavior: smooth;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="header-container"></div>
+
+    <main>
+        <div class="page-section">
+
+            <img src="/assets/images/img/ppt.jpg" alt="Pulsed Power Technology Laboratory Banner" class="lab-banner">
+
+            <div class="lab-container">
+
+                <div class="lab-header">
+                    <h1 class="lab-title bilingual-title" data-hi="पल्स्ड पावर प्रौद्योगिकी प्रयोगशाला"
+                        data-en="Pulsed Power Technology Laboratory">
+                        Pulsed Power Technology Laboratory
+                    </h1>
+                    <div class="lab-subtitle bilingual-text" data-hi="सघन प्लाज्मा फोकस प्रयोगशाला II"
+                        data-en="Dense Plasma Focus Laboratory II">Dense Plasma Focus Laboratory II</div>
+                </div>
+
+                <div class="lab-tabs-wrapper">
+                    <div class="lab-tabs" id="labTabs">
+                        <button class="lab-tab active" onclick="switchTab('overview')">
+                            <span class="bilingual-text" data-hi="अवलोकन" data-en="Overview">Overview</span>
+                        </button>
+                        <button class="lab-tab" onclick="switchTab('research')">
+                            <span class="bilingual-text" data-hi="अनुसंधान" data-en="Research">Research</span>
+                        </button>
+                        <button class="lab-tab" onclick="switchTab('publications')">
+                            <span class="bilingual-text" data-hi="प्रकाशन" data-en="Publications">Publications</span>
+                        </button>
+                        <button class="lab-tab" onclick="switchTab('people')">
+                            <span class="bilingual-text" data-hi="लोग" data-en="People">People</span>
+                        </button>
+                    </div>
+
+                    <div class="scroll-indicator left" id="scrollLeft">◄ Swipe</div>
+                    <div class="scroll-indicator right" id="scrollRight">Swipe ►</div>
+                </div>
+
+                <div class="lab-content">
+
+                    <!-- Overview Tab -->
+                    <div id="overview" class="tab-panel active">
+                        <div class="overview-section">
+                            <h3 class="bilingual-text" data-hi="अवलोकन" data-en="Overview">Overview</h3>
+                            <p class="bilingual-text"
+                                data-hi="पल्स्ड पावर प्रौद्योगिकी आधारित अनुसंधान एवं विकास (आर एंड डी) गतिविधियाँ इस केंद्र में 1997 से प्लाज्मा फोकस (पीएफ) सुविधा की शुरुआत के साथ की जा रही हैं। पीएफ मुख्य रूप से एक क्षणिक प्लाज्मा उत्पादक उपकरण है जो प्लाज्मा को बहुत उच्च घनत्व और उच्च तापमान तक पिंच करने के लिए स्व-उत्पन्न चुंबकीय क्षेत्र का उपयोग करता है। यह विभिन्न विद्युत चुम्बकीय विकिरणों, आवेशित कणों और न्यूट्रॉन का समृद्ध स्रोत है। इसके अलावा, इस उपकरण में धारा फिलामेंटेशन, अस्थिरताएं, हॉट स्पॉट, शॉक गति आदि जैसी कई दिलचस्प भौतिक घटनाएं देखी जाती हैं। आमतौर पर कम ऊर्जा वाले उपकरण विभिन्न औद्योगिक अनुप्रयोगों के लिए बहुत सुविधाजनक साबित हुए हैं। इसलिए, यह उपकरण न केवल प्लाज्मा भौतिकी के शिक्षण के लिए बल्कि अनुसंधान एवं विकास गतिविधियों के लिए भी एक आशाजनक उपकरण है।"
+                                data-en="The pulsed power technology based research and development (R&D) activities are being carried out at this centre since 1997 with the initiation of the plasma focus (PF) facility. The PF is mainly a transient plasma producing device that makes use of self-generated magnetic field to pinch the plasma to a very high dense and high temperature. It is a rich source of various electromagnetic radiations, charged particles and neutrons. In addition, many interesting physical phenomena such as current filamentation, instabilities, hot spots, shock motion etc are being marked in this device. Typically low energy devices have been proven to be very convenient for the different industrial applications. Hence, this device is a promising tool not only for teaching of plasma physics but also for R&D activities.">
+                                The pulsed power technology based research and development (R&D) activities are being
+                                carried out at this centre since 1997 with the initiation of the plasma focus (PF)
+                                facility. The PF is mainly a transient plasma producing device that makes use of
+                                self-generated magnetic field to pinch the plasma to a very high dense and high
+                                temperature. It is a rich source of various electromagnetic radiations, charged
+                                particles and neutrons. In addition, many interesting physical phenomena such as current
+                                filamentation, instabilities, hot spots, shock motion etc are being marked in this
+                                device. Typically low energy devices have been proven to be very convenient for the
+                                different industrial applications. Hence, this device is a promising tool not only for
+                                teaching of plasma physics but also for R&D activities.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Research Tab -->
+                    <div id="research" class="tab-panel">
+
+                        <h3 class="section-title bilingual-text" data-hi="सघन प्लाज्मा फोकस प्रयोगशाला II"
+                            data-en="Dense Plasma Focus Laboratory II">Dense Plasma Focus Laboratory II</h3>
+
+                        <!-- Research Item 1 -->
+                        <div class="research-item">
+                            <h4 class="bilingual-text"
+                                data-hi="1. पीएफ उपकरण में एक्स-रे डिटेक्टर के रूप में वैक्यूम फोटोडायोड का विकास"
+                                data-en="1. Development of Vacuum Photodiode as X-ray detector in PF device">1.
+                                Development of Vacuum Photodiode as X-ray detector in PF device</h4>
+
+                            <img src="/assets/images/images/dpf1.jpg" alt="Vacuum Photodiode" class="float-right"
+                                onerror="this.style.display='none'">
+
+                            <p class="bilingual-text"
+                                data-hi="हम प्लाज्मा फोकस उपकरण के लिए वैक्यूम फोटोडायोड (वीपीडी) विकसित करने और उसका अध्ययन करने में लगे हुए हैं। यह डिटेक्टर दो-इलेक्ट्रोड प्रणाली है जो फोटोइलेक्ट्रिक प्रभाव के सिद्धांत पर काम करता है और सामान्यतः उच्च निर्वात (&lt; 10-5 mb) में उपयोग के लिए उपयुक्त है। हमने पीएफ उपकरण से उत्सर्जित एक्स-रे का पता लगाने के लिए एल्यूमीनियम फोटोकैथोड के साथ उपयुक्त प्रकार के वीपीडी डिजाइन और निर्माण किए हैं। इस कार्य का महत्व है क्योंकि वीपीडी को आईटीईआर के लिए संभावित एक्स-रे डिटेक्टरों में से एक माना जाता है।"
+                                data-en="We are engaged in developing and studying vacuum photodiode (VPD) for plasma focus device. This detector is a two-electrode system that works on the principle of photoelectric effect and suitable to use in high vacuum (&lt; 10-5 mb) generally. We have designed and fabricated suitable types of VPDs with aluminum photocathode for the detection of X-ray emitted from PF device. This work has an importance as since VPD is considered to be one of the probable X-ray detectors for ITER.">
+                                We are engaged in developing and studying vacuum photodiode (VPD) for plasma focus
+                                device. This detector is a two-electrode system that works on the principle of
+                                photoelectric effect and suitable to use in high vacuum (&lt; 10-5 mb) generally. We
+                                have designed and fabricated suitable types of VPDs with aluminum photocathode for the
+                                detection of X-ray emitted from PF device. This work has an importance as since VPD is
+                                considered to be one of the probable X-ray detectors for ITER.
+                            </p>
+
+                            <p class="bilingual-text"
+                                data-hi="प्लाज्मा फोकस (पीएफ) उपकरण से एक्स-रे का पता लगाने के लिए बेलनाकार वैक्यूम फोटोडायोड (वीपीडी) के प्रदर्शन पर एक गुणात्मक अध्ययन किया गया है। वीपीडी के विभिन्न मापदंडों जैसे इलेक्ट्रोड का व्यास, इलेक्ट्रोड का पृथक्करण और इसकी संवेदनशीलता का पीएफ वातावरण में प्रयोगात्मक रूप से परीक्षण किया गया है। पहली बार प्रयोगात्मक रूप से यह पाया गया है कि बेलनाकार वीपीडी के दो समाक्षीय इलेक्ट्रोड के पार्श्व दिशा में इलेक्ट्रोड-पृथक्करण भी डिटेक्टर की दक्षता बढ़ाने में महत्वपूर्ण भूमिका निभाता है। इस स्थिति के आधार पर हमने एक बहुत छोटा वीपीडी विकसित किया है। इस विकास कार्य का विवरण <strong><em>Rev. Sci. Instrum.</em></strong>, <strong>82</strong>, 103507 (2011) में पाया जा सकता है। एक नैदानिक उपकरण के रूप में वीपीडी पर अध्ययन अभी भी जारी है।"
+                                data-en="A qualitative study on the performance of cylindrical vacuum photodiodes (VPDs) for detection of x-ray from plasma focus (PF) device has been carried out. Various parameters of VPD such as electrode's diameter, electrode's separation, and its sensitivity are experimentally tested in PF environment. For the first time it is found experimentally that the electrode-separation in the lateral direction of the two coaxial electrodes of cylindrical VPD also plays an important role to increase the efficiency of the detector. Based on this condition we have developed a very small VPD. The details of this developmental work can be found in <strong><em>Rev. Sci. Instrum.</em></strong>, <strong>82</strong>, 103507 (2011). The study on the VPD as a diagnostics is still going on.">
+                                A qualitative study on the performance of cylindrical vacuum photodiodes (VPDs) for
+                                detection of x-ray from plasma focus (PF) device has been carried out. Various
+                                parameters of VPD such as electrode's diameter, electrode's separation, and its
+                                sensitivity are experimentally tested in PF environment. For the first time it is found
+                                experimentally that the electrode-separation in the lateral direction of the two coaxial
+                                electrodes of cylindrical VPD also plays an important role to increase the efficiency of
+                                the detector. Based on this condition we have developed a very small VPD. The details of
+                                this developmental work can be found in <strong><em>Rev. Sci. Instrum.</em></strong>,
+                                <strong>82</strong>, 103507 (2011). The study on the VPD as a diagnostics is still going
+                                on.
+                            </p>
+                        </div>
+
+                        <!-- Research Item 2 -->
+                        <div class="research-item">
+                            <h4 class="bilingual-text"
+                                data-hi="2. पीएफ उपकरण के एक्स-रे उत्सर्जन क्षेत्र की इमेजिंग के लिए ट्रिपल-पिनहोल कैमरा का विकास"
+                                data-en="2. Development of triple-pinhole camera for imaging X-ray emitting zone of PF device">
+                                2. Development of triple-pinhole camera for imaging X-ray emitting zone of PF device
+                            </h4>
+
+                            <p class="bilingual-text"
+                                data-hi="पिनहोल आधारित एक्स-रे इमेजिंग कैमरा पीएफ उपकरण के सघन गर्म पिंच्ड प्लाज्मा के स्थान-समाधान एक्स-रे उत्सर्जन क्षेत्र का अध्ययन करने के लिए एक कुशल, लागत प्रभावी और सरल उपकरण है। यह एक्स-रे उत्सर्जन क्षेत्र के स्थान, अनुमानित आकार और एक्स-रे उत्सर्जक प्लाज्मा स्तंभ के विकिरण घनत्व की गुणात्मक जानकारी देता है। पिनहोल कैमरे में एकाधिक पिनहोल का परिचय विभिन्न मोटाई के एकाधिक फिल्टर के साथ एकल शॉट में पीएफ उपकरण के पिंच्ड प्लाज्मा स्तंभ की छवि को कैप्चर करने में मदद करेगा।"
+                                data-en="The pinhole based X-ray imaging camera is an efficient and cost effective as well as simple device to study space resolved X-ray emitting zone of dense hot pinched plasma of PF device. It gives over all idea of the location of the X-ray emitting zone as well as approximate size and qualitative idea of radiation density of the X-ray emitting plasma column. The introduction of multiple pinholes in the pinhole camera will help to capture the image of pinched plasma column of PF device in a single shot with multiple filters of different thickness.">
+                                The pinhole based X-ray imaging camera is an efficient and cost effective as well as
+                                simple device to study space resolved X-ray emitting zone of dense hot pinched plasma of
+                                PF device. It gives over all idea of the location of the X-ray emitting zone as well as
+                                approximate size and qualitative idea of radiation density of the X-ray emitting plasma
+                                column. The introduction of multiple pinholes in the pinhole camera will help to capture
+                                the image of pinched plasma column of PF device in a single shot with multiple filters
+                                of different thickness.
+                            </p>
+
+                            <p class="bilingual-text"
+                                data-hi="इस प्रकार, एक एक्स-रे पिनहोल कैमरा जो एक ही वस्तु की तीन छवियों को एक साथ कैप्चर करने में सक्षम था, निर्मित किया गया और पीएफ उपकरण के एक्स-रे उत्सर्जन क्षेत्र को कैप्चर करने के लिए नियोजित किया गया।"
+                                data-en="Thus, an X-ray pinhole camera that capable of capturing three images simultaneously of the same object was fabricated and employed to capture X-ray emitting zone of PF device.">
+                                Thus, an X-ray pinhole camera that capable of capturing three images simultaneously of
+                                the same object was fabricated and employed to capture X-ray emitting zone of PF device.
+                            </p>
+                        </div>
+
+                        <!-- Research Item 3 -->
+                        <div class="research-item">
+                            <h4 class="bilingual-text" data-hi="3. पीएफ उपकरण की पिंच संरचना पर एनोड आकार का प्रभाव"
+                                data-en="3. Studies on the effect of anode shape on pinch structure of PF device">3.
+                                Studies on the effect of anode shape on pinch structure of PF device</h4>
+
+                            <img src="/assets/images/images/dpf2.jpg" alt="Anode shapes" class="float-right"
+                                onerror="this.style.display='none'">
+
+                            <p class="bilingual-text"
+                                data-hi="विभिन्न टिप आकार वाले चार एनोडों के साथ संचालित पीएफ उपकरण की पिंच संरचना पर एनोड आकार के प्रभाव का अध्ययन ट्रिपल एक्स-रे पिनहोल कैमरा का उपयोग करके किया गया। ट्रिपल पिनहोल कैमरा के अलावा, <em>p-i-n</em> डायोड एक्स-रे स्पेक्ट्रोमीटर का उपयोग पिंच निर्माण पर एनोड आकार के प्रभाव को देखने के लिए किया गया है।"
+                                data-en="The effect of anode shape on pinch structure of PF device operated with four anodes of different tip shape namely cylindrical, diverging, oval and converging were studied by employing a triple X-ray pinhole camera. In addition to triple pinhole camera, <em>p-i-n</em> diode X-ray spectrometer has been used to see the effect of anode shape on pinch formation.">
+                                The effect of anode shape on pinch structure of PF device operated with four anodes of
+                                different tip shape namely cylindrical, diverging, oval and converging were studied by
+                                employing a triple X-ray pinhole camera. In addition to triple pinhole camera,
+                                <em>p-i-n</em> diode X-ray spectrometer has been used to see the effect of anode shape
+                                on pinch formation.
+                            </p>
+                        </div>
+
+                        <!-- Research Item 4 -->
+                        <div class="research-item">
+                            <h4 class="bilingual-text" data-hi="4. पीएफ उपकरण से न्यूट्रॉन उत्सर्जन पर अध्ययन"
+                                data-en="4. Studies on neutron emission from PF device">4. Studies on neutron emission
+                                from PF device</h4>
+
+                            <img src="/assets/images/images/dpf3.jpg" alt="PF Device" class="float-right"
+                                onerror="this.style.display='none'">
+
+                            <p class="bilingual-text"
+                                data-hi="हम बबल टेक, इंक कनाडा के बबल डोसिमीटर (बीडी) का उपयोग करके पीएफ उपकरण से न्यूट्रॉन उत्सर्जन की संख्या का अनुमान लगाने के लिए अपना प्रयोग कर रहे हैं। न्यूट्रॉन उत्सर्जन 0.3-0.4 Torr (मैक्लियोड गेज रीडिंग) में अधिक पाया गया। बबल निर्माण की संख्या अक्षीय और रेडियल दिशा में समान नहीं पाई गई। यह इंगित करता है कि हमारे मामले में भी न्यूट्रॉन उत्सर्जन समदिशिक नहीं है। आगे के अध्ययन के लिए कार्य जारी है।"
+                                data-en="We are executing our experiment to estimate the no of neutron emission from PF device by using bubble dosimeter (BD) from Bubble Tech, Inc Canada. The neutron emission found to be higher in the 0.3-0.4 Torr (Mcleod Gauge reading). The number of bubble forms found to be not same in the axial and radial direction. This indicates that the neutron emission is not isotropic in our case also. The work is continuing for further studies.">
+                                We are executing our experiment to estimate the no of neutron emission from PF device by
+                                using bubble dosimeter (BD) from Bubble Tech, Inc Canada. The neutron emission found to
+                                be higher in the 0.3-0.4 Torr (Mcleod Gauge reading). The number of bubble forms found
+                                to be not same in the axial and radial direction. This indicates that the neutron
+                                emission is not isotropic in our case also. The work is continuing for further studies.
+                            </p>
+                        </div>
+
+                        <!-- Research Item 5 -->
+                        <div class="research-item">
+                            <h4 class="bilingual-text" data-hi="5. पीएफ उपकरण पर चल रहे कार्य"
+                                data-en="5. On Going Works on PF Device">5. On Going Works on PF Device</h4>
+
+                            <img src="/assets/images/images/dpf4.jpg" alt="PF Device" class="float-right"
+                                onerror="this.style.display='none'">
+
+                            <p class="bilingual-text"
+                                data-hi="हमने पहले ही पीएफ उपकरण से न्यूट्रॉन उत्सर्जन पर अध्ययन शुरू कर दिया है। अब, विभिन्न आकार के एनोड टिप (जैसे बेलनाकार, अपसारी, अंडाकार और अभिसारी टिप) के साथ न्यूट्रॉन उत्सर्जन और एक्स-रे और आयनों के साथ इसके सहसंबंध पर सावधानीपूर्वक अवलोकन चल रहे हैं। आने वाले दिनों में न्यूट्रॉन वातावरण में वैक्यूम फोटोडायोड के प्रदर्शन की जांच की जाएगी।"
+                                data-en="We have already started the studies on neutron emission from PF device. Now, the careful observations are going on neutron emission and its correlation with X-rays and ions with different shape anode tips (namely cylindrical, diverging, oval and converging tip). Performance of Vacuum photodiode in neutron environment will be investigated in coming days.">
+                                We have already started the studies on neutron emission from PF device. Now, the careful
+                                observations are going on neutron emission and its correlation with X-rays and ions with
+                                different shape anode tips (namely cylindrical, diverging, oval and converging tip).
+                                Performance of Vacuum photodiode in neutron environment will be investigated in coming
+                                days.
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <!-- Publications Tab -->
+                    <div id="publications" class="tab-panel">
+
+                        <h3 class="section-title bilingual-text" data-hi="प्रकाशित/प्रेषित पेपर"
+                            data-en="Paper Published/Communicated">Paper Published/Communicated</h3>
+
+                        <ul class="publications-list">
+                            <li><em>"Detection efficiency vs. cathode anode seperation in cylindrical vacuum photodiodes
+                                    used for measuring x-rays from plasma focus device"</em> by T. K. Borthakur, N.
+                                Talukdar, N. K. Neog, C. V. S. Rao, and A. Shyam, published in Review of scientific
+                                instrument, 2011</li>
+                            <li><em>'Studies on X-ray and neutron emission from 2.2 kJ plasma focus device'</em> by N.
+                                Talukdar, T. K. Borthakur , N. K. Neog. accepted to "PROBLEMS OF ATOMIC SCIENCE AND
+                                TECHNOLOGY"</li>
+                            <li><em>"Effect of anode shape on pinch structure of plasma focus device"</em> by N.
+                                Talukdar, N.K. Neog and T. K. Borthakur (Communicated)</li>
+                            <li><em>"Study of X-ray emission from plasma focus device using vacuum photodiode"</em> N
+                                Talukdar, T K Borthakur and N K Neog (Communicated)</li>
+                        </ul>
+
+                        <h3 class="section-title bilingual-text"
+                            data-hi="राष्ट्रीय/अंतर्राष्ट्रीय स्कूल/सम्मेलन में प्रस्तुत पेपर"
+                            data-en="Paper presented in national/international school/conference">Paper presented in
+                            national/international school/conference</h3>
+
+                        <ul class="conference-list">
+                            <li>Dr. T. K. Borthakur Alushta (Crimea), Ukraine to attend "International Conference &
+                                School on Plasma Physics and Controlled Fusion and The Adjoint Workshop Nano- and
+                                micro-sized structures in plasmas" from September 17-22, 2012 and present a paper on
+                                <em>'Studies on X-ray and neutron emission from 2.2 kJ plasma focus device'</em> by N.
+                                Talukdar, T. K. Borthakur , N. K. Neog
+                            </li>
+                            <li>Dr. N. K. Neog visited Italy to attend School and Training Course on Dense Magnetized
+                                Plasma as a source of ionizing radiations, their diagnostics and applications, ICTP,
+                                from October 8-12, 2012 and present a paper on <em>'Studies on X-rays and Charged
+                                    Particles Radiations from Plasma focus device'</em> by N.Talukdar, N. K. Neog, T. K.
+                                Borthakur and S. R. Mohanty</li>
+                            <li>"Imaging of X-Ray emitting zone of plasma focus device by simple triple pinhole camera
+                                by N. Talukdar, N. K. Neog and T. K. Borthakur, presented in 27th National Symposium on
+                                Plasma Science and Technology held at Pondicherry University, Pondicherry from December
+                                10-13, 2012</li>
+                        </ul>
+                    </div>
+
+                    <!-- People Tab -->
+                    <div id="people" class="tab-panel">
+
+                        <h3 class="section-title bilingual-text" data-hi="कार्मिक" data-en="Manpower">Manpower</h3>
+
+                        <table class="manpower-table">
+                            <tr>
+                                <td>
+                                    <div class="manpower-item">
+                                        <span class="style8">»</span>
+                                        <img src="/assets/images/images/tkb.jpg" alt="Dr. T.K. Borthakur"
+                                            onerror="this.style.display='none'">
+                                        <div>
+                                            <strong>Dr. T.K. Borthakur</strong>, <span class="bilingual-text"
+                                                data-hi="वैज्ञानिक अधिकारी-ई" data-en="Scientific Officer-E">Scientific
+                                                Officer-E</span><br>
+                                            <strong>Email</strong>: <a
+                                                href="mailto:tridip@cppipr.res.in">tridip@cppipr.res.in</a>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="manpower-item">
+                                        <span class="style8">»</span>
+                                        <img src="/assets/images/images/neog.jpg" alt="Dr. N.K. Neog"
+                                            onerror="this.style.display='none'">
+                                        <div>
+                                            <strong>Dr. N.K. Neog</strong>, <span class="bilingual-text"
+                                                data-hi="वैज्ञानिक अधिकारी-ई" data-en="Scientific Officer-E">Scientific
+                                                Officer-E</span><br>
+                                            <strong>Email</strong>: <a
+                                                href="mailto:nirod@cppipr.res.in">nirod@cppipr.res.in</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="manpower-item">
+                                        <span class="style8">»</span>
+                                        <img src="/assets/images/images/n_talukdar.JPG" alt="Mr. Nayan Talukdar"
+                                            onerror="this.style.display='none'">
+                                        <div>
+                                            <strong>Mr. Nayan Talukdar</strong>, <span class="bilingual-text"
+                                                data-hi="एसआरएफ (पूर्व)" data-en="SRF (Former)">SRF (Former)</span><br>
+                                            <strong>Email</strong>: <a
+                                                href="mailto:nayan.cpp@rediffmail.com">nayan.cpp@rediffmail.com</a>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="manpower-item">
+                                        <span class="style8">»</span>
+                                        <img src="/assets/images/images/suramoni.jpg" alt="Dr. Suramoni Borthakur"
+                                            onerror="this.style.display='none'">
+                                        <div>
+                                            <strong>Dr. Suramoni Borthakur</strong>, <span class="bilingual-text"
+                                                data-hi="पीडीएफ" data-en="PDF">PDF</span><br>
+                                            <strong>Email</strong>: <a
+                                                href="mailto:suramoni.borthakur@cppipr.res.in">suramoni.borthakur@cppipr.res.in</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- Note about additional staff (commented out in original) -->
+                        <p class="bilingual-text" style="color: var(--lab-muted); font-style: italic; margin-top: 1rem;"
+                            data-hi="* अतिरिक्त कार्मिक जानकारी मूल रिकॉर्ड में उपलब्ध है"
+                            data-en="* Additional staff information available in the original records">* Additional
+                            staff information available in the original records</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-container"></div>
+
+    <script>
+        // Tab Switching Function - Fixed to handle clicks on inner spans
+        function switchTab(tabName) {
+            // Hide all panels
+            document.querySelectorAll('.tab-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+
+            // Remove active from all tabs
+            document.querySelectorAll('.lab-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected panel
+            document.getElementById(tabName).classList.add('active');
+
+            // Activate clicked tab - using closest to handle clicks on inner spans
+            let clickedTab = event.target.closest('.lab-tab');
+            if (clickedTab) {
+                clickedTab.classList.add('active');
+            }
+
+            // Scroll active tab into view on mobile
+            if (window.innerWidth <= 900 && clickedTab) {
+                clickedTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+        }
+
+        // Hide scroll indicators after first interaction
+        let hasInteracted = false;
+        const labTabs = document.getElementById('labTabs');
+        const scrollLeft = document.getElementById('scrollLeft');
+        const scrollRight = document.getElementById('scrollRight');
+
+        if (labTabs) {
+            labTabs.addEventListener('scroll', function () {
+                if (!hasInteracted) {
+                    hasInteracted = true;
+                    if (scrollLeft) scrollLeft.style.display = 'none';
+                    if (scrollRight) scrollRight.style.display = 'none';
+                }
+            }, { once: true });
+
+            labTabs.addEventListener('touchstart', function () {
+                if (!hasInteracted) {
+                    hasInteracted = true;
+                    if (scrollLeft) scrollLeft.style.display = 'none';
+                    if (scrollRight) scrollRight.style.display = 'none';
+                }
+            }, { once: true });
+        }
+
+        // Fragment Loader
+        function loadFragment(url, containerId) {
+            fetch(url)
+                .then(res => res.text())
+                .then(html => {
+                    const container = document.getElementById(containerId);
+                    container.innerHTML = html;
+
+                    container.querySelectorAll('script').forEach(oldScript => {
+                        const newScript = document.createElement('script');
+                        if (oldScript.src) {
+                            newScript.src = oldScript.src;
+                        } else {
+                            newScript.textContent = oldScript.textContent;
+                        }
+                        oldScript.replaceWith(newScript);
+                    });
+                })
+                .catch(err => console.error('Error loading fragment:', url, err));
+        }
+
+        loadFragment('/UI/header.html', 'header-container');
+        loadFragment('/UI/footer.html', 'footer-container');
+    </script>
+
+</body>
+
+</html>

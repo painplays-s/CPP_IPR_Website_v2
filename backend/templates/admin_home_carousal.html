@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Home Carousel Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    /* =====================================================
+   GLOBAL RESET & BASE
+   ===================================================== */
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 1.5rem 4vw;
+      background: #0f172a;
+      color: #e5e7eb;
+      line-height: 1.5;
+    }
+
+    .page {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* =====================================================
+   HEADER
+   ===================================================== */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 1.4rem;
+      white-space: nowrap;
+    }
+
+    /* =====================================================
+   FLASH MESSAGES
+   ===================================================== */
+    .flash-messages {
+      margin-bottom: 1rem;
+    }
+
+    .flash-message {
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .flash-success {
+      background: #166534;
+      color: #dcfce7;
+      border: 1px solid #22c55e;
+    }
+
+    .flash-error {
+      background: #7f1d1d;
+      color: #fecaca;
+      border: 1px solid #ef4444;
+    }
+
+    /* =====================================================
+   CARDS
+   ===================================================== */
+    .card {
+      background: #020617;
+      border-radius: 14px;
+      padding: 1.25rem;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      margin-bottom: 1.75rem;
+    }
+
+    .card h2 {
+      margin: 0 0 1rem;
+      font-size: 1.1rem;
+    }
+
+    /* =====================================================
+   FORMS
+   ===================================================== */
+    label {
+      display: block;
+      font-size: 0.9rem;
+      margin-bottom: 0.25rem;
+      color: #cbd5f5;
+    }
+
+    input[type="text"],
+    input[type="file"],
+    textarea {
+      width: 100%;
+      padding: 0.5rem 0.6rem;
+      border-radius: 8px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 0.9rem;
+      margin-bottom: 0.75rem;
+      font-family: inherit;
+    }
+
+    input[type="text"]:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #f59e0b;
+    }
+
+    /* Style for file input */
+    input[type="file"] {
+      padding: 0.5rem;
+      cursor: pointer;
+    }
+
+    input[type="file"]::-webkit-file-upload-button {
+      background: #1e293b;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      border-radius: 6px;
+      color: #e5e7eb;
+      padding: 0.3rem 0.8rem;
+      margin-right: 0.8rem;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .inline-input {
+      width: 100%;
+      padding: 0.5rem 0.6rem;
+      border-radius: 8px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .muted {
+      color: #94a3b8;
+      font-size: 0.85rem;
+      margin-top: -0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .reorder-hint {
+      font-size: 0.9rem;
+      color: #94a3b8;
+      margin-bottom: 0.75rem;
+      padding: 0.5rem;
+      background: rgba(15, 23, 42, 0.6);
+      border-radius: 6px;
+    }
+
+    /* =====================================================
+   BUTTONS
+   ===================================================== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem 1.1rem;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: 0.18s ease;
+      text-decoration: none;
+      color: inherit;
+      min-width: 88px;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(to right, #f59e0b, #ec4899);
+      color: #0b1120;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.9;
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-danger {
+      background: #ef4444;
+      color: #fee2e2;
+    }
+
+    .btn-danger:hover {
+      background: #dc2626;
+    }
+
+    .btn-secondary {
+      background: #fff8c2;
+      color: #000;
+      border: 1px solid #e6d98a;
+    }
+
+    .btn-secondary:hover {
+      background: #fef08a;
+    }
+
+    .btn-exit {
+      background: transparent;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    .btn-exit:hover {
+      background: rgba(148, 163, 184, 0.1);
+    }
+
+    /* =====================================================
+   UPLOAD PREVIEW GRID
+   ===================================================== */
+    .preview-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .preview-item {
+      background: #071031;
+      padding: 1rem;
+      border-radius: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s;
+    }
+
+    .preview-item:hover {
+      transform: translateY(-2px);
+      border-color: rgba(245, 158, 11, 0.5);
+    }
+
+    .preview-item .thumb {
+      height: 160px;
+      overflow: hidden;
+      border-radius: 8px;
+      margin-bottom: 0.75rem;
+      background: #0f172a;
+    }
+
+    .preview-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .preview-item .filename {
+      font-size: 0.85rem;
+      margin-bottom: 0.75rem;
+      padding: 0.25rem 0.5rem;
+      background: rgba(15, 23, 42, 0.6);
+      border-radius: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* =====================================================
+   TABLE (DESKTOP)
+   ===================================================== */
+    .table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border-radius: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      min-width: 1000px;
+    }
+
+    th,
+    td {
+      padding: 0.6rem;
+      border-bottom: 1px solid rgba(30, 64, 175, 0.4);
+      vertical-align: top;
+    }
+
+    th {
+      color: #93c5fd;
+      background: rgba(15, 23, 42, 0.6);
+      text-align: left;
+    }
+
+    .thumb-preview {
+      width: 120px;
+      height: 70px;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .thumb-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .drag-handle {
+      cursor: grab;
+      font-size: 1.2rem;
+      color: #94a3b8;
+      user-select: none;
+    }
+
+    .drag-handle:active {
+      cursor: grabbing;
+    }
+
+    .handle-cell {
+      width: 40px;
+      text-align: center;
+    }
+
+    tr.dragging {
+      opacity: 0.4;
+    }
+
+    /* =====================================================
+   ACTION BUTTON GROUP
+   ===================================================== */
+    .actions-row {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .href-anchor {
+      color: #60a5fa;
+      text-decoration: none;
+      word-break: break-all;
+    }
+
+    .href-anchor:hover {
+      text-decoration: underline;
+    }
+
+    /* Edit mode styles */
+    .edit-mode {
+      background: rgba(15, 23, 42, 0.6);
+      padding: 0.75rem;
+      border-radius: 8px;
+      margin-top: 0.5rem;
+    }
+
+    /* =====================================================
+   MOBILE CARD LAYOUT (PORTRAIT)
+   ===================================================== */
+    .mobile-slides-list {
+      display: none;
+    }
+
+    .mobile-slide-card {
+      background: #071031;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      transition: opacity 0.2s;
+    }
+
+    .mobile-slide-card.dragging {
+      opacity: 0.4;
+    }
+
+    .mobile-slide-card .card-drag-handle {
+      font-size: 1.5rem;
+      cursor: grab;
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      margin-bottom: 0.5rem;
+      color: #94a3b8;
+      user-select: none;
+    }
+
+    .mobile-slide-card .card-drag-handle:active {
+      cursor: grabbing;
+    }
+
+    .mobile-slide-card .card-thumb {
+      width: 100%;
+      height: 200px;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 1rem;
+    }
+
+    .mobile-slide-card .card-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .mobile-slide-card .card-section {
+      margin-bottom: 0.75rem;
+    }
+
+    .mobile-slide-card .card-section label {
+      font-size: 0.8rem;
+      color: #93c5fd;
+      margin-bottom: 0.25rem;
+      display: block;
+    }
+
+    .mobile-slide-card .actions-row {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .mobile-slide-card .actions-row .btn {
+      width: 100%;
+    }
+
+    /* =====================================================
+   RESPONSIVE — PORTRAIT / TABLET
+   ===================================================== */
+    @media (orientation: portrait) {
+
+      body {
+        padding: 1rem;
+      }
+
+      .header {
+        flex-wrap: wrap;
+      }
+
+      .header h1 {
+        flex: 1 1 100%;
+      }
+
+      .preview-list {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      }
+
+      /* Hide desktop table, show mobile cards */
+      .table-wrapper {
+        display: none;
+      }
+
+      .mobile-slides-list {
+        display: block;
+      }
+    }
+
+    /* =====================================================
+   RESPONSIVE — MOBILE (SMALL PORTRAIT)
+   ===================================================== */
+    @media (max-width: 480px) {
+
+      .preview-list {
+        grid-template-columns: 1fr;
+      }
+
+      .actions-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .actions-row .btn {
+        width: 100%;
+      }
+    }
+  </style>
+
+</head>
+
+<body>
+  <div class="page">
+    <div class="header">
+      <h1>Home Carousel Admin</h1>
+      <a href="{{ url_for('admin_home.admin_home') }}" class="btn btn-exit">Exit</a>
+    </div>
+
+    <!-- FLASH MESSAGES -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-messages">
+      {% for category, message in messages %}
+      <div class="flash-message flash-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <!-- Upload card -->
+    <div class="card">
+      <h2>Add New Carousel Image(s)</h2>
+
+      <label for="multi_image">Choose image files (multiple allowed)</label>
+      <input type="file" id="multi_image" name="multi_image"
+        accept="image/jpeg,image/png,image/gif,image/webp,image/svg+xml" multiple>
+      <small class="muted">Allowed formats: JPEG, PNG, GIF, WebP, SVG</small>
+
+      <p class="muted">You can select multiple images. For each selected file you can set captions & optional link
+        before uploading.</p>
+
+      <div id="selectedPreview" class="preview-list"></div>
+
+      <div style="display: flex; gap: 0.6rem; margin-top: 0.8rem;">
+        {% if csrf_token %}
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" id="csrf_token">
+        {% endif %}
+        <button id="uploadSelectedBtn" class="btn btn-primary" disabled>Upload Selected</button>
+        <button id="clearSelectionBtn" class="btn btn-secondary">Clear</button>
+      </div>
+    </div>
+
+    <!-- Existing slides with reorder and inline edit -->
+    <div class="card">
+      <h2>Existing Slides</h2>
+
+      {% if items|length == 0 %}
+      <p class="muted">No carousel images uploaded yet.</p>
+      {% else %}
+      <div class="reorder-hint">☰ Drag the handle to reorder slides. Click "Save Order" to persist changes.</div>
+
+      <div style="display:flex; align-items:center; gap: 0.6rem; margin-bottom:1rem;">
+        <button id="saveOrderBtn" class="btn btn-primary">Save Order</button>
+      </div>
+
+      <!-- DESKTOP TABLE VIEW -->
+      <div class="table-wrapper">
+        <table class="table" id="slidesTable">
+          <thead>
+            <tr>
+              <th class="handle-cell"></th>
+              <th>Preview</th>
+              <th>Captions</th>
+              <th>Link</th>
+              <th>Uploaded</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody class="draggable-rows" id="slidesTbody">
+            {% for item in items %}
+            <tr draggable="true" data-id="{{ item.id }}">
+              <td class="handle-cell">
+                <span class="drag-handle">☰</span>
+              </td>
+
+              <td>
+                <div class="thumb-preview">
+                  <img src="/assets/images/home_carousal/{{ item.filename }}" alt="Slide preview">
+                </div>
+              </td>
+
+              <td class="captions-cell" data-original-en="{{ item.caption_en|default('') }}"
+                data-original-hi="{{ item.caption_hi|default('') }}">
+                <div class="view-mode">
+                  <strong>EN:</strong> <span class="caption-en">{{ item.caption_en or '—' }}</span><br>
+                  <strong>HI:</strong> <span class="caption-hi">{{ item.caption_hi or '—' }}</span>
+                </div>
+                <div class="edit-mode" style="display:none;">
+                  <input class="inline-input caption-en-input" type="text" value="{{ item.caption_en or '' }}"
+                    placeholder="Caption (English)">
+                  <input class="inline-input caption-hi-input" type="text" value="{{ item.caption_hi or '' }}"
+                    placeholder="Caption (Hindi)">
+                </div>
+              </td>
+
+              <td class="link-cell">
+                <div class="view-mode">
+                  {% if item.href %}
+                  <a href="{{ item.href }}" target="_blank" class="href-anchor">{{ item.href }}</a>
+                  {% else %}
+                  <span class="muted">None</span>
+                  {% endif %}
+                </div>
+                <div class="edit-mode" style="display:none;">
+                  <input class="inline-input href-input" type="text" value="{{ item.href or '' }}"
+                    placeholder="https://example.com">
+                </div>
+              </td>
+
+              <td class="muted">{{ format_date(item.uploaded_at) }}</td>
+
+              <td>
+                <div class="actions-row">
+                  <button class="btn btn-secondary" onclick="toggleEdit(this)" data-id="{{ item.id }}">Edit</button>
+                  <button class="btn btn-primary" style="display:none;" onclick="saveEdit(this)"
+                    data-id="{{ item.id }}">Save</button>
+                  <button class="btn btn-secondary" style="display:none;" onclick="cancelEdit(this)">Cancel</button>
+                  <button class="btn btn-danger" onclick="deleteSlide('{{ item.id }}')">Delete</button>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- MOBILE CARD VIEW -->
+      <div class="mobile-slides-list" id="mobileSlidesList">
+        {% for item in items %}
+        <div class="mobile-slide-card" draggable="true" data-id="{{ item.id }}">
+          <span class="card-drag-handle">☰</span>
+
+          <div class="card-thumb">
+            <img src="/assets/images/home_carousal/{{ item.filename }}" alt="Slide preview">
+          </div>
+
+          <div class="card-section captions-cell" data-original-en="{{ item.caption_en|default('') }}"
+            data-original-hi="{{ item.caption_hi|default('') }}">
+            <label>Captions</label>
+            <div class="view-mode">
+              <strong>EN:</strong> <span class="caption-en">{{ item.caption_en or '—' }}</span><br>
+              <strong>HI:</strong> <span class="caption-hi">{{ item.caption_hi or '—' }}</span>
+            </div>
+            <div class="edit-mode" style="display:none;">
+              <input class="inline-input caption-en-input" type="text" value="{{ item.caption_en or '' }}"
+                placeholder="Caption (English)">
+              <input class="inline-input caption-hi-input" type="text" value="{{ item.caption_hi or '' }}"
+                placeholder="Caption (Hindi)">
+            </div>
+          </div>
+
+          <div class="card-section link-cell">
+            <label>Link</label>
+            <div class="view-mode">
+              {% if item.href %}
+              <a href="{{ item.href }}" target="_blank" class="href-anchor">{{ item.href }}</a>
+              {% else %}
+              <span class="muted">None</span>
+              {% endif %}
+            </div>
+            <div class="edit-mode" style="display:none;">
+              <input class="inline-input href-input" type="text" value="{{ item.href or '' }}"
+                placeholder="https://example.com">
+            </div>
+          </div>
+
+          <div class="card-section">
+            <label>Uploaded</label>
+            <span class="muted">{{ format_date(item.uploaded_at) }}</span>
+          </div>
+
+          <div class="actions-row">
+            <button class="btn btn-secondary" onclick="toggleEdit(this)" data-id="{{ item.id }}">Edit</button>
+            <button class="btn btn-primary" style="display:none;" onclick="saveEdit(this)"
+              data-id="{{ item.id }}">Save</button>
+            <button class="btn btn-secondary" style="display:none;" onclick="cancelEdit(this)">Cancel</button>
+            <button class="btn btn-danger" onclick="deleteSlide('{{ item.id }}')">Delete</button>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+    <script>
+    /* ------- FUNCTION TO SHOW FLASH MESSAGES ------- */
+    function showFlashMessage(message, type) {
+      // Create flash message container if it doesn't exist
+      let flashContainer = document.querySelector('.flash-messages');
+      if (!flashContainer) {
+        flashContainer = document.createElement('div');
+        flashContainer.className = 'flash-messages';
+        const header = document.querySelector('.header');
+        header.parentNode.insertBefore(flashContainer, header.nextSibling);
+      }
+      
+      // Create flash message
+      const flashDiv = document.createElement('div');
+      flashDiv.className = `flash-message flash-${type}`;
+      flashDiv.textContent = message;
+      
+      // Add to container
+      flashContainer.appendChild(flashDiv);
+      
+      // Auto-remove after 5 seconds
+      setTimeout(() => {
+        flashDiv.style.opacity = '0';
+        flashDiv.style.transition = 'opacity 0.5s';
+        setTimeout(() => flashDiv.remove(), 500);
+      }, 5000);
+      
+      // Scroll to show the message
+      flashDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    /* ------- FILE VALIDATION FUNCTION ------- */
+    function validateImageFile(file) {
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'];
+      const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'];
+
+      // Check MIME type
+      if (!allowedTypes.includes(file.type)) {
+        return false;
+      }
+
+      // Check file extension as backup
+      const fileName = file.name;
+      const ext = '.' + fileName.split('.').pop().toLowerCase();
+      if (!allowedExtensions.includes(ext)) {
+        return false;
+      }
+
+      return true;
+    }
+
+    /* ------- MULTI-FILE SELECTION + PREVIEW + UPLOAD ------- */
+    const multiInput = document.getElementById('multi_image');
+    const previewList = document.getElementById('selectedPreview');
+    const uploadBtn = document.getElementById('uploadSelectedBtn');
+    const clearBtn = document.getElementById('clearSelectionBtn');
+    const csrfTokenEl = document.getElementById('csrf_token');
+
+    let selectedFiles = [];
+
+    multiInput.addEventListener('change', (e) => {
+      const files = Array.from(e.target.files || []);
+      let invalidFiles = [];
+
+      for (const f of files) {
+        // Validate file type
+        if (!validateImageFile(f)) {
+          invalidFiles.push(f.name);
+          continue;
+        }
+
+        if (!selectedFiles.some(s => s.file.name === f.name && s.file.size === f.size)) {
+          selectedFiles.push({ file: f, caption_en: '', caption_hi: '', href: '' });
+        }
+      }
+
+      if (invalidFiles.length > 0) {
+        showFlashMessage('The following files are not valid images and were skipped:\n' + invalidFiles.join('\n'), 'error');
+      }
+
+      renderSelectedPreviews();
+    });
+
+    function renderSelectedPreviews() {
+      previewList.innerHTML = '';
+      if (selectedFiles.length === 0) {
+        uploadBtn.disabled = true;
+        return;
+      }
+      uploadBtn.disabled = false;
+
+      selectedFiles.forEach((entry, idx) => {
+        const el = document.createElement('div');
+        el.className = 'preview-item';
+        el.dataset.idx = idx;
+
+        const thumb = document.createElement('div');
+        thumb.className = 'thumb';
+        const img = document.createElement('img');
+        img.alt = entry.file.name;
+        img.src = URL.createObjectURL(entry.file);
+        thumb.appendChild(img);
+
+        const name = document.createElement('div');
+        name.className = 'filename';
+        name.textContent = entry.file.name;
+
+        const inCaptionEn = document.createElement('input');
+        inCaptionEn.className = 'inline-input';
+        inCaptionEn.placeholder = 'Caption (English)';
+        inCaptionEn.value = entry.caption_en || '';
+        inCaptionEn.addEventListener('input', (e) => {
+          selectedFiles[idx].caption_en = e.target.value;
+        });
+
+        const inCaptionHi = document.createElement('input');
+        inCaptionHi.className = 'inline-input';
+        inCaptionHi.placeholder = 'Caption (Hindi)';
+        inCaptionHi.value = entry.caption_hi || '';
+        inCaptionHi.addEventListener('input', (e) => {
+          selectedFiles[idx].caption_hi = e.target.value;
+        });
+
+        const inHref = document.createElement('input');
+        inHref.className = 'inline-input';
+        inHref.placeholder = 'Optional link (https://...)';
+        inHref.value = entry.href || '';
+        inHref.addEventListener('input', (e) => {
+          selectedFiles[idx].href = e.target.value;
+        });
+
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'btn btn-secondary';
+        removeBtn.style.marginTop = '0.5rem';
+        removeBtn.textContent = 'Remove';
+        removeBtn.addEventListener('click', () => {
+          URL.revokeObjectURL(img.src);
+          selectedFiles.splice(idx, 1);
+          renderSelectedPreviews();
+          showFlashMessage('File removed from selection', 'info');
+        });
+
+        el.appendChild(thumb);
+        el.appendChild(name);
+        el.appendChild(inCaptionEn);
+        el.appendChild(inCaptionHi);
+        el.appendChild(inHref);
+        el.appendChild(removeBtn);
+        previewList.appendChild(el);
+      });
+    }
+
+    clearBtn.addEventListener('click', () => {
+      // Clean up object URLs
+      selectedFiles.forEach(entry => {
+        if (entry.preview) {
+          URL.revokeObjectURL(entry.preview);
+        }
+      });
+      selectedFiles = [];
+      multiInput.value = '';
+      renderSelectedPreviews();
+      showFlashMessage('Selection cleared', 'info');
+    });
+
+    uploadBtn.addEventListener('click', async () => {
+      if (selectedFiles.length === 0) {
+        showFlashMessage('No files selected to upload.', 'error');
+        return;
+      }
+
+      uploadBtn.disabled = true;
+      uploadBtn.textContent = 'Uploading...';
+
+      try {
+        const form = new FormData();
+        selectedFiles.forEach((entry) => {
+          form.append('images', entry.file);
+        });
+
+        const meta = selectedFiles.map((s) => ({
+          filename: s.file.name,
+          caption_en: s.caption_en || '',
+          caption_hi: s.caption_hi || '',
+          href: s.href || ''
+        }));
+        form.append('meta', JSON.stringify(meta));
+
+        if (csrfTokenEl) {
+          form.append('csrf_token', csrfTokenEl.value);
+        }
+
+        const resp = await fetch("{{ url_for('admin_carousal.upload_carousal') }}", {
+          method: 'POST',
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json'
+          },
+          body: form
+        });
+
+        const data = await resp.json();
+        
+        if (data.success) {
+          showFlashMessage(data.message || 'Upload successful!', 'success');
+          
+          // Clean up object URLs
+          selectedFiles.forEach(entry => {
+            if (entry.preview) {
+              URL.revokeObjectURL(entry.preview);
+            }
+          });
+          selectedFiles = [];
+          multiInput.value = '';
+          renderSelectedPreviews();
+          
+          // Reload after 2 seconds to show updated list
+          setTimeout(() => location.reload(), 2000);
+        } else {
+          showFlashMessage(data.message || 'Upload failed', 'error');
+          uploadBtn.disabled = false;
+          uploadBtn.textContent = 'Upload Selected';
+        }
+      } catch (err) {
+        console.error('Upload error:', err);
+        showFlashMessage('Upload error: ' + (err.message || err), 'error');
+        uploadBtn.disabled = false;
+        uploadBtn.textContent = 'Upload Selected';
+      }
+    });
+
+    /* ------- INLINE EDITING FOR EXISTING SLIDES ------- */
+    function toggleEdit(button) {
+      const container = button.closest('tr') || button.closest('.mobile-slide-card');
+      const editBtn = container.querySelector('button[onclick^="toggleEdit"]');
+      const saveBtn = container.querySelector('button[onclick^="saveEdit"]');
+      const cancelBtn = container.querySelector('button[onclick^="cancelEdit"]');
+
+      container.querySelectorAll('.view-mode').forEach(n => n.style.display = 'none');
+      container.querySelectorAll('.edit-mode').forEach(n => n.style.display = 'block');
+
+      if (editBtn) editBtn.style.display = 'none';
+      if (saveBtn) saveBtn.style.display = 'inline-flex';
+      if (cancelBtn) cancelBtn.style.display = 'inline-flex';
+    }
+
+    function cancelEdit(button) {
+      const container = button.closest('tr') || button.closest('.mobile-slide-card');
+      const captionsCell = container.querySelector('.captions-cell');
+      const originalEn = captionsCell.dataset.originalEn || '';
+      const originalHi = captionsCell.dataset.originalHi || '';
+
+      const captionEnInput = container.querySelector('.caption-en-input');
+      const captionHiInput = container.querySelector('.caption-hi-input');
+      const hrefInput = container.querySelector('.href-input');
+
+      if (captionEnInput) captionEnInput.value = originalEn;
+      if (captionHiInput) captionHiInput.value = originalHi;
+
+      const hrefAnchor = container.querySelector('.href-anchor');
+      if (hrefInput) {
+        hrefInput.value = hrefAnchor ? hrefAnchor.textContent : '';
+      }
+
+      container.querySelectorAll('.view-mode').forEach(n => n.style.display = 'block');
+      container.querySelectorAll('.edit-mode').forEach(n => n.style.display = 'none');
+
+      const editBtn = container.querySelector('button[onclick^="toggleEdit"]');
+      const saveBtn = container.querySelector('button[onclick^="saveEdit"]');
+      const cancelBtn = container.querySelector('button[onclick^="cancelEdit"]');
+
+      if (editBtn) editBtn.style.display = 'inline-flex';
+      if (saveBtn) saveBtn.style.display = 'none';
+      if (cancelBtn) cancelBtn.style.display = 'none';
+    }
+
+    async function saveEdit(button) {
+      const container = button.closest('tr') || button.closest('.mobile-slide-card');
+      const id = button.dataset.id;
+      const captionEn = container.querySelector('.caption-en-input').value.trim();
+      const captionHi = container.querySelector('.caption-hi-input').value.trim();
+      const href = container.querySelector('.href-input').value.trim();
+
+      if (!captionEn && !captionHi) {
+        if (!confirm('Both captions are empty. Save anyway?')) {
+          return;
+        }
+      }
+
+      try {
+        const payload = {
+          caption_en: captionEn,
+          caption_hi: captionHi,
+          href: href
+        };
+
+        const headers = {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        };
+
+        if (csrfTokenEl) {
+          headers['X-CSRFToken'] = csrfTokenEl.value;
+        }
+
+        const url = "{{ url_for('admin_carousal.edit_carousal', item_id=0) }}".replace('/0', '/' + id);
+        const resp = await fetch(url, {
+          method: 'POST',
+          headers: headers,
+          body: JSON.stringify(payload)
+        });
+
+        const data = await resp.json();
+        
+        if (data.success) {
+          showFlashMessage(data.message || 'Changes saved successfully!', 'success');
+          
+          // Update view mode
+          const captionEnSpan = container.querySelector('.caption-en');
+          const captionHiSpan = container.querySelector('.caption-hi');
+          if (captionEnSpan) captionEnSpan.textContent = captionEn || '—';
+          if (captionHiSpan) captionHiSpan.textContent = captionHi || '—';
+
+          const linkView = container.querySelector('.link-cell .view-mode');
+          if (linkView) {
+            if (href) {
+              linkView.innerHTML = `<a href="${href}" target="_blank" class="href-anchor">${href}</a>`;
+            } else {
+              linkView.innerHTML = '<span class="muted">None</span>';
+            }
+          }
+
+          // Update dataset
+          const captionsCell = container.querySelector('.captions-cell');
+          if (captionsCell) {
+            captionsCell.dataset.originalEn = captionEn;
+            captionsCell.dataset.originalHi = captionHi;
+          }
+
+          // Switch back to view mode
+          container.querySelectorAll('.view-mode').forEach(n => n.style.display = 'block');
+          container.querySelectorAll('.edit-mode').forEach(n => n.style.display = 'none');
+
+          const editBtn = container.querySelector('button[onclick^="toggleEdit"]');
+          const saveBtn = container.querySelector('button[onclick^="saveEdit"]');
+          const cancelBtn = container.querySelector('button[onclick^="cancelEdit"]');
+
+          if (editBtn) editBtn.style.display = 'inline-flex';
+          if (saveBtn) saveBtn.style.display = 'none';
+          if (cancelBtn) cancelBtn.style.display = 'none';
+        } else {
+          showFlashMessage(data.message || 'Failed to save changes.', 'error');
+        }
+      } catch (err) {
+        console.error('Save error:', err);
+        showFlashMessage('Error saving edit: ' + (err.message || err), 'error');
+      }
+    }
+
+    /* ------- DELETE ------- */
+    async function deleteSlide(id) {
+      if (!confirm('Are you sure you want to delete this slide permanently? This action cannot be undone.')) {
+        return;
+      }
+
+      try {
+        const headers = {
+          'X-Requested-With': 'XMLHttpRequest'
+        };
+
+        if (csrfTokenEl) {
+          headers['X-CSRFToken'] = csrfTokenEl.value;
+        }
+
+        const url = "{{ url_for('admin_carousal.delete_carousal', item_id=0) }}".replace('/0', '/' + id);
+        const resp = await fetch(url, {
+          method: 'POST',
+          headers: headers
+        });
+
+        const data = await resp.json();
+        
+        if (data.success) {
+          showFlashMessage(data.message || 'Slide deleted successfully!', 'success');
+          setTimeout(() => location.reload(), 1500);
+        } else {
+          showFlashMessage(data.message || 'Error deleting slide.', 'error');
+        }
+      } catch (err) {
+        console.error('Delete error:', err);
+        showFlashMessage('Error deleting slide: ' + (err.message || err), 'error');
+      }
+    }
+
+    /* ------- DRAG & DROP REORDER ------- */
+    const tbody = document.getElementById('slidesTbody');
+    const mobileList = document.getElementById('mobileSlidesList');
+    let draggingRow = null;
+
+    function setupDragDrop(container) {
+      if (!container) return;
+
+      container.addEventListener('dragstart', (e) => {
+        draggingRow = e.target.closest('tr') || e.target.closest('.mobile-slide-card');
+        if (draggingRow) {
+          draggingRow.classList.add('dragging');
+        }
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', draggingRow ? draggingRow.dataset.id : '');
+      });
+
+      container.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        const target = e.target.closest('tr') || e.target.closest('.mobile-slide-card');
+        if (!target || target === draggingRow || !draggingRow) return;
+
+        const bounding = target.getBoundingClientRect();
+        const offset = e.clientY - bounding.top;
+        const after = offset > (bounding.height / 2);
+
+        if (after) {
+          container.insertBefore(draggingRow, target.nextSibling);
+        } else {
+          container.insertBefore(draggingRow, target);
+        }
+      });
+
+      container.addEventListener('dragend', () => {
+        if (draggingRow) {
+          draggingRow.classList.remove('dragging');
+        }
+        draggingRow = null;
+      });
+    }
+
+    // Initialize drag and drop
+    setupDragDrop(tbody);
+    setupDragDrop(mobileList);
+
+    // Save order button
+    document.getElementById('saveOrderBtn')?.addEventListener('click', async () => {
+      let ids = [];
+
+      // Get order from table if visible
+      if (tbody && window.getComputedStyle(tbody.closest('.table-wrapper')).display !== 'none') {
+        const rows = tbody.querySelectorAll('tr');
+        ids = Array.from(rows).map(r => r.dataset.id);
+      }
+      // Otherwise get order from mobile list
+      else if (mobileList) {
+        const cards = mobileList.querySelectorAll('.mobile-slide-card');
+        ids = Array.from(cards).map(c => c.dataset.id);
+      }
+
+      if (ids.length === 0) {
+        showFlashMessage('No slides to reorder', 'error');
+        return;
+      }
+
+      try {
+        const headers = {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        };
+
+        if (csrfTokenEl) {
+          headers['X-CSRFToken'] = csrfTokenEl.value;
+        }
+
+        const url = "{{ url_for('admin_carousal.reorder_carousal') }}";
+        const resp = await fetch(url, {
+          method: 'POST',
+          headers: headers,
+          body: JSON.stringify({ order: ids })
+        });
+
+        const data = await resp.json();
+        
+        if (data.success) {
+          showFlashMessage(data.message || 'Order saved successfully!', 'success');
+        } else {
+          showFlashMessage(data.message || 'Failed to save order.', 'error');
+        }
+      } catch (err) {
+        console.error('Reorder error:', err);
+        showFlashMessage('Error saving order: ' + (err.message || err), 'error');
+      }
+    });
+  </script>
+</body>
+
+</html>

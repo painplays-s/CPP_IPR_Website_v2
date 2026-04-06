@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Important Links - CPP-IPR</title>
+
+  <style>
+    :root {
+      --links-bg: #ffffff;
+      --links-border: #d0d7e2;
+      --links-text: #111827;
+      --links-muted: #6b7280;
+      --links-accent: #2563eb;
+      --links-radius-lg: 16px;
+      --download-btn: #16a34a;
+      --download-btn-hover: #15803d;
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      font-family: Arial, sans-serif;
+    }
+
+    #header-container,
+    #footer-container {
+      flex-shrink: 0;
+    }
+
+    main {
+      flex: 1;
+      padding: 1.5rem 5vw;
+      box-sizing: border-box;
+    }
+
+    /* ---------- GLOBAL SECTION WIDTH ---------- */
+    .page-section {
+      max-width: 1600px;
+      margin: 0 auto 2rem auto;
+    }
+
+    /* ---------- LINKS SECTION STYLES ---------- */
+    .links-section {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      box-sizing: border-box;
+    }
+
+    /* BANNER IMAGE */
+    .links-banner {
+      width: 100%;
+      height: auto;
+      border-radius: var(--links-radius-lg);
+      object-fit: cover;
+    }
+
+    /* MAIN BODY */
+    .links-main {
+      position: relative;
+      width: 100%;
+      background: var(--links-bg);
+      border: 1.5px solid var(--links-border);
+      border-radius: var(--links-radius-lg);
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+
+    /* HEADER INSIDE BOX */
+    .links-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem 1.75rem 1rem 1.75rem;
+      position: relative;
+    }
+
+    /* Horizontal line with custom width */
+    .links-header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      height: 2px;
+      background-color: var(--links-border);
+    }
+
+    .links-title {
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: var(--links-text);
+      text-align: center;
+      margin: 0;
+    }
+
+    /* CONTENT AREA */
+    .links-content {
+      padding: 1.75rem 1.75rem;
+      box-sizing: border-box;
+    }
+
+    /* ITEMS GRID - MAX 4 PER ROW */
+    .items-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.25rem;
+    }
+
+    /* Ensure maximum 4 columns */
+    @media (min-width: 1400px) {
+      .items-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .item-card {
+      background: #f9fafb;
+      border: 1px solid var(--links-border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      height: 240px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .item-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    }
+
+    .item-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .item-name {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--links-text);
+      margin: 0 0 0.5rem 0;
+      line-height: 1.4;
+    }
+
+    .item-name-hi {
+      font-size: 0.9rem;
+      color: var(--links-muted);
+      margin: 0;
+      line-height: 1.4;
+    }
+
+    /* BUTTON CONTAINER */
+    .button-container {
+      width: 100%;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* DOWNLOAD BUTTON */
+    .download-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+      padding: 0.75rem 1.25rem;
+      background: var(--download-btn);
+      color: #ffffff;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: background 0.3s ease;
+    }
+
+    .download-btn:hover {
+      background: var(--download-btn-hover);
+    }
+
+    .download-btn::before {
+      content: '⬇';
+      font-size: 1.1rem;
+    }
+
+    /* EXTERNAL LINK BUTTON */
+    .external-link-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+      padding: 0.75rem 1.25rem;
+      background: var(--links-accent);
+      color: #ffffff;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: background 0.3s ease;
+    }
+
+    .external-link-btn:hover {
+      background: #1d4ed8;
+    }
+
+    .external-link-btn::after {
+      content: '↗';
+      font-size: 1.1rem;
+    }
+
+    /* LOADING STATE */
+    .loading {
+      text-align: center;
+      padding: 2rem;
+      color: var(--links-muted);
+      font-size: 1rem;
+      grid-column: 1 / -1;
+    }
+
+    /* EMPTY STATE */
+    .empty-state {
+      text-align: center;
+      padding: 2rem;
+      color: var(--links-muted);
+      font-size: 1rem;
+      grid-column: 1 / -1;
+    }
+
+    /* ---------- TABLET ---------- */
+    @media (max-width: 1200px) {
+      .items-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      }
+    }
+
+    /* ---------- MOBILE ---------- */
+    @media (max-width: 900px) {
+      .links-title {
+        font-size: 1.35rem;
+      }
+
+      .links-header {
+        padding: 1.25rem 1.25rem 0.85rem 1.25rem;
+      }
+
+      .links-header::after {
+        width: 80%;
+      }
+
+      .links-content {
+        padding: 1.5rem 1.25rem;
+      }
+
+      .items-grid {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 1rem;
+      }
+
+      .item-card {
+        padding: 1.25rem;
+        height: 220px;
+      }
+
+      .item-name {
+        font-size: 0.95rem;
+      }
+
+      .item-name-hi {
+        font-size: 0.85rem;
+      }
+
+      .download-btn,
+      .external-link-btn {
+        font-size: 0.9rem;
+        padding: 0.65rem 1rem;
+      }
+    }
+
+    /* ---------- SMALL MOBILE ---------- */
+    @media (max-width: 600px) {
+      .items-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .item-card {
+        height: 200px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <div id="header-container"></div>
+
+  <!-- PAGE CONTENT -->
+  <main>
+    <div class="page-section links-section">
+
+      <!-- BANNER IMAGE -->
+      <img src="/assets/images/about_banner.jpg" 
+           alt="CPP-IPR Banner" 
+           class="links-banner">
+
+      <!-- DOWNLOADABLE FORMS SECTION -->
+      <div class="links-main">
+        
+        <!-- HEADER INSIDE BOX -->
+        <div class="links-header">
+          <h1 class="links-title bilingual-title" 
+              data-hi="डाउनलोड करने योग्य फॉर्म" 
+              data-en="Downloadable Forms">
+            Downloadable Forms
+          </h1>
+        </div>
+
+        <!-- CONTENT -->
+        <div class="links-content">
+          <div id="forms-container" class="items-grid">
+            <div class="loading">Loading forms...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- IMPORTANT LINKS SECTION -->
+      <div class="links-main">
+        
+        <!-- HEADER INSIDE BOX -->
+        <div class="links-header">
+          <h1 class="links-title bilingual-title" 
+              data-hi="महत्वपूर्ण लिंक" 
+              data-en="Important Links">
+            Important Links
+          </h1>
+        </div>
+
+        <!-- CONTENT -->
+        <div class="links-content">
+          <div id="links-container" class="items-grid">
+            <div class="loading">Loading links...</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <div id="footer-container"></div>
+
+  <!-- FRAGMENT LOADER -->
+  <script>
+    function loadFragment(url, containerId) {
+      fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const container = document.getElementById(containerId);
+          container.innerHTML = html;
+
+          container.querySelectorAll('script').forEach(oldScript => {
+            const newScript = document.createElement('script');
+            if (oldScript.src) {
+              newScript.src = oldScript.src;
+            } else {
+              newScript.textContent = oldScript.textContent;
+            }
+            oldScript.replaceWith(newScript);
+          });
+        })
+        .catch(err => console.error('Error loading fragment:', url, err));
+    }
+
+    loadFragment('/UI/header.html', 'header-container');
+    loadFragment('/UI/footer.html', 'footer-container');
+  </script>
+
+  <!-- LOAD FORMS AND LINKS -->
+  <script>
+    // Get current language from localStorage or default to 'en'
+    let currentLang = localStorage.getItem('language') || 'en';
+
+    // Load Downloadable Forms
+    async function loadForms() {
+      try {
+        const response = await fetch('/api/downloadable-forms');
+        const forms = await response.json();
+
+        const container = document.getElementById('forms-container');
+
+        if (forms.length === 0) {
+          container.innerHTML = '<div class="empty-state">No forms available at the moment.</div>';
+          return;
+        }
+
+        container.innerHTML = forms.map(form => `
+          <div class="item-card" onclick="window.open('${form.file_url}', '_blank')">
+            <div class="item-info">
+              <p class="item-name">${currentLang === 'hi' ? form.name_hi : form.name_en}</p>
+              <p class="item-name-hi">${currentLang === 'hi' ? form.name_en : form.name_hi}</p>
+            </div>
+            <div class="button-container">
+              <a href="${form.file_url}" 
+                 target="_blank" 
+                 download
+                 class="download-btn bilingual-text"
+                 data-hi="डाउनलोड"
+                 data-en="Download"
+                 onclick="event.stopPropagation()">
+                Download
+              </a>
+            </div>
+          </div>
+        `).join('');
+
+        // Apply bilingual updates
+        updateBilingualContent();
+      } catch (error) {
+        console.error('Error loading forms:', error);
+        document.getElementById('forms-container').innerHTML = 
+          '<div class="empty-state">Failed to load forms. Please try again later.</div>';
+      }
+    }
+
+    // Load Important Links
+    async function loadLinks() {
+      try {
+        const response = await fetch('/api/links');
+        const links = await response.json();
+
+        const container = document.getElementById('links-container');
+
+        if (links.length === 0) {
+          container.innerHTML = '<div class="empty-state">No links available at the moment.</div>';
+          return;
+        }
+
+        container.innerHTML = links.map(link => `
+          <div class="item-card" onclick="window.open('${link.url}', '_blank', 'noopener,noreferrer')">
+            <div class="item-info">
+              <p class="item-name">${currentLang === 'hi' ? link.name_hi : link.name_en}</p>
+              <p class="item-name-hi">${currentLang === 'hi' ? link.name_en : link.name_hi}</p>
+            </div>
+            <div class="button-container">
+              <a href="${link.url}" 
+                 target="_blank" 
+                 rel="noopener noreferrer"
+                 class="external-link-btn bilingual-text"
+                 data-hi="खोलें"
+                 data-en="Open"
+                 onclick="event.stopPropagation()">
+                Open
+              </a>
+            </div>
+          </div>
+        `).join('');
+
+        // Apply bilingual updates
+        updateBilingualContent();
+      } catch (error) {
+        console.error('Error loading links:', error);
+        document.getElementById('links-container').innerHTML = 
+          '<div class="empty-state">Failed to load links. Please try again later.</div>';
+      }
+    }
+
+    // Update bilingual content based on current language
+    function updateBilingualContent() {
+      const lang = localStorage.getItem('language') || 'en';
+      
+      document.querySelectorAll('.bilingual-title, .bilingual-text').forEach(el => {
+        const hiText = el.getAttribute('data-hi');
+        const enText = el.getAttribute('data-en');
+        
+        if (hiText && enText) {
+          el.textContent = lang === 'hi' ? hiText : enText;
+        }
+      });
+    }
+
+    // Listen for language change events
+    window.addEventListener('languageChanged', (e) => {
+      currentLang = e.detail.language;
+      loadForms();
+      loadLinks();
+    });
+
+    // Initial load
+    loadForms();
+    loadLinks();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Faculty & Scientists - CPP-IPR</title>
+
+  <style>
+    :root {
+      --people-bg: #ffffff;
+      --people-border: #d0d7e2;
+      --people-text: #111827;
+      --people-muted: #6b7280;
+      --people-accent: #2563eb;
+      --people-radius-lg: 16px;
+      --section-bg: #f9fafb;
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      font-family: Arial, sans-serif;
+      background: #f3f4f6;
+    }
+
+    #header-container,
+    #footer-container {
+      flex-shrink: 0;
+    }
+
+    main {
+      flex: 1;
+      padding: 1.5rem 5vw;
+      box-sizing: border-box;
+    }
+
+    .page-section {
+      max-width: 1600px;
+      margin: 0 auto 2rem auto;
+    }
+
+    .people-section {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      box-sizing: border-box;
+    }
+
+    .people-banner {
+      width: 100%;
+      height: auto;
+      border-radius: var(--people-radius-lg);
+      object-fit: cover;
+    }
+
+    .people-main {
+      position: relative;
+      width: 100%;
+      background: var(--people-bg);
+      border: 1.5px solid var(--people-border);
+      border-radius: var(--people-radius-lg);
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+
+    .people-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem 1.75rem 1rem 1.75rem;
+      position: relative;
+    }
+
+    .people-header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      height: 2px;
+      background-color: var(--people-border);
+    }
+
+    .people-title {
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: var(--people-text);
+      text-align: center;
+      margin: 0;
+    }
+
+    .people-content {
+      padding: 1.75rem;
+      box-sizing: border-box;
+    }
+
+    .sub-category {
+      margin-bottom: 2.5rem;
+    }
+
+    .sub-category:last-child {
+      margin-bottom: 0;
+    }
+
+    .sub-category-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--people-text);
+      margin: 0 0 1.25rem 0;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--people-border);
+      text-align: center !important;
+      /* FORCE CENTERED TITLE */
+      width: 100%;
+      /* Ensure full width for centering */
+      display: block;
+      /* Ensure block display */
+    }
+
+    .people-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    @media (min-width: 1400px) {
+      .people-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .person-card {
+      background: var(--section-bg);
+      border: 1px solid var(--people-border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .person-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    }
+
+    .person-photo {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--people-border);
+    }
+
+    .person-info {
+      text-align: center;
+      width: 100%;
+    }
+
+    .person-name {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--people-text);
+      margin: 0 0 0.25rem 0;
+      line-height: 1.4;
+    }
+
+    .person-name-hi {
+      font-size: 0.9rem;
+      color: var(--people-muted);
+      margin: 0 0 0.75rem 0;
+      line-height: 1.4;
+    }
+
+    .person-designation {
+      font-size: 0.9rem;
+      color: var(--people-accent);
+      margin: 0 0 0.25rem 0;
+      line-height: 1.3;
+    }
+
+    .person-designation-hi {
+      font-size: 0.85rem;
+      color: var(--people-muted);
+      margin: 0 0 0.5rem 0;
+      line-height: 1.3;
+    }
+
+    .person-location {
+      font-size: 0.85rem;
+      color: var(--people-muted);
+      margin: 0 0 0.75rem 0;
+      font-style: italic;
+    }
+
+    .person-contact {
+      font-size: 0.85rem;
+      color: var(--people-muted);
+      margin: 0.25rem 0;
+    }
+
+    .person-contact strong {
+      color: var(--people-text);
+    }
+
+    .loading {
+      text-align: center;
+      padding: 2rem;
+      color: var(--people-muted);
+      font-size: 1rem;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 2rem;
+      color: var(--people-muted);
+      font-size: 1rem;
+    }
+
+    @media (max-width: 1200px) {
+      .people-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      }
+    }
+
+    @media (max-width: 900px) {
+      .people-title {
+        font-size: 1.35rem;
+      }
+
+      .sub-category-title {
+        font-size: 1.15rem;
+        text-align: center !important;
+        /* FORCE CENTERED FOR MOBILE */
+      }
+
+      .people-header {
+        padding: 1.25rem 1.25rem 0.85rem 1.25rem;
+      }
+
+      .people-header::after {
+        width: 80%;
+      }
+
+      .people-content {
+        padding: 1.5rem 1.25rem;
+      }
+
+      .people-grid {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 1.25rem;
+      }
+
+      .person-card {
+        padding: 1.25rem;
+      }
+
+      .person-photo {
+        width: 100px;
+        height: 100px;
+      }
+
+      .person-name {
+        font-size: 0.95rem;
+      }
+
+      .person-name-hi {
+        font-size: 0.85rem;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .people-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .sub-category-title {
+        font-size: 1.1rem;
+        text-align: center !important;
+        /* FORCE CENTERED FOR SMALL MOBILE */
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <div id="header-container"></div>
+
+  <!-- PAGE CONTENT -->
+  <main>
+    <div class="page-section people-section">
+
+      <!-- BANNER IMAGE -->
+      <img src="/assets/images/about_banner.jpg" alt="CPP-IPR Banner" class="people-banner">
+
+      <!-- FACULTY SECTION -->
+      <div class="people-main">
+
+        <!-- HEADER INSIDE BOX -->
+        <div class="people-header">
+          <h1 class="people-title bilingual-title" data-hi="संकाय/वैज्ञानिक/इंजीनियर"
+            data-en="Faculty/Scientists/Engineers">
+            Faculty/Scientists/Engineers
+          </h1>
+        </div>
+
+        <!-- CONTENT -->
+        <div class="people-content">
+          <div id="faculty-container">
+            <div class="loading">Loading faculty members...</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <div id="footer-container"></div>
+
+  <!-- FRAGMENT LOADER -->
+  <script>
+    function loadFragment(url, containerId) {
+      fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const container = document.getElementById(containerId);
+          container.innerHTML = html;
+
+          container.querySelectorAll('script').forEach(oldScript => {
+            const newScript = document.createElement('script');
+            if (oldScript.src) {
+              newScript.src = oldScript.src;
+            } else {
+              newScript.textContent = oldScript.textContent;
+            }
+            oldScript.replaceWith(newScript);
+          });
+        })
+        .catch(err => console.error('Error loading fragment:', url, err));
+    }
+
+    loadFragment('/UI/header.html', 'header-container');
+    loadFragment('/UI/footer.html', 'footer-container');
+  </script>
+
+  <!-- LOAD FACULTY -->
+  <script>
+    let currentLang = localStorage.getItem('language') || 'en';
+
+    const subCategoryLabels = {
+      'faculty_officers': {
+        en: 'Faculties/Scientific Officers',
+        hi: 'संकाय/वैज्ञानिक अधिकारी'
+      },
+      'engineering': {
+        en: 'Engineering Section',
+        hi: 'अभियांत्रिकी अनुभाग'
+      },
+      'scientific_assistants': {
+        en: 'Scientific Assistants',
+        hi: 'वैज्ञानिक सहायक'
+      },
+      'project_officers': {
+        en: 'Project Scientific Officers',
+        hi: 'परियोजना वैज्ञानिक अधिकारी'
+      },
+      'project_assistants': {
+        en: 'Project Scientific Assistants',
+        hi: 'परियोजना वैज्ञानिक सहायक'
+      },
+      'technician': {
+        en: 'Technician',
+        hi: 'तकनीशियन'
+      },
+      'project_technician': {
+        en: 'Project Technician',
+        hi: 'परियोजना तकनीशियन'
+      }
+    };
+
+    async function loadFaculty() {
+      try {
+        const response = await fetch('/api/people/faculty');
+        const faculty = await response.json();
+
+        const container = document.getElementById('faculty-container');
+
+        if (faculty.length === 0) {
+          container.innerHTML = '<div class="empty-state">No faculty members available at the moment.</div>';
+          return;
+        }
+
+        // Group by sub-category
+        const grouped = {};
+        faculty.forEach(person => {
+          if (!grouped[person.sub_category]) {
+            grouped[person.sub_category] = [];
+          }
+          grouped[person.sub_category].push(person);
+        });
+
+        // Render grouped faculty
+        let html = '';
+        for (const [subCat, people] of Object.entries(grouped)) {
+          const label = subCategoryLabels[subCat] || { en: subCat, hi: subCat };
+
+          html += `
+            <div class="sub-category">
+              <h2 class="sub-category-title bilingual-title" 
+                  data-hi="${label.hi}" 
+                  data-en="${label.en}">
+                ${currentLang === 'hi' ? label.hi : label.en}
+              </h2>
+              <div class="people-grid">
+                ${people.map(person => `
+                  <div class="person-card">
+                    <img src="/assets/images/people/${person.photo}" 
+                         alt="${person.name_en}" 
+                         class="person-photo"
+                         onerror="this.src='/assets/images/placeholder.jpg'">
+                    <div class="person-info">
+                      <p class="person-name">${currentLang === 'hi' ? person.name_hi : person.name_en}</p>
+                      <p class="person-name-hi">${currentLang === 'hi' ? person.name_en : person.name_hi}</p>
+                      <p class="person-designation">${currentLang === 'hi' ? person.designation_hi : person.designation_en}</p>
+                      <p class="person-designation-hi">${currentLang === 'hi' ? person.designation_en : person.designation_hi}</p>
+                      <p class="person-location">${currentLang === 'hi' ? person.location_hi : person.location_en}</p>
+                      <p class="person-contact"><strong>Email:</strong> ${person.email}</p>
+                      <p class="person-contact"><strong>Extn:</strong> ${person.extn_no}</p>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          `;
+        }
+
+        container.innerHTML = html;
+        updateBilingualContent();
+      } catch (error) {
+        console.error('Error loading faculty:', error);
+        document.getElementById('faculty-container').innerHTML =
+          '<div class="empty-state">Failed to load faculty. Please try again later.</div>';
+      }
+    }
+
+    function updateBilingualContent() {
+      const lang = localStorage.getItem('language') || 'en';
+
+      document.querySelectorAll('.bilingual-title').forEach(el => {
+        const hiText = el.getAttribute('data-hi');
+        const enText = el.getAttribute('data-en');
+
+        if (hiText && enText) {
+          el.textContent = lang === 'hi' ? hiText : enText;
+        }
+      });
+    }
+
+    window.addEventListener('languageChanged', (e) => {
+      currentLang = e.detail.language;
+      loadFaculty();
+    });
+
+    loadFaculty();
+  </script>
+
+  <!-- INCLUDE BILINGUAL LOGIC -->
+  <script src="/UI/bilingual.js"></script>
+
+</body>
+
+</html>

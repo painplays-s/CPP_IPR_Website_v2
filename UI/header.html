@@ -1,0 +1,1052 @@
+<!-- =========================
+     HEADER STYLES
+     ========================= -->
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Banner Image */
+  .banner {
+    width: 100%;
+    display: block;
+    position: relative;
+    z-index: 1;
+  }
+
+  .banner picture,
+  .banner img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* Navigation Strip */
+  .nav-strip {
+    width: 100%;
+    height: 40px;
+    background: linear-gradient(90deg, #FF6B35 0%, #003366 100%);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1rem;
+    position: relative;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    overflow: visible;
+    z-index: 1000;
+    white-space: nowrap;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1 1 auto;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+    padding: 0 0.5rem;
+    margin-right: 0.5rem;
+  }
+
+  /* Webkit browsers (Chrome, Safari, Edge) scrollbar styling for nav */
+  .nav-links::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .nav-links::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+  }
+
+  .nav-links::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+  }
+
+  .nav-links::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+  }
+
+  /* Firefox scrollbar styling */
+  @supports (scrollbar-width: thin) {
+    .nav-links {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  .nav-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+
+  .nav-link {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 14px;
+    white-space: nowrap;
+    padding: 0.5rem 0.75rem;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+  }
+
+  /* Dropdown (toggle) */
+  .dropdown {
+    position: relative;
+    display: inline-block;
+    flex-shrink: 0;
+  }
+
+  .dropdown-toggle {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 14px;
+    white-space: nowrap;
+    padding: 0.5rem 0.75rem;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .dropdown-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+  }
+
+  .dropdown-arrow {
+    font-size: 16px;
+    line-height: 1;
+  }
+
+  /* Dropdown root (portal) */
+  #dropdown-root {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 0;
+    z-index: 9999;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  #dropdown-root .dropdown-menu {
+    pointer-events: auto;
+  }
+
+  /* Dropdown menu with visible scrollbar */
+  .dropdown-menu {
+    position: fixed;
+    display: none;
+    margin-top: 0.25rem;
+    background: #ffffff;
+    color: #333333;
+    min-width: 220px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    max-height: 400px;
+    overflow-y: auto;
+    z-index: 10000;
+    transition: opacity 150ms ease, transform 150ms ease;
+    opacity: 0;
+    transform: translateY(-5px);
+
+    /* Scrollbar styling for Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e0 #f1f5f9;
+  }
+
+  /* Scrollbar styling for Chrome, Safari, Edge */
+  .dropdown-menu::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .dropdown-menu::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+  }
+
+  .dropdown-menu::-webkit-scrollbar-thumb {
+    background: #cbd5e0;
+    border-radius: 4px;
+  }
+
+  .dropdown-menu::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+  }
+
+  .dropdown-menu.show {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .dropdown-item {
+    display: block;
+    padding: 0.75rem 1rem;
+    color: #333333;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background-color 0.2s;
+    cursor: pointer;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .dropdown-item:last-child {
+    border-bottom: none;
+  }
+
+  .dropdown-item:hover {
+    background-color: #f5f5f5;
+  }
+
+  /* Zoom controls container */
+  .zoom-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 4px;
+    padding: 0.2rem;
+  }
+
+  /* Zoom buttons */
+  .zoom-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 0.25rem 0.5rem;
+    transition: background-color 0.2s;
+    white-space: nowrap;
+    border-radius: 3px;
+  }
+
+  .zoom-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+
+  /* Language toggle */
+  .language-toggle {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 20px;
+    padding: 0.25rem 0.5rem;
+    cursor: pointer;
+  }
+
+  .lang-option {
+    color: #ffffff;
+    font-size: 13px;
+    padding: 0.1rem 0.3rem;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .lang-option.active {
+    font-weight: bold;
+    opacity: 1;
+  }
+
+  .lang-option.inactive {
+    opacity: 0.6;
+  }
+
+  .lang-divider {
+    width: 1px;
+    height: 16px;
+    background: rgba(255, 255, 255, 0.4);
+  }
+
+  /* Hamburger */
+  .hamburger {
+    display: none;
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0.25rem;
+    line-height: 1;
+  }
+
+  .hamburger:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+  }
+
+  /* Mobile menu */
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 20000;
+  }
+
+  .mobile-menu.active {
+    display: block;
+  }
+
+  .mobile-menu-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    max-height: 80vh;
+    background: #ffffff;
+    border-radius: 16px 16px 0 0;
+    overflow-y: auto;
+  }
+
+  .mobile-menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #e0e0e0;
+    position: sticky;
+    top: 0;
+    background: #ffffff;
+    z-index: 20001;
+  }
+
+  .mobile-menu-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333333;
+  }
+
+  .mobile-menu-close {
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: #666666;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+  }
+
+  .mobile-menu-items {
+    padding: 0.5rem 0;
+  }
+
+  .mobile-menu-item {
+    display: block;
+    padding: 1rem 1.5rem;
+    color: #333333;
+    text-decoration: none;
+    font-size: 16px;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+  }
+
+  .mobile-menu-item:hover {
+    background-color: #f9f9f9;
+  }
+
+  .mobile-expandable {
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .mobile-expandable-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+    font-size: 16px;
+    color: #333333;
+    font-weight: 500;
+  }
+
+  .mobile-expandable-header:hover {
+    background-color: #f9f9f9;
+  }
+
+  .mobile-expandable-icon {
+    font-size: 20px;
+    transition: transform 0.3s;
+  }
+
+  .mobile-expandable.expanded .mobile-expandable-icon {
+    transform: rotate(180deg);
+  }
+
+  .mobile-expandable-content {
+    display: none;
+    background-color: #f9f9f9;
+  }
+
+  .mobile-expandable.expanded .mobile-expandable-content {
+    display: block;
+  }
+
+  .mobile-submenu-item {
+    display: block;
+    padding: 0.75rem 1.5rem 0.75rem 2.5rem;
+    color: #555555;
+    text-decoration: none;
+    font-size: 15px;
+    border-bottom: 1px solid #e8e8e8;
+    cursor: pointer;
+  }
+
+  .mobile-submenu-item:hover {
+    background-color: #f0f0f0;
+  }
+
+  /* Ensure content below is clickable when dropdowns are closed */
+  .dropdown-menu:not(.show) {
+    display: none !important;
+  }
+
+  /* Responsive */
+  @media (orientation: portrait) {
+    .nav-links {
+      display: none;
+    }
+
+    .hamburger {
+      display: block;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .nav-links {
+      display: none;
+    }
+
+    .hamburger {
+      display: block;
+    }
+  }
+
+  /* Small screen adjustments for dropdowns */
+  @media (max-width: 1200px) {
+    .dropdown-menu {
+      min-width: 200px;
+    }
+  }
+
+  /* Print styles */
+  @media print {
+
+    .nav-strip,
+    .dropdown-menu,
+    .mobile-menu {
+      display: none;
+    }
+  }
+</style>
+
+<!-- =========================
+     HEADER HTML
+     ========================= -->
+<header class="banner">
+  <picture>
+    <source srcset="/assets/images/heading_portrait.png" media="(orientation: portrait)">
+    <img src="/assets/images/heading.png" alt="CPP-IPR Banner">
+  </picture>
+
+  <nav class="nav-strip">
+    <div class="nav-links">
+      <a href="/pages/Home/home.html" class="nav-link" data-i18n-nav="nav.home">Home</a>
+      <a href="/pages/Profile/about.html" class="nav-link" data-i18n-nav="nav.profile">Profile</a>
+
+      <div class="dropdown">
+        <div class="dropdown-toggle" data-menu="people">
+          <span data-i18n-nav="nav.people">People</span>
+          <span class="dropdown-arrow">▼</span>
+        </div>
+        <div class="dropdown-menu" data-menu="people"></div>
+      </div>
+
+      <div class="dropdown">
+        <div class="dropdown-toggle" data-menu="rnd">
+          <span data-i18n-nav="nav.rnd">R&amp;D Activities</span>
+          <span class="dropdown-arrow">▼</span>
+        </div>
+        <div class="dropdown-menu" data-menu="rnd"></div>
+      </div>
+
+      <div class="dropdown">
+        <div class="dropdown-toggle" data-menu="staff">
+          <span data-i18n-nav="nav.staff">For Staffs</span>
+          <span class="dropdown-arrow">▼</span>
+        </div>
+        <div class="dropdown-menu" data-menu="staff"></div>
+      </div>
+
+      <div class="dropdown">
+        <div class="dropdown-toggle" data-menu="seminars">
+          <span data-i18n-nav="nav.seminars">Seminars &amp; Colloquiums</span>
+          <span class="dropdown-arrow">▼</span>
+        </div>
+        <div class="dropdown-menu" data-menu="seminars"></div>
+      </div>
+
+      <!-- NEW: IPR Pages Dropdown -->
+      <div class="dropdown">
+        <div class="dropdown-toggle" data-menu="iprPages">
+          <span data-i18n-nav="nav.iprPages">IPR Pages</span>
+          <span class="dropdown-arrow">▼</span>
+        </div>
+        <div class="dropdown-menu" data-menu="iprPages"></div>
+      </div>
+
+      <a href="/pages/RTI/rti.html" class="nav-link" data-i18n-nav="nav.rti">RTI</a>
+      <a href="/pages/Important_Links/important.html" class="nav-link" data-i18n-nav="nav.links">Important Links</a>
+      <a href="/pages/Tenders/tender.html" class="nav-link" data-i18n-nav="nav.tenders">Tenders</a>
+      <a href="/pages/Advertisement/adv.html" class="nav-link" data-i18n-nav="nav.advertisement">Advertisement</a>
+      <a href="/pages/Reach_Us/reach.html" class="nav-link" data-i18n-nav="nav.reachUs">Reach Us</a>
+
+      <a href="#" class="nav-link" data-i18n-nav="nav.oldWebsite" id="old-website-link" target="_blank"
+        rel="noopener noreferrer">Old Website</a>
+    </div>
+
+    <div class="nav-controls">
+      <div class="zoom-controls">
+        <button class="zoom-btn" id="zoom-out-btn" data-i18n-nav="nav.zoomOut">Zoom -</button>
+        <button class="zoom-btn" id="zoom-in-btn" data-i18n-nav="nav.zoomIn">Zoom +</button>
+      </div>
+
+      <div class="language-toggle">
+        <span class="lang-option active" data-lang="en">EN</span>
+        <span class="lang-divider"></span>
+        <span class="lang-option inactive" data-lang="hi">हिं</span>
+      </div>
+
+      <button class="hamburger" id="hamburger-btn">☰</button>
+    </div>
+  </nav>
+</header>
+
+<div id="dropdown-root"></div>
+
+<!-- =========================
+     MOBILE MENU
+     ========================= -->
+<div class="mobile-menu" id="mobile-menu">
+  <div class="mobile-menu-content">
+    <div class="mobile-menu-header">
+      <span class="mobile-menu-title" data-i18n-nav="nav.menu">Menu</span>
+      <button class="mobile-menu-close" id="mobile-menu-close">×</button>
+    </div>
+    <div class="mobile-menu-items">
+      <a href="/pages/Home/home.html" class="mobile-menu-item" data-i18n-nav="nav.home">Home</a>
+      <a href="/pages/Profile/about.html" class="mobile-menu-item" data-i18n-nav="nav.profile">Profile</a>
+
+      <div class="mobile-expandable">
+        <div class="mobile-expandable-header">
+          <span data-i18n-nav="nav.people">People</span>
+          <span class="mobile-expandable-icon">▼</span>
+        </div>
+        <div class="mobile-expandable-content">
+          <a href="/pages/People/center_director.html" class="mobile-submenu-item"
+            data-i18n-nav="nav.people.centerDirector">Centre Director</a>
+          <a href="/pages/People/admin.html" class="mobile-submenu-item"
+            data-i18n-nav="nav.people.adminStaff">Administrative Staff</a>
+          <a href="/pages/People/faculty.html" class="mobile-submenu-item" data-i18n-nav="nav.people.faculty">Faculties
+            / Scientists / Engineers</a>
+          <a href="/pages/People/pdfs.html" class="mobile-submenu-item" data-i18n-nav="nav.people.pdfs">PDFs / Research
+            Scholars</a>
+        </div>
+      </div>
+
+      <div class="mobile-expandable">
+        <div class="mobile-expandable-header">
+          <span data-i18n-nav="nav.rnd">R&amp;D Activities</span>
+          <span class="mobile-expandable-icon">▼</span>
+        </div>
+        <div class="mobile-expandable-content">
+          <a href="/pages/RnD/cimple_psi.html" class="mobile-submenu-item"
+            data-i18n-nav="nav.rnd.cimplePsi">CIMPLE-PSI</a>
+          <a href="/pages/RnD/tsl.html" class="mobile-submenu-item" data-i18n-nav="nav.rnd.tsl">TSL Laboratory</a>
+          <a href="/pages/RnD/pal.html" class="mobile-submenu-item" data-i18n-nav="nav.rnd.pal">PAL Laboratory</a>
+          <a href="/pages/RnD/iecf.html" class="mobile-submenu-item" data-i18n-nav="nav.rnd.iecf">IECF Laboratory</a>
+          <a href="/pages/RnD/dusty.html" class="mobile-submenu-item" data-i18n-nav="nav.rnd.dusty">Dusty Plasma
+            Laboratory</a>
+          <a href="/pages/RnD/double_plasma.html" class="mobile-submenu-item"
+            data-i18n-nav="nav.rnd.doublePlasma">Double Plasma</a>
+          <a href="/pages/RnD/cdps.html" class="mobile-submenu-item" data-i18n-nav="nav.rnd.cdps">CDPS Laboratory</a>
+          <a href="/pages/RnD/helicon.html" class="mobile-submenu-item" data-i18n-nav="nav.rnd.helicon">Helicon
+            Laboratory</a>
+          <a href="/pages/RnD/ppt_dpf1.html" class="mobile-submenu-item" data-i18n-nav="nav.rnd.pptDpf1">PPT DPF-I
+            Laboratory</a>
+          <a href="/pages/RnD/ppt_dpf2.html" class="mobile-submenu-item" data-i18n-nav="nav.rnd.pptDpf2">PPT DPF-II
+            Laboratory</a>
+        </div>
+      </div>
+
+      <div class="mobile-expandable">
+        <div class="mobile-expandable-header">
+          <span data-i18n-nav="nav.staff">For Staffs</span>
+          <span class="mobile-expandable-icon">▼</span>
+        </div>
+        <div class="mobile-expandable-content">
+          <a href="" target="_blank" class="mobile-submenu-item" data-i18n-nav="nav.staff.fileStorage"
+            id="mobile-file-storage-link">File Storage Server</a>
+          <a href="" target="_blank" class="mobile-submenu-item" data-i18n-nav="nav.staff.mailStorage"
+            id="mobile-mail-storage-link">Mail Storage Server</a>
+          <a href="" target="_blank" class="mobile-submenu-item" data-i18n-nav="nav.staff.canteen"
+            id="mobile-canteen-link">CPP-IPR Canteen</a>
+          <a href="#" target="_blank" class="mobile-submenu-item" data-i18n-nav="nav.staff.internalFile"
+            id="mobile-internal-file-link">Internal File Sharing Server</a>
+          <a href="/pages/Library/library.html" class="mobile-submenu-item"
+            data-i18n-nav="nav.staff.library">Library</a>
+        </div>
+      </div>
+
+      <div class="mobile-expandable">
+        <div class="mobile-expandable-header">
+          <span data-i18n-nav="nav.seminars">Seminars &amp; Colloquiums</span>
+          <span class="mobile-expandable-icon">▼</span>
+        </div>
+        <div class="mobile-expandable-content">
+          <a href="/pages/Seminars_Colloquiums/student_seminar.html" class="mobile-submenu-item"
+            data-i18n-nav="nav.seminars.studentSeminar">Student Seminar</a>
+          <a href="/pages/Seminars_Colloquiums/collo.html" class="mobile-submenu-item"
+            data-i18n-nav="nav.seminars.colloquiums">Colloquiums</a>
+          <a href="/pages/Seminars_Colloquiums/conferences_archive.html" class="mobile-submenu-item"
+            data-i18n-nav="nav.seminars.conferencesArchive">Conferences Archive</a>
+        </div>
+      </div>
+
+      <!-- NEW: IPR Pages in Mobile Menu -->
+      <div class="mobile-expandable">
+        <div class="mobile-expandable-header">
+          <span data-i18n-nav="nav.iprPages">IPR Pages</span>
+          <span class="mobile-expandable-icon">▼</span>
+        </div>
+        <div class="mobile-expandable-content">
+          <a href="https://www.ipr.res.in/" target="_blank" class="mobile-submenu-item"
+            data-i18n-nav="nav.iprPages.website">IPR Website</a>
+          <a href="https://www.ipr.res.in/hindicell/index.html" target="_blank" class="mobile-submenu-item"
+            data-i18n-nav="nav.iprPages.hindiCell">Hindi Cell</a>
+          <a href="https://www.ipr.res.in/ANTYA/" target="_blank" class="mobile-submenu-item"
+            data-i18n-nav="nav.iprPages.hpcNewsletter">HPC Newsletter</a>
+          <a href="https://www.ipr.res.in/newsletter/index.html" target="_blank" class="mobile-submenu-item"
+            data-i18n-nav="nav.iprPages.iprNewsletter">IPR Newsletter</a>
+          <a href="https://www.ipr.res.in/outreach/index.html" target="_blank" class="mobile-submenu-item"
+            data-i18n-nav="nav.iprPages.outreach">Outreach</a>
+          <a href="https://pgportal.gov.in/" target="_blank" class="mobile-submenu-item"
+            data-i18n-nav="nav.iprPages.publicGrievances">Public Grievances</a>
+          <a href="https://www.ipr.res.in/documents/jobs_career.html" target="_blank" class="mobile-submenu-item"
+            data-i18n-nav="nav.iprPages.jobs">Jobs</a>
+        </div>
+      </div>
+
+      <a href="/pages/RTI/rti.html" class="mobile-menu-item" data-i18n-nav="nav.rti">RTI</a>
+      <a href="/pages/Important_Links/important.html" class="mobile-menu-item" data-i18n-nav="nav.links">Important
+        Links</a>
+      <a href="/pages/Tenders/tender.html" class="mobile-menu-item" data-i18n-nav="nav.tenders">Tenders</a>
+      <a href="/pages/Advertisement/adv.html" class="mobile-menu-item"
+        data-i18n-nav="nav.advertisement">Advertisement</a>
+      <a href="/pages/Reach_Us/reach.html" class="mobile-menu-item" data-i18n-nav="nav.reachUs">Reach Us</a>
+      <a href="#" class="mobile-menu-item" data-i18n-nav="nav.oldWebsite" id="mobile-old-website-link" target="_blank"
+        rel="noopener noreferrer">Old Website</a>
+    </div>
+  </div>
+</div>
+
+<!-- =========================
+     JAVASCRIPT
+     ========================= -->
+<script>
+  (function () {
+    'use strict';
+
+    // ============================================
+    // CONFIGURATION VARIABLES - Edit these URLs
+    // ============================================
+    const CONFIG = {
+      oldWebsiteUrl: 'http://www.cppipr.res.in/',  // Leave empty or set to your old website URL
+      fileStorageUrl: 'http://192.168.1.100/index.php/login',
+      mailStorageUrl: 'https://192.168.1.200/restgui/start.html',
+      canteenUrl: 'http://192.168.1.3/canteen2022/index.php',
+      internalFileUrl: 'http://192.168.1.223:5000'  // Add your internal file server IP and port here
+    };
+
+    // ZOOM FUNCTIONALITY (with Zoom + and Zoom -)
+    function initZoom() {
+      const zoomInBtn = document.getElementById('zoom-in-btn');
+      const zoomOutBtn = document.getElementById('zoom-out-btn');
+
+      if (!zoomInBtn || !zoomOutBtn) return;
+
+      let currentZoom = parseInt(localStorage.getItem('websiteZoom')) || 100;
+
+      function setZoom(level) {
+        // Limit zoom between 80% and 150%
+        level = Math.max(80, Math.min(150, level));
+        document.documentElement.style.zoom = level + '%';
+        localStorage.setItem('websiteZoom', level);
+        currentZoom = level;
+      }
+
+      // Apply saved zoom on load
+      setZoom(currentZoom);
+
+      // Zoom In button
+      zoomInBtn.addEventListener('click', function () {
+        setZoom(currentZoom + 10);
+      });
+
+      // Zoom Out button
+      zoomOutBtn.addEventListener('click', function () {
+        setZoom(currentZoom - 10);
+      });
+    }
+
+    // SET DYNAMIC LINKS
+    function setDynamicLinks() {
+      // Desktop Old Website Link
+      const desktopOldWebsiteLink = document.getElementById('old-website-link');
+      if (desktopOldWebsiteLink && CONFIG.oldWebsiteUrl) {
+        desktopOldWebsiteLink.href = CONFIG.oldWebsiteUrl;
+      }
+
+      // Mobile Old Website Link
+      const mobileOldWebsiteLink = document.getElementById('mobile-old-website-link');
+      if (mobileOldWebsiteLink && CONFIG.oldWebsiteUrl) {
+        mobileOldWebsiteLink.href = CONFIG.oldWebsiteUrl;
+      }
+
+      // Mobile Staff Links
+      const mobileFileStorage = document.getElementById('mobile-file-storage-link');
+      if (mobileFileStorage) mobileFileStorage.href = CONFIG.fileStorageUrl;
+
+      const mobileMailStorage = document.getElementById('mobile-mail-storage-link');
+      if (mobileMailStorage) mobileMailStorage.href = CONFIG.mailStorageUrl;
+
+      const mobileCanteen = document.getElementById('mobile-canteen-link');
+      if (mobileCanteen) mobileCanteen.href = CONFIG.canteenUrl;
+
+      // Mobile Internal File Link
+      const mobileInternalFile = document.getElementById('mobile-internal-file-link');
+      if (mobileInternalFile) mobileInternalFile.href = CONFIG.internalFileUrl;
+    }
+
+    // MOBILE MENU
+    function initMobileMenu() {
+      const hamburgerBtn = document.getElementById('hamburger-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      const mobileMenuClose = document.getElementById('mobile-menu-close');
+
+      if (hamburgerBtn && mobileMenu) {
+        hamburgerBtn.addEventListener('click', () => mobileMenu.classList.add('active'));
+      }
+      if (mobileMenuClose && mobileMenu) {
+        mobileMenuClose.addEventListener('click', () => mobileMenu.classList.remove('active'));
+      }
+      if (mobileMenu) {
+        mobileMenu.addEventListener('click', e => {
+          if (e.target === mobileMenu) mobileMenu.classList.remove('active');
+        });
+      }
+
+      document.querySelectorAll('.mobile-expandable-header').forEach(header => {
+        header.addEventListener('click', () => header.parentElement.classList.toggle('expanded'));
+      });
+    }
+
+    // DROPDOWN MENUS - FIXED VERSION with proper positioning
+    function initDropdowns() {
+      const dropdownData = {
+        people: [
+          { key: 'nav.people.centerDirector', label: 'Centre Director', href: '/pages/People/center_director.html' },
+          { key: 'nav.people.adminStaff', label: 'Administrative Staff', href: '/pages/People/admin.html' },
+          { key: 'nav.people.faculty', label: 'Faculty', href: '/pages/People/faculty.html' },
+          { key: 'nav.people.pdfs', label: 'PDFs', href: '/pages/People/pdfs.html' }
+        ],
+        rnd: [
+          { key: 'nav.rnd.cimplePsi', label: 'CIMPLE-PSI', href: '/pages/RnD/cimple_psi.html' },
+          { key: 'nav.rnd.tsl', label: 'TSL', href: '/pages/RnD/tsl.html' },
+          { key: 'nav.rnd.pal', label: 'PAL', href: '/pages/RnD/pal.html' },
+          { key: 'nav.rnd.iecf', label: 'IECF', href: '/pages/RnD/iecf.html' },
+          { key: 'nav.rnd.dusty', label: 'Dusty Plasma', href: '/pages/RnD/dusty.html' },
+          { key: 'nav.rnd.doublePlasma', label: 'Double Plasma', href: '/pages/RnD/double_plasma.html' },
+          { key: 'nav.rnd.cdps', label: 'CDPS', href: '/pages/RnD/cdps.html' },
+          { key: 'nav.rnd.helicon', label: 'Helicon', href: '/pages/RnD/helicon.html' },
+          { key: 'nav.rnd.pptDpf1', label: 'PPT DPF-I', href: '/pages/RnD/ppt_dpf1.html' },
+          { key: 'nav.rnd.pptDpf2', label: 'PPT DPF-II', href: '/pages/RnD/ppt_dpf2.html' }
+        ],
+        staff: [
+          { key: 'nav.staff.fileStorage', label: 'File Storage Server', href: CONFIG.fileStorageUrl, target: '_blank' },
+          { key: 'nav.staff.mailStorage', label: 'Mail Storage Server', href: CONFIG.mailStorageUrl, target: '_blank' },
+          { key: 'nav.staff.canteen', label: 'CPP-IPR Canteen', href: CONFIG.canteenUrl, target: '_blank' },
+          { key: 'nav.staff.internalFile', label: 'Internal File Sharing Server', href: CONFIG.internalFileUrl, target: '_blank' },
+          { key: 'nav.staff.library', label: 'Library', href: '/pages/Library/library.html' }
+        ],
+        seminars: [
+          { key: 'nav.seminars.studentSeminar', label: 'Student Seminar', href: '/pages/Seminars_Colloquiums/student_seminar.html' },
+          { key: 'nav.seminars.colloquiums', label: 'Colloquiums', href: '/pages/Seminars_Colloquiums/collo.html' },
+          { key: 'nav.seminars.conferencesArchive', label: 'Conferences Archive', href: '/pages/Seminars_Colloquiums/conferences_archive.html' }
+        ],
+        // NEW: IPR Pages Dropdown Data
+        iprPages: [
+          { key: 'nav.iprPages.website', label: 'IPR Website', href: 'https://www.ipr.res.in/', target: '_blank' },
+          { key: 'nav.iprPages.hindiCell', label: 'Hindi Cell', href: 'https://www.ipr.res.in/hindicell/index.html', target: '_blank' },
+          { key: 'nav.iprPages.hpcNewsletter', label: 'HPC Newsletter', href: 'https://www.ipr.res.in/ANTYA/', target: '_blank' },
+          { key: 'nav.iprPages.iprNewsletter', label: 'IPR Newsletter', href: 'https://www.ipr.res.in/newsletter/index.html', target: '_blank' },
+          { key: 'nav.iprPages.outreach', label: 'Outreach', href: 'https://www.ipr.res.in/outreach/index.html', target: '_blank' },
+          { key: 'nav.iprPages.publicGrievances', label: 'Public Grievances', href: 'https://pgportal.gov.in/', target: '_blank' },
+          { key: 'nav.iprPages.jobs', label: 'Jobs', href: 'https://www.ipr.res.in/documents/jobs_career.html', target: '_blank' }
+        ]
+      };
+
+      const dropdownRoot = document.getElementById('dropdown-root');
+      if (!dropdownRoot) return;
+
+      const dropdownMenus = {};
+
+      // Create dropdown menus
+      Object.keys(dropdownData).forEach(key => {
+        const menu = document.createElement('div');
+        menu.className = 'dropdown-menu';
+        menu.dataset.menu = key;
+
+        menu.innerHTML = dropdownData[key].map(item => {
+          const targetAttr = item.target ? ` target="${item.target}" rel="noopener noreferrer"` : '';
+          return `<a href="${item.href}" class="dropdown-item"${targetAttr} data-i18n-nav="${item.key}">${item.label}</a>`;
+        }).join('');
+
+        dropdownRoot.appendChild(menu);
+        dropdownMenus[key] = menu;
+      });
+
+      // FIXED: Position menu function that calculates based on current scroll
+      function positionMenu(toggle, menu) {
+        const rect = toggle.getBoundingClientRect();
+
+        // Calculate position - place directly below the toggle
+        let top = rect.bottom + 4; // 4px gap
+        let left = rect.left;
+
+        // Temporarily show to measure
+        menu.style.visibility = 'hidden';
+        menu.style.display = 'block';
+
+        const menuRect = menu.getBoundingClientRect();
+
+        // Adjust if dropdown goes off right edge of screen
+        if (left + menuRect.width > window.innerWidth) {
+          left = Math.max(8, window.innerWidth - menuRect.width - 8);
+        }
+
+        // Ensure dropdown doesn't go off left edge of screen
+        left = Math.max(8, left);
+
+        // Apply positions
+        menu.style.top = Math.round(top) + 'px';
+        menu.style.left = Math.round(left) + 'px';
+
+        menu.style.visibility = '';
+        menu.style.display = '';
+      }
+
+      // Close all dropdowns function
+      function closeAllDropdowns() {
+        Object.values(dropdownMenus).forEach(m => m.classList.remove('show'));
+      }
+
+      // Handle dropdown toggles
+      document.querySelectorAll('.dropdown-toggle[data-menu]').forEach(toggle => {
+        const key = toggle.dataset.menu;
+        const menu = dropdownMenus[key];
+        if (!menu) return;
+
+        toggle.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+
+          const wasOpen = menu.classList.contains('show');
+
+          // Close all dropdowns first
+          closeAllDropdowns();
+
+          if (!wasOpen) {
+            // Position and show the clicked dropdown
+            positionMenu(toggle, menu);
+            menu.classList.add('show');
+          }
+        });
+      });
+
+      // Close dropdowns when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('.dropdown-toggle')) {
+          closeAllDropdowns();
+        }
+      });
+
+      // Close dropdowns on scroll (Option 1)
+      window.addEventListener('scroll', () => {
+        closeAllDropdowns();
+      }, { passive: true });
+
+      // Close dropdowns on window resize
+      window.addEventListener('resize', () => {
+        closeAllDropdowns();
+      });
+
+      // Close on Escape key
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeAllDropdowns();
+        }
+      });
+    }
+
+    // INIT ALL
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function () {
+        setDynamicLinks();
+        initZoom();
+        initMobileMenu();
+        initDropdowns();
+      });
+    } else {
+      setDynamicLinks();
+      initZoom();
+      initMobileMenu();
+      initDropdowns();
+    }
+
+  })();
+
+  // TRANSLATIONS
+  window.navTranslations = {
+    en: {
+      "nav.home": "Home",
+      "nav.profile": "Profile",
+      "nav.people": "People",
+      "nav.rnd": "R&D Activities",
+      "nav.staff": "For Staffs",
+      "nav.seminars": "Seminars & Colloquiums",
+      "nav.iprPages": "IPR Pages",
+      "nav.rti": "RTI",
+      "nav.links": "Important Links",
+      "nav.tenders": "Tenders",
+      "nav.advertisement": "Advertisement",
+      "nav.reachUs": "Reach Us",
+      "nav.menu": "Menu",
+      "nav.oldWebsite": "Old Website",
+      "nav.admin": "Admin Panel",
+      "nav.zoomIn": "Zoom +",
+      "nav.zoomOut": "Zoom -",
+      "nav.people.centerDirector": "Centre Director",
+      "nav.people.adminStaff": "Administrative Staff",
+      "nav.people.faculty": "Faculties / Scientists / Engineers",
+      "nav.people.pdfs": "PDFs / Research Scholars",
+      "nav.rnd.cimplePsi": "CIMPLE-PSI Lab",
+      "nav.rnd.tsl": "Theory & Simulation Lab",
+      "nav.rnd.pal": "Plasma Accelerator Lab",
+      "nav.rnd.iecf": "IECF Lab",
+      "nav.rnd.dusty": "Dusty Plasma Lab",
+      "nav.rnd.doublePlasma": "Double Plasma Device Lab",
+      "nav.rnd.cdps": "Cross-Disciplinary Plasma Science Lab",
+      "nav.rnd.helicon": "Helicon Lab",
+      "nav.rnd.pptDpf1": "PPT DPF-I Lab",
+      "nav.rnd.pptDpf2": "PPT DPF-II Lab",
+      "nav.staff.fileStorage": "File Storage Server",
+      "nav.staff.mailStorage": "Mail Storage Server",
+      "nav.staff.canteen": "CPP-IPR Canteen",
+      "nav.staff.internalFile": "Internal File Sharing Server",
+      "nav.staff.library": "Library",
+      "nav.seminars.studentSeminar": "Student Seminar",
+      "nav.seminars.colloquiums": "Colloquiums",
+      "nav.seminars.conferencesArchive": "Conferences Archive",
+      "nav.iprPages.website": "IPR Website",
+      "nav.iprPages.hindiCell": "Hindi Cell",
+      "nav.iprPages.hpcNewsletter": "HPC Newsletter",
+      "nav.iprPages.iprNewsletter": "IPR Newsletter",
+      "nav.iprPages.outreach": "Outreach",
+      "nav.iprPages.publicGrievances": "Public Grievances",
+      "nav.iprPages.jobs": "Jobs"
+    },
+    hi: {
+      "nav.home": "होम",
+      "nav.profile": "प्रोफ़ाइल",
+      "nav.people": "जन शक्ति",
+      "nav.rnd": "आर एंड डी गतिविधियाँ",
+      "nav.staff": "स्टाफ हेतु",
+      "nav.seminars": "संगोष्ठी एवं व्याख्यान",
+      "nav.iprPages": "आईपीआर पेज",
+      "nav.rti": "सूचना का अधिकार",
+      "nav.links": "महत्त्वपूर्ण लिंक",
+      "nav.tenders": "निविदाएँ",
+      "nav.advertisement": "विज्ञापन",
+      "nav.reachUs": "हम तक पहुँचें",
+      "nav.menu": "मेन्यू",
+      "nav.oldWebsite": "पुरानी वेबसाइट",
+      "nav.admin": "एडमिन पैनल",
+      "nav.zoomIn": "ज़ूम +",
+      "nav.zoomOut": "ज़ूम -",
+      "nav.people.centerDirector": "केंद्र निदेशक",
+      "nav.people.adminStaff": "प्रशासनिक कर्मचारी",
+      "nav.people.faculty": "फैकल्टी / वैज्ञानिक / अभियंता",
+      "nav.people.pdfs": "पीडीएफ / शोधार्थी",
+      "nav.rnd.cimplePsi": "CIMPLE-PSI प्रयोगशाला",
+      "nav.rnd.tsl": "सिद्धांत एवं अनुकरण प्रयोगशाला",
+      "nav.rnd.pal": "प्लाज़्मा त्वरक प्रयोगशाला",
+      "nav.rnd.iecf": "IECF प्रयोगशाला",
+      "nav.rnd.dusty": "डस्टी प्लाज़्मा प्रयोगशाला",
+      "nav.rnd.doublePlasma": "डबल प्लाज़्मा उपकरण प्रयोगशाला",
+      "nav.rnd.cdps": "अंतरविषयक प्लाज़्मा विज्ञान प्रयोगशाला",
+      "nav.rnd.helicon": "हेलिकॉन प्रयोगशाला",
+      "nav.rnd.pptDpf1": "PPT DPF-I प्रयोगशाला",
+      "nav.rnd.pptDpf2": "PPT DPF-II प्रयोगशाला",
+      "nav.staff.fileStorage": "फ़ाइल स्टोरेज सर्वर",
+      "nav.staff.mailStorage": "मेल स्टोरेज सर्वर",
+      "nav.staff.canteen": "CPP-IPR कैंटीन",
+      "nav.staff.internalFile": "आंतरिक फ़ाइल साझाकरण सर्वर",
+      "nav.staff.library": "पुस्तकालय",
+      "nav.seminars.studentSeminar": "स्टूडेंट सेमिनार",
+      "nav.seminars.colloquiums": "कोलोकीअम",
+      "nav.seminars.conferencesArchive": "सम्मेलन अभिलेख",
+      "nav.iprPages.website": "आईपीआर वेबसाइट",
+      "nav.iprPages.hindiCell": "हिंदी सेल",
+      "nav.iprPages.hpcNewsletter": "एचपीसी न्यूज़लेटर",
+      "nav.iprPages.iprNewsletter": "आईपीआर न्यूज़लेटर",
+      "nav.iprPages.outreach": "आउटरीच",
+      "nav.iprPages.publicGrievances": "सार्वजनिक शिकायतें",
+      "nav.iprPages.jobs": "नौकरियाँ"
+    }
+  };
+</script>
+
+<script src="/UI/bilingual.js"></script>

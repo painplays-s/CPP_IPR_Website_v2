@@ -1,0 +1,1842 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CIMPLE-PSI Laboratory - CPP-IPR</title>
+
+    <style>
+        :root {
+            --lab-bg: #ffffff;
+            --lab-border: #d0d7e2;
+            --lab-text: #111827;
+            --lab-muted: #6b7280;
+            --lab-accent: #2563eb;
+            --lab-radius-lg: 16px;
+            --lab-tab-active: #2563eb;
+            --lab-tab-hover: #e5e7eb;
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+        }
+
+        #header-container,
+        #footer-container {
+            flex-shrink: 0;
+        }
+
+        main {
+            flex: 1;
+            padding: 1.5rem 5vw;
+            box-sizing: border-box;
+            background: #f9fafb;
+        }
+
+        .page-section {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .lab-banner {
+            width: 100%;
+            height: auto;
+            max-height: 300px;
+            border-radius: var(--lab-radius-lg);
+            object-fit: cover;
+            margin-bottom: 1.5rem;
+        }
+
+        .lab-container {
+            background: var(--lab-bg);
+            border: 1.5px solid var(--lab-border);
+            border-radius: var(--lab-radius-lg);
+            overflow: hidden;
+        }
+
+        .lab-header {
+            padding: 2rem 2rem 1.5rem;
+            text-align: center;
+            border-bottom: 2px solid var(--lab-border);
+        }
+
+        .lab-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--lab-text);
+            margin: 0;
+        }
+
+        .lab-tabs-wrapper {
+            position: relative;
+            border-bottom: 2px solid var(--lab-border);
+            background: #f9fafb;
+        }
+
+        .lab-tabs {
+            display: flex;
+            gap: 0.5rem;
+            padding: 1.5rem 2rem 0;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scrollbar-width: thin;
+            -ms-overflow-style: auto;
+        }
+
+        .lab-tabs::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .lab-tabs::-webkit-scrollbar-track {
+            background: var(--lab-border);
+            border-radius: 10px;
+        }
+
+        .lab-tabs::-webkit-scrollbar-thumb {
+            background: var(--lab-accent);
+            border-radius: 10px;
+        }
+
+        .lab-tab {
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: none;
+            border-radius: 8px 8px 0 0;
+            color: var(--lab-muted);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .lab-tab:hover {
+            background: var(--lab-tab-hover);
+            color: var(--lab-text);
+        }
+
+        .lab-tab.active {
+            background: var(--lab-tab-active);
+            color: #ffffff;
+        }
+
+        .lab-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--lab-accent);
+        }
+
+        .scroll-indicator {
+            display: none;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(37, 99, 235, 0.9);
+            color: white;
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            pointer-events: none;
+            z-index: 10;
+            animation: fadeInOut 2s infinite;
+        }
+
+        .scroll-indicator.left {
+            left: 0.5rem;
+        }
+
+        .scroll-indicator.right {
+            right: 0.5rem;
+        }
+
+        @keyframes fadeInOut {
+
+            0%,
+            100% {
+                opacity: 0.7;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        .lab-content {
+            padding: 2rem 5%;
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .overview-section {
+            max-width: 100%;
+        }
+
+        .overview-section h3 {
+            font-size: 1.5rem;
+            color: var(--lab-text);
+            margin: 0 0 1rem;
+            font-weight: 600;
+        }
+
+        .overview-section h4 {
+            font-size: 1.3rem;
+            margin: 1.5rem 0 1rem;
+            font-weight: 600;
+        }
+
+        .overview-section h4.auto-style1 {
+            color: #D43F3A;
+        }
+
+        .overview-section h4.auto-style2 {
+            color: #821AC0;
+        }
+
+        .overview-section h4.auto-style3 {
+            color: #C7254E;
+        }
+
+        .overview-section p {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: var(--lab-text);
+            margin-bottom: 1.2rem;
+            text-align: justify;
+        }
+
+        .research-figures-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 1.5rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .research-figures-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .research-item {
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--lab-border);
+        }
+
+        .research-item:last-child {
+            border-bottom: none;
+        }
+
+        .research-item h3 {
+            font-size: 1.4rem;
+            color: var(--lab-accent);
+            margin: 0 0 1rem;
+            font-weight: 600;
+        }
+
+        .research-item h3 em {
+            font-style: italic;
+        }
+
+        .research-item p {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: var(--lab-text);
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+
+        .research-figure {
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+
+        .research-figure img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            border: 1px solid var(--lab-border);
+        }
+
+        .research-figure figcaption {
+            font-size: 0.95rem;
+            color: var(--lab-muted);
+            font-style: italic;
+            margin-top: 0.75rem;
+            padding: 0.5rem;
+            text-align: center;
+            border-radius: 4px;
+        }
+
+        .people-categories {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .people-cat-btn {
+            padding: 0.6rem 1.2rem;
+            background: #f3f4f6;
+            border: 1px solid var(--lab-border);
+            border-radius: 8px;
+            color: var(--lab-text);
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .people-cat-btn:hover {
+            background: #e5e7eb;
+        }
+
+        .people-cat-btn.active {
+            background: var(--lab-tab-active);
+            color: #ffffff;
+            border-color: var(--lab-accent);
+        }
+
+        .people-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .person-card {
+            display: none;
+            background: #ffffff;
+            border: 1.5px solid var(--lab-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .person-card.show {
+            display: block;
+        }
+
+        .person-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .person-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 1rem;
+            border: 3px solid var(--lab-border);
+        }
+
+        .person-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--lab-text);
+            margin: 0 0 0.5rem;
+        }
+
+        .person-name a {
+            color: var(--lab-text);
+            text-decoration: none;
+        }
+
+        .person-name a:hover {
+            color: var(--lab-accent);
+            text-decoration: underline;
+        }
+
+        .person-role {
+            font-size: 0.95rem;
+            color: var(--lab-muted);
+            margin: 0 0 0.5rem;
+            font-style: italic;
+        }
+
+        .person-institution {
+            font-size: 0.9rem;
+            color: var(--lab-muted);
+            margin: 0 0 1rem;
+        }
+
+        .person-email {
+            font-size: 0.9rem;
+            word-break: break-all;
+            margin-bottom: 0.5rem;
+        }
+
+        .person-email a {
+            color: var(--lab-accent);
+            text-decoration: none;
+        }
+
+        .person-phone {
+            font-size: 0.9rem;
+            color: var(--lab-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .person-links {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .person-links a {
+            padding: 0.4rem 0.8rem;
+            background: #f3f4f6;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: var(--lab-text);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .person-links a:hover {
+            background: var(--lab-accent);
+            color: #ffffff;
+        }
+
+        .person-expertise {
+            margin-top: 1rem;
+            text-align: left;
+        }
+
+        .person-expertise h5 {
+            font-size: 0.9rem;
+            color: var(--lab-text);
+            margin: 0 0 0.5rem;
+            font-weight: 600;
+        }
+
+        .person-expertise ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .person-expertise li {
+            font-size: 0.85rem;
+            color: var(--lab-muted);
+            padding: 0.25rem 0;
+            padding-left: 1rem;
+            position: relative;
+        }
+
+        .person-expertise li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--lab-accent);
+        }
+
+        .publications-year {
+            margin-bottom: 2.5rem;
+        }
+
+        .publications-year h3 {
+            font-size: 1.3rem;
+            color: var(--lab-text);
+            margin: 0 0 1rem;
+            font-weight: 600;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--lab-border);
+        }
+
+        .publications-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .publications-list li {
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            background: #f9fafb;
+            border-radius: 8px;
+            border-left: 3px solid var(--lab-accent);
+            font-size: 0.95rem;
+            line-height: 1.7;
+            text-align: justify;
+        }
+
+        .publications-list li a {
+            color: var(--lab-accent);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .publications-list li a:hover {
+            text-decoration: underline;
+        }
+
+        .publications-list li em {
+            font-style: italic;
+        }
+
+        .publications-list li strong {
+            font-weight: 600;
+        }
+
+        .if-badge {
+            display: inline-block;
+            background: #10b981;
+            color: #ffffff;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+            vertical-align: middle;
+            margin-left: 0.5rem;
+        }
+
+        .awards-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .awards-list li {
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 8px;
+            border-left: 4px solid #f59e0b;
+            font-size: 1rem;
+            line-height: 1.7;
+            text-align: justify;
+        }
+
+        .awards-list li em {
+            font-style: italic;
+        }
+
+        .alumni-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .alumni-list li {
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            background: #f9fafb;
+            border-radius: 8px;
+            border-left: 3px solid var(--lab-accent);
+            font-size: 1rem;
+            line-height: 1.7;
+            text-align: left;
+        }
+
+        .alumni-list li em {
+            font-style: italic;
+        }
+
+        .facility-item {
+            margin-bottom: 2.5rem;
+        }
+
+        .facility-item p {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: var(--lab-text);
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+
+        @media (max-width: 900px) {
+            .lab-title {
+                font-size: 1.5rem;
+            }
+
+            .lab-header {
+                padding: 1.5rem 1.25rem 1rem;
+            }
+
+            .lab-tabs-wrapper {
+                padding: 0;
+            }
+
+            .lab-tabs {
+                padding: 1rem 1rem 0;
+                gap: 0.75rem;
+                -webkit-overflow-scrolling: touch;
+                scroll-behavior: smooth;
+            }
+
+            .lab-tab {
+                font-size: 0.9rem;
+                padding: 0.6rem 1rem;
+            }
+
+            .lab-content {
+                padding: 1.5rem 5%;
+            }
+
+            .people-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .scroll-indicator {
+                display: block;
+            }
+        }
+
+        @media (orientation: portrait) {
+            .lab-tabs {
+                -webkit-overflow-scrolling: touch;
+                scroll-behavior: smooth;
+            }
+        }
+
+        .auto-style4 {
+            font-size: large;
+        }
+
+        .auto-style5 {
+            font-size: small;
+        }
+
+        .auto-style6 {
+            font-size: large;
+            color: #CA2F2C;
+        }
+
+        .auto-style7 {
+            font-size: large;
+            color: #D32F2C;
+        }
+
+        .auto-style8 {
+            color: #FF0000;
+        }
+
+        .auto-style9 {
+            color: #000000;
+        }
+
+        .text-left {
+            text-align: left;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="header-container"></div>
+
+    <main>
+        <div class="page-section">
+
+            <img src="/assets/images/cimple_psi/cimplepsi_banner.jpg" alt="CIMPLE-PSI Laboratory Banner"
+                class="lab-banner">
+
+            <div class="lab-container">
+
+                <!-- LAB HEADER -->
+                <div class="lab-header">
+                    <h1 class="lab-title bilingual-title" data-hi="CIMPLE-PSI प्रयोगशाला"
+                        data-en="CIMPLE-PSI Laboratory">
+                        CIMPLE-PSI Laboratory
+                    </h1>
+                </div>
+
+                <!-- TAB NAVIGATION -->
+                <div class="lab-tabs-wrapper">
+                    <div class="lab-tabs" id="labTabs">
+                        <button class="lab-tab active" onclick="switchTab('overview')">
+                            <span class="bilingual-text" data-hi="अवलोकन" data-en="Overview">Overview</span>
+                        </button>
+                        <button class="lab-tab" onclick="switchTab('research')">
+                            <span class="bilingual-text" data-hi="अनुसंधान" data-en="Research">Research</span>
+                        </button>
+                        <button class="lab-tab" onclick="switchTab('facilities')">
+                            <span class="bilingual-text" data-hi="सुविधाएं" data-en="Facilities">Facilities</span>
+                        </button>
+                        <button class="lab-tab" onclick="switchTab('people')">
+                            <span class="bilingual-text" data-hi="लोग" data-en="People">People</span>
+                        </button>
+                        <button class="lab-tab" onclick="switchTab('publications')">
+                            <span class="bilingual-text" data-hi="प्रकाशन" data-en="Publications">Publications</span>
+                        </button>
+                        <button class="lab-tab" onclick="switchTab('awards')">
+                            <span class="bilingual-text" data-hi="पुरस्कार एवं सम्मान"
+                                data-en="Awards & Recognitions">Awards & Recognitions</span>
+                        </button>
+                        <button class="lab-tab" onclick="switchTab('alumni')">
+                            <span class="bilingual-text" data-hi="पूर्व छात्र" data-en="Alumni">Alumni</span>
+                        </button>
+                    </div>
+
+                    <div class="scroll-indicator left" id="scrollLeft">◄ Swipe</div>
+                    <div class="scroll-indicator right" id="scrollRight">Swipe ►</div>
+                </div>
+
+                <div class="lab-content">
+
+                    <!-- Overview Tab -->
+                    <div id="overview" class="tab-panel active">
+                        <div class="overview-section">
+                            <h3 class="bilingual-text" data-hi="प्रयोगशाला का अवलोकन"
+                                data-en="Overview of the laboratory">Overview of the laboratory</h3>
+
+                            <h4 class="auto-style1 bilingual-text"
+                                data-hi="<strong>I. नियंत्रित प्लाज्मा फ्यूजन से संबंधित प्लाज्मा-सतह अंतःक्रिया (PSI) अध्ययन:</strong>"
+                                data-en="<strong>I. Controlled plasma fusion relevant plasma surface interaction (PSI) studies:</strong>">
+                                <strong>I. Controlled plasma fusion relevant plasma surface interaction (PSI)
+                                    studies:</strong>
+                            </h4>
+                            <p class="bilingual-text"
+                                data-hi="यह समझना महत्वपूर्ण है कि क्या प्रस्तावित प्लाज्मा-सम्मुख सामग्रियां (PFM) आईटीईआर/डेमो जैसे भविष्य के उन्नत टोकामकों के डायवर्टर क्षेत्र में अत्यधिक ताप और कणीय स्थितियों का सामना कर सकेंगी। डी/टी अभिक्रियाओं के दौरान, आपतित विकिरण में स्थिर-अवस्था, अत्यधिक उच्च-फ्लक्स वाले निम्न-ऊर्जा आयन (T+, D+ और He+) और 14 MeV फ्यूजन न्यूट्रॉन शामिल होंगे, साथ ही एज लोकलाइज्ड मोड्स (ELM) से क्षणिक ताप-भार भी शामिल होंगे। इस प्रयोगशाला ने सिमुलेटेड आईटीईआर डायवर्टर जैसी स्थितियों के तहत कुछ पीएफएम (टंगस्टन, आईएन-आरएएफएम स्टील, डब्ल्यू-मिश्र धातु) के फ्यूजन-प्रासंगिक प्लाज्मा-सतह अंतःक्रिया (PSI) व्यवहार का अध्ययन किया। सिम्पल-पीएसआई (600 किलोवाट, अधिकतम 0.45 टेस्ला चुंबकीय क्षेत्र) को 2012-2018 के बीच स्वदेशी रूप से विकसित किया गया था, जो दुनिया के कुछ सिम्युलेटर उपकरणों में से एक है जो अत्यधिक आयन-फ्लक्स (~10<sup>24</sup> m<sup>-2</sup>s<sup>-1</sup>) और स्थिर-अवस्था ताप-फ्लक्स (~5 MWm<sup>-2</sup>) दोनों के मामले में आईटीईआर जैसे चरम मापदंडों को पुन: उत्पन्न कर सकता है। सीपीपी-आईपीआर हाई हीट फ्लक्स (एचएचएफ, 2007-12) उपकरण एक खंडित आर्क स्रोत का उपयोग करके विकसित किया गया था, जिसने सूर्य की सतह पर उपलब्ध ताप-फ्लक्स के बराबर ताप-फ्लक्स उत्पन्न किया, जहां हमने टंगस्टन के पिघलने का अध्ययन किया। टंगस्टन के कंकालीय क्रिस्टल देखे गए; इसी प्रकार की आकृतियाँ पहले रूसी टी-10 टोकामक में ग्रेफाइट के लिए पहचानी गई थीं। वर्तमान ध्यान टंगस्टन-आधारित बहु-घटक मिश्र धातुओं के विकिरण प्रतिरोध को मापने पर है।"
+                                data-en="It is important to understand, whether the proposed plasma facing materials (PFM) will withstand the extreme heat and particle conditions in the divertor region of the ITER/DEMO like future advanced tokamaks. During the D/T reactions, the incident radiation will comprise of steady-state, very high-flux of low-energy ions (T+, D+ and He+) and 14 MeV fusion neutrons, in addition to the transient heat-loads from the edge localized modes (ELM). This laboratory studied the fusion relevant plasma surface interaction (PSI) behaviour of some PFM (tungsten, IN-RAFM steel, W-alloys) under simulated ITER divertor like conditions. CIMPLE-PSI (600 kW, maximum 0.45 Tesla magnetic field) was indigenously developed in between 2012-2018, which is one of the few simulator devices in the world that can reproduce ITER like extreme parameters in terms of the both extreme ion-flux (~10<sup>24</sup> m<sup>-2</sup>s<sup>-1</sup>) and steady-state heat flux (~5 MWm<sup>-2</sup>). CPP-IPR High Heat Flux (HHF, 2007-12) device was developed using a segmented arc source, which produced heat-flux equal to that available on the surface of the Sun, where we studied melting of tungsten. Observed tungsten skeletal crystals; similar morphologies were identified before in the Russian T-10 tokamak, for graphite. Current focus is on measuring irradiation resistance of tungsten based multi component alloys.">
+                                <em>It is important to understand, whether the proposed plasma facing materials (PFM)
+                                    will withstand the extreme heat and particle conditions in the divertor region of
+                                    the ITER/DEMO like future advanced tokamaks. During the D/T reactions, the incident
+                                    radiation will comprise of steady-state, very high-flux of low-energy ions (T+, D+
+                                    and He+) and 14 MeV fusion neutrons, in addition to the transient heat-loads from
+                                    the edge localized modes (ELM). This laboratory studied the fusion relevant plasma
+                                    surface interaction (PSI) behaviour of some PFM (tungsten, IN-RAFM steel, W-alloys)
+                                    under simulated ITER divertor like conditions. CIMPLE-PSI (600 kW, maximum 0.45
+                                    Tesla magnetic field) was indigenously developed in between 2012-2018, which is one
+                                    of the few simulator devices in the world that can reproduce ITER like extreme
+                                    parameters in terms of the both extreme ion-flux (~10<sup>24</sup>
+                                    m<sup>-2</sup>s<sup>-1</sup>) and steady-state heat flux (~5 MWm<sup>-2</sup>).
+                                    CPP-IPR High Heat Flux (HHF, 2007-12) device was developed using a segmented arc
+                                    source, which produced heat-flux equal to that available on the surface of the Sun,
+                                    where we studied melting of tungsten. Observed tungsten skeletal crystals; similar
+                                    morphologies were identified before in the Russian T-10 tokamak, for graphite.
+                                    Current focus is on measuring irradiation resistance of tungsten based multi
+                                    component alloys.</em>
+                            </p>
+
+                            <h4 class="auto-style2 bilingual-text"
+                                data-hi="<strong>II. सीपीपी-आईपीआर के लिए एक साझा अनुसंधान कार्यक्रम को परिभाषित करना और पोषित करना:</strong>"
+                                data-en="<strong>II. Defined and nurturing a common research program for CPP-IPR:</strong>">
+                                <strong>II. Defined and nurturing a common research program for CPP-IPR:</strong>
+                            </h4>
+                            <p class="bilingual-text"
+                                data-hi="फ्यूजन-प्रासंगिक पीएसआई अध्ययनों में साझा मूल विशेषज्ञता को संयोजित करते हुए, सिम्पल-पीएसआई ने सीपीपी-आईपीआर पल्स्ड-पावर टेक्नोलॉजी प्रयोगशाला के साथ मिलकर यह प्रदर्शित किया कि सघन प्लाज्मा फोकस (डीपीएफ) उपकरण एक हीट-फ्लक्स फैक्टर (एचएफएफ, MWm<sup>-2</sup>s<sup>0.5</sup> ~ 55) उत्पन्न करता है जो आईटीईआर जैसे ईएलएम के समान है, जिसका उपयोग टंगस्टन के थर्मल शॉक विकिरण व्यवहार का अध्ययन करने के लिए एक आदर्श परीक्षण मंच के रूप में किया जा सकता है। थर्मल-क्षणिकों के परिणामों पर हीलियम आयनों के तालमेल की व्यवस्थित रूप से जांच की गई। इस उपकरण का उपयोग फ्यूजन के लिए पीएफएम के रूप में बहु-घटक मिश्र धातुओं की उपयुक्तता को समझने के लिए भी किया जाएगा।"
+                                data-en="Combining common core expertise in fusion relevant PSI studies, CIMPLE-PSI joined with CPP-IPR Pulsed-Power Technology Laboratory to demonstrate that the dense the plasma focus (DPF) device produces a Heat-Flux Factor (HFF, MWm<sup>-2</sup>s<sup>0.5</sup> ~ 55) similar to the ITER like ELMs, which may be utilized as an ideal test bed, to study the thermal shock irradiation behaviour of tungsten. The synergy of the helium ions on the consequences of the thermal-transients were systematically investigated. This device will be also used to understand the suitability of the multi component alloys as PFM for fusion.">
+                                <em>Combining common core expertise in fusion relevant PSI studies, CIMPLE-PSI joined
+                                    with CPP-IPR Pulsed-Power Technology Laboratory to demonstrate that the dense the
+                                    plasma focus (DPF) device produces a Heat-Flux Factor (HFF,
+                                    MWm<sup>-2</sup>s<sup>0.5</sup> ~ 55) similar to the ITER like ELMs, which may be
+                                    utilized as an ideal test bed, to study the thermal shock irradiation behaviour of
+                                    tungsten. The synergy of the helium ions on the consequences of the
+                                    thermal-transients were systematically investigated. This device will be also used
+                                    to understand the suitability of the multi component alloys as PFM for fusion.</em>
+                            </p>
+
+                            <h4 class="auto-style3 bilingual-text"
+                                data-hi="<strong>III. नैनोमटेरियल्स का प्लाज्मा-सहायता प्राप्त नियंत्रित संश्लेषण:</strong>"
+                                data-en="<strong>III. Plasma assisted controlled synthesis of nanomaterials:</strong>">
+                                <strong>III. Plasma assisted controlled synthesis of nanomaterials:</strong>
+                            </h4>
+                            <p class="bilingual-text"
+                                data-hi="सुदूर दवा वितरण के लिए अतिचुंबकीय कार्बन-आच्छादित चुंबकीय नैनोकणों के प्लाज्मा संश्लेषण का प्रदर्शन किया गया, जो किसी भी विधि द्वारा पहली बार किया गया है। कुछ धातु-ऑक्साइड नैनोकणों के अत्यधिक उच्च दर (750 ग्राम/घंटा तक) संश्लेषण के लिए एक नवीन प्लाज्मा तकनीक विकसित की गई, जिसे पर्यावरणीय और जैव चिकित्सा अनुप्रयोगों के लिए अनुकूलित किया गया है।"
+                                data-en="Demonstrated plasma synthesis of superparamagnetic carbon encapsulated magnetic nanoparticles for remote drugs delivery, for the first time by any method. Developed a novel plasma technique for very high rate synthesis of certain metal-oxide nanoparticles up to 750 g/h, optimized for environmental and biomedical applications.">
+                                <em>Demonstrated plasma synthesis of superparamagnetic carbon encapsulated magnetic
+                                    nanoparticles for remote drugs delivery, for the first time by any method. Developed
+                                    a novel plasma technique for very high rate synthesis of certain metal-oxide
+                                    nanoparticles up to 750 g/h, optimized for environmental and biomedical
+                                    applications.</em>
+                            </p>
+
+                            <h4 class="auto-style2 bilingual-text"
+                                data-hi="<strong>IV. सीपीपी-आईपीआर में पूर्वोत्तर भारत के पहले आयन-त्वरक, एक 2 एमवी टैंडेट्रॉन की स्थापना का प्रस्ताव, जो भारत के फ्यूजन कार्यक्रम के लिए सामग्रियों को योग्य ठहराएगा।</strong>"
+                                data-en="<strong>IV. A proposal to setup Northeast India's first Ion-Accelerator at CPP-IPR, a 2 MV Tandetron to qualify materials for India's Fusion Program.</strong>">
+                                <strong>IV. A proposal to setup Northeast India's first Ion-Accelerator at CPP-IPR, a 2
+                                    MV Tandetron to qualify materials for India's Fusion Program.</strong>
+                            </h4>
+                            <p class="bilingual-text"
+                                data-hi="उच्च-ऊर्जा आयनों का उपयोग भारत के डेमो कार्यक्रम के लिए आईएन-आरएएफएम स्टील और डब्ल्यू-मिश्र धातुओं के साथ फ्यूजन न्यूट्रॉन की अंतःक्रिया की प्रक्रिया के विकल्प के रूप में किया जाएगा।"
+                                data-en="High-energy ions will be utilized to surrogate the process of interaction of fusion neutrons with IN-RAFM steel and W-alloys, for India's DEMO program.">
+                                <em>High-energy ions will be utilized to surrogate the process of interaction of fusion
+                                    neutrons with IN-RAFM steel and W-alloys, for India's DEMO program.</em>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Research Tab -->
+                    <div id="research" class="tab-panel">
+
+                        <!-- Research Item 1: CIMPLE-PSI Device -->
+                        <div class="research-item">
+                            <h3 class="bilingual-text" data-hi="<strong><em>CIMPLE-PSI</em></strong>"
+                                data-en="<strong><em>CIMPLE-PSI</em></strong>">
+                                <strong><em>CIMPLE-PSI</em></strong>
+                            </h3>
+
+                            <p class="bilingual-text"
+                                data-hi="<em><strong><span class='auto-style4'>नियंत्रित प्लाज्मा फ्यूजन अनुसंधान के लिए एक टोकामक डायवर्टर सिम्युलेटर उपकरण - प्लाज्मा सतह अंतःक्रिया (PSI) अध्ययन</span></strong></em>"
+                                data-en="<em><strong><span class='auto-style4'>A Tokamak Divertor Simulator Device for Controlled Plasma Fusion Research Relevant Plasma Surface Interaction (PSI) Studies</span></strong></em>">
+                                <em><strong><span class="auto-style4">A Tokamak Divertor Simulator Device for Controlled
+                                            Plasma Fusion Research Relevant Plasma Surface Interaction (PSI)
+                                            Studies</span></strong></em>
+                            </p>
+
+                            <figure class="research-figure">
+                                <img src="/assets/images/cimple_psi/cimple_psi_system2.jpg" alt="The CIMPLE-PSI device">
+                                <figcaption class="bilingual-text" data-hi="सिम्पल-पीएसआई उपकरण का फोटोग्राफ"
+                                    data-en="Photograph of the CIMPLE-PSI device">
+                                    Photograph of the CIMPLE-PSI device
+                                </figcaption>
+                            </figure>
+
+                            <p class="bilingual-text"
+                                data-hi="यह पहले से समझना आवश्यक है कि अभूतपूर्व आयन-फ्लक्स और ताप-फ्लक्स वाले आईटीईआर टोकामक में प्लाज्मा डायवर्टर क्षेत्र के साथ कैसे अंतःक्रिया करेगा, जब यह दुनिया का सबसे बड़ा फ्यूजन-मशीन अगले कुछ वर्षों में फ्रांस के कादाराशे में परिचालन हो जाएगा। भारत के पूर्वोत्तर भाग में स्थित यह प्रयोगशाला उन्नत प्रायोगिक प्रणालियों के विकास में लगी हुई है जहां फ्यूजन-प्रासंगिक पीएसआई मुद्दों का अध्ययन सिम्युलेटेड टोकामक, डायवर्टर जैसी प्लाज्मा स्थितियों के तहत किया जा सकता है। सिम्पल-पीएसआई उपकरण स्वदेशी रूप से डिजाइन और विकसित किया गया था, जो स्थिर-अवस्था स्थितियों के तहत आईटीईआर जैसे आयन-फ्लक्स (~10<sup>24</sup> m<sup>-2</sup>s<sup>-1</sup>), ताप-फ्लक्स (~5×10<sup>6</sup> Wm<sup>-2</sup>) और आयन-फ्लुएंस (~3×10<sup>27</sup> m<sup>-2</sup>) को पुन: उत्पन्न कर सकता है। उपकरण को निरंतर संचालन के लिए लगभग 600 किलोवाट शक्ति की आवश्यकता होती है, इसे 14,000 m<sup>3</sup>/h से अधिक गति वाले चार सेट रूट्स/रोटरी वैक्यूम पंपों द्वारा पंप किया जाता है। एक खंडित प्लाज्मा टॉर्च का उपयोग घने, उच्च वेग प्लाज्मा जेट का उत्पादन करने के लिए किया जाता है, जिसे जल-शीतित विद्युत चुंबक द्वारा उत्पादित अक्षीय चुंबकीय क्षेत्र (अधिकतम 0.45 टेस्ला) द्वारा एक कोलिमेटेड प्लाज्मा बीम में सीमित किया जाता है।"
+                                data-en="It is essential to understand in advance, how the plasma in the ITER tokamak with unprecedented ion-flux and heat-flux, will interact with the Divertor region, once this world's largest fusion-machine becomes operational in Cadarache, France, in the next couples of years. This laboratory in the northeastern part of India has been engaged in the development of advanced experimental systems where fusion relevant PSI issues may be studied under simulated Tokamak, Divertor like plasma conditions. CIMPLE-PSI device was indigenously designed and developed, which can reproduce ITER like ion-flux (~10<sup>24</sup> m<sup>-2</sup>s<sup>-1</sup>), heat-flux (~5×10<sup>6</sup> Wm<sup>-2</sup>) and ion-fluence (~3×10<sup>27</sup> m<sup>-2</sup>), under steady-state conditions. The device requires about 600 kW power for continuous operation, is pumped down by four sets of roots/rotary vacuum pumps with speed more than 14,000 m<sup>3</sup>/h. A segmented plasma torch is used to produce a dense, high velocity plasma jet, which is confined into a collimated plasma beam by an axial magnetic field (maximum 0.45 Tesla) produced with a water-cooled electromagnet.">
+                                It is essential to understand in advance, how the plasma in the ITER tokamak with
+                                unprecedented ion-flux and heat-flux, will interact with the Divertor region, once this
+                                world's largest fusion-machine becomes operational in Cadarache, France, in the next
+                                couples of years. This laboratory in the northeastern part of India has been engaged in
+                                the development of advanced experimental systems where fusion relevant PSI issues may be
+                                studied under simulated Tokamak, Divertor like plasma conditions. CIMPLE-PSI device was
+                                indigenously designed and developed, which can reproduce ITER like ion-flux
+                                (~10<sup>24</sup> m<sup>-2</sup>s<sup>-1</sup>), heat-flux (~5×10<sup>6</sup>
+                                Wm<sup>-2</sup>) and ion-fluence (~3×10<sup>27</sup> m<sup>-2</sup>), under steady-state
+                                conditions. The device requires about 600 kW power for continuous operation, is pumped
+                                down by four sets of roots/rotary vacuum pumps with speed more than 14,000
+                                m<sup>3</sup>/h. A segmented plasma torch is used to produce a dense, high velocity
+                                plasma jet, which is confined into a collimated plasma beam by an axial magnetic field
+                                (maximum 0.45 Tesla) produced with a water-cooled electromagnet.
+                            </p>
+
+                            <p><a href="https://doi.org/10.1088/1741-4326/ab0248" target="_blank"><em><span
+                                            class="auto-style5">(M. Kakati et al., Design, development, and recent
+                                            experiments of the CIMPLE-PSI device, Nuclear Fusion 59 (2019)
+                                            112008)</span></em></a></p>
+
+                            <figure class="research-figure">
+                                <img src="/assets/images/cimple_psi/cimple_psi_system3.jpg"
+                                    alt="FESEM micrograph of tungsten skeletal crystals">
+                                <figcaption class="bilingual-text"
+                                    data-hi="सीपीपी-आईपीआर एचएचएफ उपकरण में देखे गए टंगस्टन कंकालीय क्रिस्टल का एफईएसईएम माइक्रोग्राफ"
+                                    data-en="FESEM micrograph of tungsten skeletal crystals observed in CPP-IPR HHF Device">
+                                    FESEM micrograph of tungsten skeletal crystals observed in CPP-IPR HHF Device
+                                </figcaption>
+                            </figure>
+
+                            <p class="bilingual-text"
+                                data-hi="सीपीपी-आईपीआर हाई हीट फ्लक्स (एचएचएफ) उपकरण एक प्लाज्मा-सहायता प्राप्त नियंत्रित ताप स्रोत है, जहां प्लाज्मा जेट को केवल गैस गतिशील नियंत्रण द्वारा और यहां तक कि चुंबकीय क्षेत्र के बिना भी सीमित किया जाता है। एचएचएफ सूर्य की सतह (10 MWm<sup>-2</sup>) के समान तीव्र, सतत ताप-फ्लक्स को पुन: उत्पन्न कर सकता है। इस प्रणाली में टंगस्टन के विदेशी कंकालीय और गोलाकार स्फेरुलाइटिक सूक्ष्म-क्रिस्टल का संघनन देखा गया। इसी प्रकार की अत्यधिक गैर-संतुलन धूल जैसी आकृतियाँ पहले रूस में टी-10 टोकामक में बताई गई थीं।"
+                                data-en="The CPP-IPR high heat flux (HHF) device is a plasma-assisted controlled heat source, where the plasma jet is confined simply by gas dynamic control and even without a magnetic field. HHF can reproduce an intense, continuous heat-flux similar to that on the surface of the sun (10 MWm<sup>-2</sup>). Condensation of exotic skeletal and spherulitic micro-crystals of tungsten were observed in this system. Similar highly non-equilibrium dust like morphologies were reported before in the T-10 tokamak, in Russia.">
+                                The CPP-IPR high heat flux (HHF) device is a plasma-assisted controlled heat source,
+                                where the plasma jet is confined simply by gas dynamic control and even without a
+                                magnetic field. HHF can reproduce an intense, continuous heat-flux similar to that on
+                                the surface of the sun (10 MWm<sup>-2</sup>). Condensation of exotic skeletal and
+                                spherulitic micro-crystals of tungsten were observed in this system. Similar highly
+                                non-equilibrium dust like morphologies were reported before in the T-10 tokamak, in
+                                Russia.
+                            </p>
+
+                            <p><a href="https://doi.org/10.1016/j.fusengdes.2016.03.061" target="_blank"><em><span
+                                            class="auto-style5">(N. Aomoa et al., Development of a plasma assisted ITER
+                                            level controlled heat source and observation of novel micro/nanostructures
+                                            produced upon exposure of tungsten targets, Fusion Eng. Des. 106, 63
+                                            (2016))</span></em></a></p>
+                        </div>
+
+                        <!-- Research Item 2: Helium plasma interaction with W and IN-RAFM Steel -->
+                        <div class="research-item">
+                            <h3 class="bilingual-text"
+                                data-hi="<strong><em>डब्ल्यू और आईएन-आरएएफएम स्टील के साथ हीलियम प्लाज्मा अंतःक्रिया</em></strong>"
+                                data-en="<strong><em>Helium plasma interaction with W and IN-RAFM Steel</em></strong>">
+                                <strong><em>Helium plasma interaction with W and IN-RAFM Steel</em></strong>
+                            </h3>
+
+                            <p class="bilingual-text"
+                                data-hi="सिम्पल-पीएसआई में उच्च तापमान (अधिकतम 1430 K तक) पर बायस्ड टंगस्टन लक्ष्यों के साथ उच्च फ्लुएंस हीलियम प्लाज्मा की अंतःक्रिया से सतही फाइबर फॉर्म संरचनाओं का निर्माण हुआ, जिसे डब्ल्यू-फज के रूप में भी जाना जाता है, जो पहले टोकामकों और अन्य टोकामक डायवर्टर सिम्युलेटर उपकरणों में देखा गया था। फज के अंदर के बुलबुले, जो उन संरचनाओं के निर्माण के लिए अग्रदूत हैं, को 300 kV एचआरटीईएम के साथ फोटोग्राफ किया गया, जबकि डब्ल्यू सतह के ठीक नीचे एम्बेडेड रहने वाले उन बुलबुलों के व्यास गहराई प्रोफाइल को ग्रेजिंग इंसीडेंस स्मॉल एंगल एक्स-रे स्कैटरिंग (जीआईएसएएक्सएस) की तकनीक द्वारा मापा गया।"
+                                data-en="Interaction of high fluence helium plasma with biased tungsten targets, at elevated target temperature (maximum up to 1430 K) in CIMPLE-PSI led to the formation of surface fiber form structures, also known as W-fuzz, which was observed before in tokamaks and also in other tokamak divertor simulator devices. Bubbles inside the fuzz, which are the precursors for formation of those structures, were photographed with a 300 kV HRTEM, while diameter depth profile of those bubbles remaining embedded just below the W surface were measured by the technique of grazing incidence small angle x-ray scattering (GISAXS).">
+                                Interaction of high fluence helium plasma with biased tungsten targets, at elevated
+                                target temperature (maximum up to 1430 K) in CIMPLE-PSI led to the formation of surface
+                                fiber form structures, also known as W-fuzz, which was observed before in tokamaks and
+                                also in other tokamak divertor simulator devices. Bubbles inside the fuzz, which are the
+                                precursors for formation of those structures, were photographed with a 300 kV HRTEM,
+                                while diameter depth profile of those bubbles remaining embedded just below the W
+                                surface were measured by the technique of grazing incidence small angle x-ray scattering
+                                (GISAXS).
+                            </p>
+
+                            <p class="auto-style5"><a href="https://doi.org/10.1088/1741-4326/ab0248"
+                                    target="_blank"><em>(M. Kakati et al., Design, development, and recent experiments
+                                        of the CIMPLE-PSI device, Nuclear Fusion 59 (2019) 112008)</em></a></p>
+
+                            <figure class="research-figure">
+                                <img src="/assets/images/cimple_psi/figure5.jpg" alt="HRTEM micrograph of W-fuzz">
+                                <figcaption class="bilingual-text"
+                                    data-hi="एम्बेडेड हीलियम बुलबुले के साथ डब्ल्यू-फज का एचआरटीईएम माइक्रोग्राफ (इनसेट एक्सपोज्ड सतह के नीचे छिपे बुलबुलों के व्यास गहराई प्रोफाइल दिखाता है)"
+                                    data-en="HRTEM micrograph of W-fuzz with embedded helium bubbles (inset shows diameter depth profiles of the bubbles remaining hidden under the exposed surface)">
+                                    HRTEM micrograph of W-fuzz with embedded helium bubbles (inset shows diameter depth
+                                    profiles of the bubbles remaining hidden under the exposed surface)
+                                </figcaption>
+                            </figure>
+
+                            <p class="bilingual-text"
+                                data-hi="पहली बार, इस प्रयोगशाला ने उच्च आयन-फ्लुएंस, कम तापमान हीलियम प्लाज्मा के विकिरण के तहत आईएन-आरएएफएम स्टील के एक्सपोजर व्यवहार को मापा, जिसमें फाइबर-फॉर्म संशोधित सतह आकृतियों की वृद्धि और आरबीएस और ईडीएस मापों द्वारा प्रकट उच्च-जेड तत्वों के साथ सतह संवर्धन भी देखा गया। फाइबर के अंदर एक बार फिर हीलियम बुलबुले की पहचान की गई, जिसने एक्सपोज्ड धातु की सतह को तोड़कर एक अत्यधिक झरझरा, शीर्ष परत का निर्माण किया। एक महत्वपूर्ण अवलोकन यह था कि स्टील की स्पटरिंग उपज आयन-फ्लुएंस के साथ कम हो गई, मुख्य रूप से अत्यधिक झरझरा, फाइबर-फॉर्म सतह के विकास के कारण, न कि केवल डब्ल्यू के साथ सतह संवर्धन के कारण, जैसा कि पिछले प्रयोगों द्वारा निष्कर्ष निकाला गया था।"
+                                data-en="For the first time, this laboratory measured the exposure behavior of IN-RAFM steel under irradiation of high ion-fluence, low temperature helium plasma that also witnessed growth of fiber-form modified surface morphologies, and surface enrichment with high-Z elements as revealed by the RBS and EDS measurements. Helium bubbles were identified once again inside the fibers, which ruptured the exposed metal surface to form a highly porous, top layer. An important observation was, the sputtering yield of the steel decreased with the ion-fluence, primarily due to the evolution of the highly porous, fiber-form surface, and not only due to the surface enrichment with W, as was concluded by the previous experiments.">
+                                For the first time, this laboratory measured the exposure behavior of IN-RAFM steel
+                                under irradiation of high ion-fluence, low temperature helium plasma that also witnessed
+                                growth of fiber-form modified surface morphologies, and surface enrichment with high-Z
+                                elements as revealed by the RBS and EDS measurements. Helium bubbles were identified
+                                once again inside the fibers, which ruptured the exposed metal surface to form a highly
+                                porous, top layer. An important observation was, the sputtering yield of the steel
+                                decreased with the ion-fluence, primarily due to the evolution of the highly porous,
+                                fiber-form surface, and not only due to the surface enrichment with W, as was concluded
+                                by the previous experiments.
+                            </p>
+
+                            <p class="auto-style5"><a href="https://doi.org/10.1088/1741-4326/abae46"
+                                    target="_blank"><em>(Trinayan Sarmah et al., Exposure of Indian RAFM under variation
+                                        of He<sup>+</sup> flux and target temperature in the CIMPLE-PSI linear device,
+                                        Nuclear Fusion 59 10 (2020): 106026)</em></a></p>
+
+                            <figure class="research-figure">
+                                <img src="/assets/images/cimple_psi/figure6.jpg"
+                                    alt="FESEM micrograph of IN-RAFM samples">
+                                <figcaption class="bilingual-text"
+                                    data-hi="He प्लाज्मा एक्सपोज्ड आईएन-आरएएफएम नमूनों पर उगाई गई सूक्ष्म संरचनाओं का एफईएसईएम माइक्रोग्राफ, इनसेट उच्च-जेड तत्वों के साथ सतह संवर्धन का आरबीएस माप दिखाता है"
+                                    data-en="FESEM micrograph of the microstructures grown on He plasma exposed IN-RAFM samples, inset shows RBS measurement of the surface enrichment with high-Z elements">
+                                    FESEM micrograph of the microstructures grown on He plasma exposed IN-RAFM samples,
+                                    inset shows RBS measurement of the surface enrichment with high-Z elements
+                                </figcaption>
+                            </figure>
+                        </div>
+
+                        <!-- Research Item 3: Studies on recrystallization of W -->
+                        <div class="research-item">
+                            <h3 class="bilingual-text"
+                                data-hi="<strong><em>डब्ल्यू के पुनर्क्रिस्टलीकरण पर अध्ययन</em></strong>"
+                                data-en="<strong><em>Studies on recrystallization of W</em></strong>">
+                                <strong><em>Studies on recrystallization of W</em></strong>
+                            </h3>
+
+                            <p class="bilingual-text"
+                                data-hi="आईटीईआर टोकामक में, प्लाज्मा ताप भार कुछ क्षेत्रों में टंगस्टन डायवर्टर के सतह तापमान को 1300°C से अधिक बढ़ा सकता है। इससे धातु का पुनर्क्रिस्टलीकरण, अनाज वृद्धि होगी, जिससे इसके सतह गुणों में गिरावट आएगी। सिम्पल-पीएसआई में, हम 3.6×10<sup>27</sup> m<sup>-2</sup> की हीलियम आयन फ्लुएंस और 1866±5 K तक के बहुत उच्च लक्ष्य तापमान के तहत विकिरणित होने पर टंगस्टन के पुनर्क्रिस्टलीकरण व्यवहार की जांच कर रहे हैं। डब्ल्यू-फज की एक घनी, मोटी (15 माइक्रोन तक) परत देखी गई, जिसे नीचे की सतह की जांच करने के लिए धीरे से हटाया जाता है। यह देखा गया है कि बड़े पिनहोल उच्च तापमान वाले नमूनों की अनाज सीमाओं को घनी रूप से आबाद करते हैं, जिनका अधिकतम आकार पांच सौ नैनोमीटर से भी अधिक है।"
+                                data-en="In the ITER tokamak, plasma heat loads may increase the surface temperature of the tungsten divertor beyond 1300°C in some areas. That will lead to recrystallization, grain growth of the metal, thus deteriorating its surface properties. In CIMPLE-PSI, we are investigating recrystallization behaviour of tungsten while irradiated by helium ion fluence of 3.6×10<sup>27</sup> m<sup>-2</sup> and very high target temperature up to 1866±5 K. A dense, thick (up to 15 micron) layer of W-fuzz was observed, which is gently wiped off to examine the surface underneath. It is seen that large pinholes densely populate the grain boundaries of the high temperature samples, with maximum size even beyond five hundred nanometers.">
+                                In the ITER tokamak, plasma heat loads may increase the surface temperature of the
+                                tungsten divertor beyond 1300°C in some areas. That will lead to recrystallization,
+                                grain growth of the metal, thus deteriorating its surface properties. In CIMPLE-PSI, we
+                                are investigating recrystallization behaviour of tungsten while irradiated by helium ion
+                                fluence of 3.6×10<sup>27</sup> m<sup>-2</sup> and very high target temperature up to
+                                1866±5 K. A dense, thick (up to 15 micron) layer of W-fuzz was observed, which is gently
+                                wiped off to examine the surface underneath. It is seen that large pinholes densely
+                                populate the grain boundaries of the high temperature samples, with maximum size even
+                                beyond five hundred nanometers.
+                            </p>
+
+                            <figure class="research-figure">
+                                <img src="/assets/images/cimple_psi/figure7.jpg" alt="Plasma interacting with material">
+                                <figcaption class="bilingual-text"
+                                    data-hi="फोटोग्राफ दिखाता है कि प्लाज्मा सिम्पल-पीएसआई में सामग्री के साथ अंतःक्रिया कर रहा है, जो नियंत्रित तापमान और बायसिंग के लिए जल-शीतित धारक से जुड़ा हुआ है"
+                                    data-en="Photograph shows plasma interacting with the material in CIMPLE-PSI, which is attached with a water-cooled holder for controlled temperature and biasing">
+                                    Photograph shows plasma interacting with the material in CIMPLE-PSI, which is
+                                    attached with a water-cooled holder for controlled temperature and biasing
+                                </figcaption>
+                            </figure>
+
+                            <p class="bilingual-text"
+                                data-hi="यह पिछले पुनर्क्रिस्टलीकरण अध्ययनों में देखे गए पिनहोल की तुलना में परिमाण के क्रम में बड़ा है, जहां प्लाज्मा एक्सपोजर आमतौर पर कम-नमूना तापमान स्थितियों के तहत किया जाता था। अनाज आकार माप ने पुष्टि की कि इन नमूनों के लिए विलंबित पुनर्क्रिस्टलीकरण प्रभावी है, हालांकि यह पहले देखा गया था कि विसरित हीलियम से पिनिंग प्रभाव बुलबुले के बढ़ते आकार के साथ कम हो सकता है। हमारे प्रयोग के दौरान एनीलिंग प्लाज्मा एक्सपोजर के दौरान हुई न कि क्रमिक रूप से जैसा कि अधिकांश पिछले प्रयोगों में था, यह एक कारण हो सकता है कि हीलियम का अवरोधक प्रभाव अभी भी प्रभावी था। इन उच्च तापमान वाले नमूनों के लिए हीलियम अनाज सीमाओं के साथ केवल कुछ दसियों नैनोमीटर से अधिक विसरित होने की संभावना है, जिसने पुनर्क्रिस्टलीकरण प्रक्रिया के अवरोध में भी योगदान दिया हो सकता है।"
+                                data-en="This is order of magnitude bigger compared to pinholes observed before in previous recrystallization studies where plasma exposure were carried-out typically under low-sample temperature conditions. Grain size measurements confirmed retarded recrystallization is effective for these samples, although it was observed before that pinning effect from diffused helium may reduce with increasing size of the bubbles. During our experiment the annealing occurred during the plasma exposure and not sequentially as in most previous experiments, that may be a reason that retarding effect of helium was still effective. Helium is likely to have diffused much beyond only few tens of nanometers along the grain boundaries for these high temperature samples that also might have contributed towards retardation of the recrystallization process.">
+                                This is order of magnitude bigger compared to pinholes observed before in previous
+                                recrystallization studies where plasma exposure were carried-out typically under
+                                low-sample temperature conditions. Grain size measurements confirmed retarded
+                                recrystallization is effective for these samples, although it was observed before that
+                                pinning effect from diffused helium may reduce with increasing size of the bubbles.
+                                During our experiment the annealing occurred during the plasma exposure and not
+                                sequentially as in most previous experiments, that may be a reason that retarding effect
+                                of helium was still effective. Helium is likely to have diffused much beyond only few
+                                tens of nanometers along the grain boundaries for these high temperature samples that
+                                also might have contributed towards retardation of the recrystallization process.
+                            </p>
+
+                            <figure class="research-figure">
+                                <img src="/assets/images/cimple_psi/figure8.jpg"
+                                    alt="FESEM micrograph of tungsten sample">
+                                <figcaption class="bilingual-text"
+                                    data-hi="1866±5 K पर हीलियम प्लाज्मा के संपर्क में आए बायस्ड (-45 V) टंगस्टन नमूने का एफईएसईएम माइक्रोग्राफ"
+                                    data-en="FESEM micrograph of the biased (-45 V) tungsten sample exposed to helium plasma at 1866±5 K">
+                                    FESEM micrograph of the biased (-45 V) tungsten sample exposed to helium plasma at
+                                    1866±5 K
+                                </figcaption>
+                            </figure>
+                        </div>
+
+                        <!-- Research Item 4: Plasma assisted bulk production of nanomaterials -->
+                        <div class="research-item">
+                            <h3 class="bilingual-text"
+                                data-hi="<strong><em>नैनोमटेरियल्स का प्लाज्मा सहायता प्राप्त थोक उत्पादन</em></strong>"
+                                data-en="<strong><em>Plasma assisted bulk production of nanomaterials</em></strong>">
+                                <strong><em>Plasma assisted bulk production of nanomaterials</em></strong>
+                            </h3>
+
+                            <p><strong><span class="auto-style6 bilingual-text"
+                                        data-hi="धातु-ऑक्साइड नैनोमटेरियल्स का थोक उत्पादन:"
+                                        data-en="Bulk production of metal-oxide nanomaterials:">Bulk production of
+                                        metal-oxide nanomaterials:</span></strong>
+                                <span class="bilingual-text"
+                                    data-hi="यह प्रयोगशाला जल उपचार, पर्यावरण इंजीनियरिंग और ऊर्जा में अनुप्रयोग के लिए, उनके कण विशेषताओं जैसे औसत आकार, कण आकार वितरण, एकत्रीकरण की स्थिति, चरण संरचना आदि से समझौता किए बिना, उच्च-तापमान-नैनोमटेरियल्स के थोक संश्लेषण के लिए थर्मल प्लाज्मा सहायता प्राप्त नवीन रासायनिक रिएक्टर विन्यास विकसित करने का लक्ष्य रखती है। हाल ही में विकसित एक प्लाज्मा-रासायनिक रिएक्टर प्रणाली में, गैस गतिशील रूप से नियंत्रित आर्गन+ऑक्सीजन प्लाज्मा स्ट्रीमलाइन एक बड़ी धातु की प्लेट को घेर लेती है, जिससे ऑक्सीकरण और उर्ध्वपातन प्रक्रियाओं के माध्यम से, धातु ऑक्साइड नैनोमटेरियल्स (WO<sub>3-x</sub>, MoO<sub>3-x</sub>) का उत्पादन 700 ग्राम/घंटा तक किया जाता है। नियंत्रित ऑक्सीजन रिक्तियों को उसी एक-चरणीय प्लाज्मा प्रक्रिया के दौरान मोली-ऑक्साइड नैनोमटेरियल्स में शामिल किया गया, जो फोटो-कैटेलिटिक डाई डिग्रेडेशन और फोटो थर्मल थेरेपी द्वारा कैंसर उपचार में अनुप्रयोग के लिए सबसे उपयुक्त था।"
+                                    data-en="This laboratory aims to develop thermal plasma assisted novel chemical reactor configurations for bulk synthesis of high-temperature-nanomaterials, without compromising with their particle characteristics, like the average size, particle size distribution, state of agglomeration, phase composition, etc., for application in water treatment, environmental engineering and in energy. In a plasma-chemical reactor system developed recently, gas dynamically controlled argon+oxygen plasma streamlines engulf a large metallic plate, from which through oxidation and sublimation processes, metal oxide nanomaterials (WO<sub>3-x</sub>, MoO<sub>3-x</sub>) are produced up to 700 g/h. Controlled oxygen vacancies were introduced into the moly-oxide nanomaterials during the same one-step plasma process, which was most appropriate for application in photo-catalytic dye degradation, and cancer treatment by photo thermal therapy.">
+                                    This laboratory aims to develop thermal plasma assisted novel chemical reactor
+                                    configurations for bulk synthesis of high-temperature-nanomaterials, without
+                                    compromising with their particle characteristics, like the average size, particle
+                                    size distribution, state of agglomeration, phase composition, etc., for application
+                                    in water treatment, environmental engineering and in energy. In a plasma-chemical
+                                    reactor system developed recently, gas dynamically controlled argon+oxygen plasma
+                                    streamlines engulf a large metallic plate, from which through oxidation and
+                                    sublimation processes, metal oxide nanomaterials (WO<sub>3-x</sub>,
+                                    MoO<sub>3-x</sub>) are produced up to 700 g/h. Controlled oxygen vacancies were
+                                    introduced into the moly-oxide nanomaterials during the same one-step plasma
+                                    process, which was most appropriate for application in photo-catalytic dye
+                                    degradation, and cancer treatment by photo thermal therapy.
+                                </span>
+                            </p>
+
+                            <p class="auto-style5"><a href="https://doi.org/10.1016/j.cej.2021.131111"
+                                    target="_blank"><em>(Mizanur Rahman et al., Bulk synthesis of tungsten-oxide
+                                        nanomaterials by a novel, plasma chemical reactor configuration, studies on
+                                        their performance for waste-water treatment and hydrogen evolution reactions,
+                                        Chemical Engineering Journal 428 (2022): 131111)</em></a></p>
+
+                            <figure class="research-figure">
+                                <img src="/assets/images/cimple_psi/figure9.jpg" alt="Reactor for bulk production">
+                                <figcaption class="bilingual-text"
+                                    data-hi="धातु ऑक्साइड नैनोमटेरियल्स के थोक उत्पादन के लिए रिएक्टर का फोटोग्राफ"
+                                    data-en="Photograph of the reactor for bulk production of metal oxide nanomaterials">
+                                    Photograph of the reactor for bulk production of metal oxide nanomaterials
+                                </figcaption>
+                            </figure>
+
+                            <p><strong><em><span class="auto-style7 bilingual-text"
+                                            data-hi="नैनोमटेरियल्स का आकार-नियंत्रित संश्लेषण:"
+                                            data-en="Size-controlled synthesis of nanomaterials:">Size-controlled
+                                            synthesis of nanomaterials:</span></em></strong>
+                                <span class="bilingual-text"
+                                    data-hi="हॉट प्लाज्मा-सहायता प्राप्त नैनोमटेरियल संश्लेषण तकनीकें औसत कण आकार और आकार वितरण के मामले में खराब नियंत्रण प्रदर्शित करती हैं। सुपरसोनिक थर्मल प्लाज्मा जेट सहायता प्राप्त रिएक्टर विन्यास का उपयोग करते हुए, इस प्रयोगशाला ने प्रदर्शित किया कि नमूना संग्रह कक्ष में परिवेशी दबाव में हेरफेर करके सबसे बारीक आकार-नियंत्रित कण प्राप्त किए जा सकते हैं, विभिन्न उच्च-तापमान नैनोमटेरियल्स जैसे सिरेमिक (टाइटेनियम ऑक्साइड और नाइट्राइड, एल्यूमिना), धातु (टंगस्टन) और कार्बन नैनोमटेरियल्स के लिए। प्रदर्शित किया गया <span class='auto-style8'>अतिचुंबकीय कार्बन-आच्छादित चुंबकीय नैनोकणों का पहला संश्लेषण</span> (सीईएमएन, औसत आकार=5 नैनोमीटर, संतृप्ति चुंबकत्व= 67 emu/g, कोएर्सिव-फील्ड= 7.4 Oe), लक्षित दवा वितरण अनुप्रयोगों के लिए।"
+                                    data-en="Hot plasma-assisted nanomaterial synthesis techniques demonstrate poor control in terms of the average particle size and the size distribution. Using a supersonic thermal plasma jet assisted reactor configuration, this laboratory demonstrated that finest size controlled particles can be achieved simply by manipulating ambient pressure in the sample collection chamber, for different high-temperature nanomaterials including ceramics (titanium oxide and nitride, alumina), metals (tungsten) and carbon nanomaterials. Demonstrated <span class='auto-style8'>first synthesis of superparamagnetic carbon-encapsulated magnetic nanoparticles</span> (CEMN, average size=5 nanometer, saturation magnetization= 67 emu/g, coercive-field= 7.4 Oe), for targeted drugs delivery applications.">
+                                    Hot plasma-assisted nanomaterial synthesis techniques demonstrate poor control in
+                                    terms of the average particle size and the size distribution. Using a supersonic
+                                    thermal plasma jet assisted reactor configuration, this laboratory demonstrated that
+                                    finest size controlled particles can be achieved simply by manipulating ambient
+                                    pressure in the sample collection chamber, for different high-temperature
+                                    nanomaterials including ceramics (titanium oxide and nitride, alumina), metals
+                                    (tungsten) and carbon nanomaterials. Demonstrated <span class="auto-style8">first
+                                        synthesis of superparamagnetic carbon-encapsulated magnetic nanoparticles</span>
+                                    (CEMN, average size=5 nanometer, saturation magnetization= 67 emu/g, coercive-field=
+                                    7.4 Oe), for targeted drugs delivery applications.
+                                </span>
+                            </p>
+
+                            <p class="auto-style5"><a href="https://doi.org/10.1016/j.jallcom.2018.03.261"
+                                    target="_blank"><em>(L. Sarma et al., Synthesis of finest superparamagnetic
+                                        carbon-encapsulated magnetic nanoparticles by a plasma expansion method for
+                                        biomedical applications, J. Alloys Compd. 749, 768 (2018))</em></a></p>
+                            <p class="auto-style5"><a href="https://doi.org/10.1016/j.carbon.2014.11.047"
+                                    target="_blank"><em>N. Aomoa et al., Plasma-assisted synthesis of carbon
+                                        encapsulated magnetic nanoparticles with controlled sizes correlated to smooth
+                                        variation of magnetic properties, Carbon 84, 24 (2015))</em></a></p>
+                            <p class="auto-style5"><a href="https://doi.org/10.1016/j.tsf.2009.06.036"
+                                    target="_blank"><em>M. Kakati et al., Study of a thermal plasma expansion process
+                                        for synthesis of nanostructured TiO2, Thin Solid Films 518, 84 (2009))</em></a>
+                            </p>
+
+                            <figure class="research-figure">
+                                <img src="/assets/images/cimple_psi/figure11.jpg" alt="TEM photograph of CEMN">
+                                <figcaption class="bilingual-text"
+                                    data-hi="सीईएमएन का टीईएम फोटोग्राफ, इनसेट एक एनकैप्सुलेटेड नैनोकण का कार्टून दिखाता है"
+                                    data-en="TEM photograph of the CEMN, inset shows a cartoon of an encapsulated nanoparticle">
+                                    TEM photograph of the CEMN, inset shows a cartoon of an encapsulated nanoparticle
+                                </figcaption>
+                            </figure>
+
+                            <p><span class="auto-style7"><strong><em class="bilingual-text"
+                                            data-hi="नैनोकम्पोजिट्स का एक चरणीय संश्लेषण:"
+                                            data-en="One step synthesis of nanocomposites:">One step synthesis of
+                                            nanocomposites:</em></strong></span>
+                                <span class="bilingual-text"
+                                    data-hi="एकल-चरण, बारीक आकार-नियंत्रित नैनोकम्पोजिट्स का संश्लेषण प्रदर्शित किया गया, जिसमें एजी-सी और सुपरपैरामैग्नेटिक आयरन-ऑक्साइड-सीईएमएन-एसडब्ल्यूसीएनटी शामिल हैं। चुंबकीय सामग्री की कोएर्सिविटी 10 Oe, संतृप्ति चुंबकत्व 52 emu g<sup>-1</sup> मापी गई, जिसमें संबंधित औसत आकार केवल 5.1 nm था, जो साहित्य में रिपोर्ट किए गए सबसे छोटे मूल्यों में से एक है। केवल 4.6 nm के न्यूनतम औसत आकार वाले चांदी के नैनोकण कार्बन शीटों पर कसकर लंगर डालते हुए न्यूक्लिएट हुए जो उनके एकत्रीकरण और आकार में वृद्धि को रोक सकते थे, जो कार्बन की क्रिस्टलीयता के और बढ़ने पर अधिक प्रभावी हो गया।"
+                                    data-en="Demonstrated single-step, fine size-controlled synthesis of nanocomposites, including Ag-C and superparamagnetic iron-oxide-CEMN-SWCNT. The coercivity of the magnetic material was measured as 10 Oe, saturation magnetization 52 emu g<sup>-1</sup>, with corresponding average size of just 5.1 nm, which is one of the smallest values reported in the literature. The silver nanoparticles with minimum average size of just 4.6 nm nucleated anchoring tightly on carbon sheets that could inhibit their aggregation and growth in size, which became more effective as crystallinity of the carbon enhanced further.">
+                                    Demonstrated single-step, fine size-controlled synthesis of nanocomposites,
+                                    including Ag-C and superparamagnetic iron-oxide-CEMN-SWCNT. The coercivity of the
+                                    magnetic material was measured as 10 Oe, saturation magnetization 52 emu
+                                    g<sup>-1</sup>, with corresponding average size of just 5.1 nm, which is one of the
+                                    smallest values reported in the literature. The silver nanoparticles with minimum
+                                    average size of just 4.6 nm nucleated anchoring tightly on carbon sheets that could
+                                    inhibit their aggregation and growth in size, which became more effective as
+                                    crystallinity of the carbon enhanced further.
+                                </span>
+                            </p>
+
+                            <p class="auto-style5"><a href="https://doi.org/10.1088/1361-6463/ab8f55"
+                                    target="_blank"><em>(Gopikisan Sabavath et al., Single-step, DC thermal plasma
+                                        assisted synthesis of Ag-C nanocomposites with less than ten nano-meter sizes
+                                        for antibacterial applications, Journal of Physics D: Applied Physics. 53 365201
+                                        (2020))</em></a></p>
+                            <p class="auto-style5"><a href="https://doi.org/10.1088/1361-6463/aaba93"
+                                    target="_blank"><em>Lavita Sarma et al., Size-controlled synthesis of
+                                        superparamagnetic iron-oxide and iron-oxide/iron/carbon nanotube nanocomposites
+                                        by supersonic plasma expansion technique, Journal of Physics D: Applied Physics
+                                        51 195003 (2018))</em></a></p>
+
+                            <figure class="research-figure">
+                                <img src="/assets/images/cimple_psi/figure12.jpg"
+                                    alt="TEM photograph of silver nanoparticles">
+                                <figcaption class="auto-style9 bilingual-text"
+                                    data-hi="टीईएम फोटोग्राफ दिखाता है < 10 nm चांदी के नैनोकण कुछ परत वाली ग्राफीन शीटों पर लंगर डाले हुए, इनसेट एचआरटीईएम चांदी और ग्राफीन दोनों के विशिष्ट क्रिस्टलीय तल दिखाता है"
+                                    data-en="TEM photograph shows < 10 nm silver nanoparticles anchored on few layered graphene sheets, inset HRTEM shows distinct crystalline planes of both silver and graphene">
+                                    TEM photograph shows < 10 nm silver nanoparticles anchored on few layered graphene
+                                        sheets, inset HRTEM shows distinct crystalline planes of both silver and
+                                        graphene </figcaption>
+                            </figure>
+                        </div>
+                    </div>
+
+                    <!-- Facilities Tab -->
+                    <div id="facilities" class="tab-panel">
+                        <div class="facility-item">
+                            <p class="bilingual-text"
+                                data-hi="सूचना अभी अद्यतन की जानी है। कृपया बाद में पुनः प्रयास करें।"
+                                data-en="Information is yet to be updated. Please check back later.">
+                                <em>Information is yet to be updated. Please check back later.</em>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- People Tab -->
+                    <div id="people" class="tab-panel">
+                        <div class="people-categories">
+                            <button class="people-cat-btn active" onclick="filterPeople('all')">
+                                <span class="bilingual-text" data-hi="सभी" data-en="All">All</span>
+                            </button>
+                            <button class="people-cat-btn" onclick="filterPeople('faculty')">
+                                <span class="bilingual-text" data-hi="संकाय" data-en="Faculty">Faculty</span>
+                            </button>
+                            <button class="people-cat-btn" onclick="filterPeople('scholar')">
+                                <span class="bilingual-text" data-hi="शोध विद्वार्थी"
+                                    data-en="Research Scholars">Research Scholars</span>
+                            </button>
+                            <button class="people-cat-btn" onclick="filterPeople('officer')">
+                                <span class="bilingual-text" data-hi="परियोजना वैज्ञानिक अधिकारी"
+                                    data-en="Project Scientific Officers">Project Scientific Officers</span>
+                            </button>
+                            <button class="people-cat-btn" onclick="filterPeople('technical')">
+                                <span class="bilingual-text" data-hi="तकनीकी कर्मचारी"
+                                    data-en="Technical Staff">Technical Staff</span>
+                            </button>
+                            <button class="people-cat-btn" onclick="filterPeople('collaborator')">
+                                <span class="bilingual-text" data-hi="सहयोगी"
+                                    data-en="Collaborators">Collaborators</span>
+                            </button>
+                        </div>
+
+                        <div class="people-grid">
+                            <!-- Faculty -->
+                            <div class="person-card show" data-category="faculty">
+                                <a href="faculty/mkakati.html" target="_blank">
+                                    <img src="/assets/images/cimple_psi/mayur_k.jpg" alt="Dr. Mayur Kakati"
+                                        class="person-photo">
+                                </a>
+                                <h4 class="person-name">
+                                    <a href="faculty/mkakati.html" target="_blank">Dr. Mayur Kakati</a>
+                                </h4>
+                                <p class="person-role bilingual-text" data-hi="सहायक प्रोफेसर-एफ"
+                                    data-en="Associate Professor-F">Associate Professor-F</p>
+                                <p class="person-institution bilingual-text"
+                                    data-hi="प्रयोगशाला और अनुभाग प्रमुख, सिम्पल-पीएसआई प्रयोगशाला, अनुप्रयुक्त प्लाज्मा अनुसंधान अनुभाग, सीपीपी-आईपीआर, सोनापुर-782402"
+                                    data-en="Laboratory and Section Head, CIMPLE-PSI Laboratory, Applied Plasma Research Section, CPP-IPR, Sonapur-782402">
+                                    Laboratory and Section Head, CIMPLE-PSI Laboratory, Applied Plasma Research Section,
+                                    CPP-IPR, Sonapur-782402</p>
+                                <div class="person-email">
+                                    <a href="mailto:mayur@cppipr.res.in">mayur@cppipr.res.in</a>
+                                </div>
+                                <div class="person-phone">Cell: +91 7896686374, +91 9435036180</div>
+                                <div class="person-links">
+                                    <a href="https://scholar.google.co.in/citations?user=Ltkr9T0AAAAJ"
+                                        target="_blank">Google Scholar</a>
+                                </div>
+                                <div class="person-expertise">
+                                    <h5 class="bilingual-text" data-hi="विशेषज्ञता का क्षेत्र:"
+                                        data-en="Area of expertise:">Area of expertise:</h5>
+                                    <ul>
+                                        <li class="bilingual-text" data-hi="प्रणाली विकास" data-en="System development">
+                                            System development</li>
+                                        <li class="bilingual-text" data-hi="प्लाज्मा सतह अंतःक्रिया (पीएसआई)"
+                                            data-en="Plasma surface interaction (PSI)">Plasma surface interaction (PSI)
+                                        </li>
+                                        <li class="bilingual-text"
+                                            data-hi="नैनोमटेरियल्स का प्लाज्मा-सहायता प्राप्त संश्लेषण"
+                                            data-en="Plasma-assisted synthesis of nanomaterials">Plasma-assisted
+                                            synthesis of nanomaterials</li>
+                                    </ul>
+                                </div>
+                                <div class="person-links">
+                                    <a href="faculty/mkakati.html" target="_blank" class="bilingual-text"
+                                        data-hi="संक्षिप्त जीवनी" data-en="Short Biography">Short Biography</a>
+                                </div>
+                            </div>
+
+                            <!-- Research Scholars -->
+                            <div class="person-card show" data-category="scholar">
+                                <img src="/assets/images/staff/PRANEEP.png" alt="Mr. Praneep Talukdar"
+                                    class="person-photo">
+                                <h4 class="person-name">Mr. Praneep Talukdar</h4>
+                                <p class="person-role bilingual-text" data-hi="वरिष्ठ शोध फेलो (एसआरएफ)"
+                                    data-en="Senior Research Fellow (SRF)">Senior Research Fellow (SRF)</p>
+                                <div class="person-phone">Cell: +91-8822893513</div>
+                                <div class="person-email">
+                                    <a href="mailto:praneep.talukdar@cppipr.res.in">praneep.talukdar@cppipr.res.in</a>
+                                </div>
+                                <div class="person-expertise">
+                                    <h5 class="bilingual-text" data-hi="रुचि का क्षेत्र:" data-en="Area of Interest:">
+                                        Area of Interest:</h5>
+                                    <ul>
+                                        <li class="bilingual-text"
+                                            data-hi="टंगस्टन और टंगस्टन-आधारित मिश्र धातुओं के नियंत्रित प्लाज्मा फ्यूजन प्रासंगिक प्लाज्मा सतह अंतःक्रिया (पीएसआई) अध्ययन"
+                                            data-en="Controlled plasma fusion relevant plasma surface interaction (PSI) studies of tungsten & tungsten-based alloys">
+                                            Controlled plasma fusion relevant plasma surface interaction (PSI) studies
+                                            of tungsten & tungsten-based alloys</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- Project Scientific Officers -->
+                            <div class="person-card show" data-category="officer">
+                                <img src="/assets/images/cimple_psi/mizanur_r.jpg" alt="Mr. Mizanur Rahman"
+                                    class="person-photo">
+                                <h4 class="person-name">Mr. Mizanur Rahman</h4>
+                                <p class="person-role bilingual-text" data-hi="परियोजना वैज्ञानिक अधिकारी (पीएसओ)"
+                                    data-en="Project Scientific Officer (PSO)">Project Scientific Officer (PSO)</p>
+                                <div class="person-phone">Cell: +91-8638167287</div>
+                                <div class="person-email">
+                                    <a href="mailto:mizanur.rahman@cppipr.res.in">mizanur.rahman@cppipr.res.in</a>
+                                </div>
+                            </div>
+
+                            <!-- Technical Staff -->
+                            <div class="person-card show" data-category="technical">
+                                <img src="/assets/images/cimple_psi/kand_d.jpg" alt="Mr. Kandeswar Deka"
+                                    class="person-photo">
+                                <h4 class="person-name">Mr. Kandeswar Deka</h4>
+                                <p class="person-role bilingual-text" data-hi="तकनीशियन-डी" data-en="Technician-D">
+                                    Technician-D</p>
+                                <div class="person-email">
+                                    <a href="mailto:kdeka@cppipr.res.in">kdeka@cppipr.res.in</a>
+                                </div>
+                            </div>
+
+                            <!-- Collaborators -->
+                            <div class="person-card show" data-category="collaborator">
+                                <h4 class="person-name">Prof. Y. C. Saxena</h4>
+                                <p class="person-role bilingual-text" data-hi="वरिष्ठ प्रोफेसर (सेवानिवृत्त)"
+                                    data-en="Senior Professor (Retired)">Senior Professor (Retired)</p>
+                                <p class="person-institution">IPR, Gandhinagar</p>
+                                <div class="person-email">
+                                    <a href="mailto:yogesh.saxena@gmail.com">yogesh.saxena@gmail.com</a>
+                                </div>
+                            </div>
+
+                            <div class="person-card show" data-category="collaborator">
+                                <h4 class="person-name">Dr. Indranil Bandyopadhyay</h4>
+                                <p class="person-role bilingual-text" data-hi="प्रमुख-सीएसकेएम, आईटीईआर-इंडिया"
+                                    data-en="Head-CSKM, ITER-India">Head-CSKM, ITER-India</p>
+                                <p class="person-institution">IPR, Gandhinagar</p>
+                                <div class="person-email">
+                                    <a href="mailto:indranil@ipr.res.in">indranil@ipr.res.in</a>
+                                </div>
+                            </div>
+
+                            <div class="person-card show" data-category="collaborator">
+                                <h4 class="person-name">Dr. Manoj Kumar Warrier</h4>
+                                <p class="person-role bilingual-text" data-hi="प्रमुख, कम्प्यूटेशनल एनालिसिस डिवीजन"
+                                    data-en="Head, Computational Analysis Division">Head, Computational Analysis
+                                    Division</p>
+                                <p class="person-institution">BARC Facilities Vizag</p>
+                                <div class="person-email">
+                                    <a href="mailto:manojwar@barc.gov.in">manojwar@barc.gov.in</a>
+                                </div>
+                            </div>
+
+                            <div class="person-card show" data-category="collaborator">
+                                <h4 class="person-name">Dr. Shiv Poojan Patel</h4>
+                                <p class="person-institution">Guru Ghasidas Vishwavidyalaya, Bilaspur</p>
+                                <div class="person-email">
+                                    <a href="mailto:shivpoojanbhola@gmail.com">shivpoojanbhola@gmail.com</a>
+                                </div>
+                            </div>
+
+                            <div class="person-card show" data-category="collaborator">
+                                <h4 class="person-name">Dr. Sanjiv Kumar (Retired)</h4>
+                                <p class="person-role bilingual-text" data-hi="पूर्व प्रमुख" data-en="Former Head">
+                                    Former Head</p>
+                                <p class="person-institution">NCCCM/BARC, Hyderabad</p>
+                                <div class="person-email">
+                                    <a href="mailto:sanjucccm@rediffmail.com">sanjucccm@rediffmail.com</a>
+                                </div>
+                            </div>
+
+                            <div class="person-card show" data-category="collaborator">
+                                <h4 class="person-name">Prof. Cormac Corr</h4>
+                                <p class="person-institution">Australian National University, Canberra, Australia</p>
+                                <div class="person-email">
+                                    <a href="mailto:cormac.corr@anu.edu.au">cormac.corr@anu.edu.au</a>
+                                </div>
+                            </div>
+
+                            <div class="person-card show" data-category="collaborator">
+                                <h4 class="person-name">Dr. G. De Temmerman</h4>
+                                <p class="person-institution">MINES ParisTech, University PSL, IHEIE, Paris, France</p>
+                                <div class="person-email">
+                                    <a href="mailto:greg.dt@qc.foundation">greg.dt@qc.foundation</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Publications Tab -->
+                    <div id="publications" class="tab-panel">
+                        <div class="publications-year">
+                            <h3>2025</h3>
+                            <ul class="publications-list">
+                                <li>
+                                    <a href="https://doi.org/10.1088/1741-4326/ad8bd9" target="_blank">
+                                        M. Rahman, S. Chetri, S. H. B. Teo, M. Thompson, M. Bilokur, C. Corr, S.
+                                        Shekhar, G. De Temmerman, and M. Kakati, Studies on the retarded
+                                        recrystallization of tungsten in CIMPLE-PSI exposed under very-high target
+                                        temperature and long He+-fluence,
+                                        <strong><em>Nuclear Fusion 65 (2025): 016017</em></strong>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="publications-year">
+                            <h3>2024</h3>
+                            <ul class="publications-list">
+                                <li>
+                                    <a href="https://doi.org/10.1016/j.vacuum.2024.113237" target="_blank">
+                                        M. Rahman, S. Chetri, D. B. Pemmaraju, U. S. Murty, U. P. Deshpande, and M.
+                                        Kakati, An expanded plasma jet assisted technique for very high-rate synthesis
+                                        of 2D α-MoO3 nanomaterials, with surface oxygen vacancies and robust induced
+                                        ferromagnetism,
+                                        <strong><em>Vacuum 225 (2024): 113237</em></strong>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="publications-year">
+                            <h3>2023</h3>
+                            <ul class="publications-list">
+                                <li>
+                                    <a href="https://doi.org/10.1088/1361-6528/acb827" target="_blank">
+                                        M. Rahman, D. B. Pemmaraju, U. S. Murty, S. Phukan, U. Deshpande, V. G. Sathe,
+                                        and M. Kakati, A single-step plasma method for rapid production of 2D,
+                                        ferromagnetic, surface vacancy-engineered MoO3-x nanomaterials, for photothermal
+                                        ablation of cancer,
+                                        <strong><em>Nanotechnology 34 (2023): 195601</em></strong>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="publications-year">
+                            <h3>2022</h3>
+                            <ul class="publications-list">
+                                <li>
+                                    <a href="https://www.sciencedirect.com/science/article/abs/pii/S1385894721026930?via%3Dihub"
+                                        target="_blank">
+                                        M. Rahman, T. Sarmah, P. Dihingia, R. Verma, S. Sharma, D. N. Srivastava, L. M.
+                                        Pandey, and M. Kakati. Bulk synthesis of tungsten-oxide nanomaterials by a
+                                        novel, plasma chemical reactor configuration, studies on their performance for
+                                        waste-water treatment and hydrogen evolution reactions,
+                                        <strong><em>Chemical Engineering Journal 428 (2022)</em></strong>: 131111
+                                        <span class="if-badge">IF: 13.273</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="publications-year">
+                            <h3>2021</h3>
+                            <ul class="publications-list">
+                                <li>
+                                    <a href="https://www.sciencedirect.com/science/article/pii/S2666821121000363?via%3Dihub"
+                                        target="_blank">
+                                        B. Wareppam, N. J. Singh, S. Chakraborty, N. Aomoa, M. Kakati, A. C. de
+                                        Oliveira, V. K. Garg, K. P. Singh, S. Barg, S. Ghosh and L. H. Singh. Unused to
+                                        useful: Recycling plasma chamber coated waste composite of ZnO and α-Fe2O3 into
+                                        an active material for sustainable waste-water treatment,
+                                        <strong><em>Chemical Engineering Journal Advances 7 (2021): 100120</em></strong>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="publications-year">
+                            <h3>2020</h3>
+                            <ul class="publications-list">
+                                <li>
+                                    <a href="https://iopscience.iop.org/article/10.1088/1741-4326/abae46"
+                                        target="_blank">
+                                        T. Sarmah, P. Dihingia, M. Rahman, J. Ghosh, P. Choudhury, D. N. Srivastava, B.
+                                        Satpati, S. Kumar, M. Kakati, and G. De Temmerman. Exposure of Indian RAFM under
+                                        variation of He+ flux and target temperature in the CIMPLE-PSI linear device,
+                                        <strong><em>Nuclear Fusion 59 10 (2020): 106026</em></strong>
+                                        <span class="if-badge">IF: 3.179</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://iopscience.iop.org/article/10.1088/1361-6463/ab8f55"
+                                        target="_blank">
+                                        G. Sabavath, M. Rahman, T. Sarmah, P. Dihingia, D. N. Srivastava, S. Sharma, L.
+                                        M. Pandey, M. Kakati. Single-step, DC thermal plasma assisted synthesis of Ag-C
+                                        nanocomposites with less than ten nano-meter sizes for antibacterial
+                                        applications,
+                                        <strong><em>Journal of Physics D: Applied Physics. 53 (2020)
+                                                365201</em></strong>
+                                        <span class="if-badge">IF: 3.207</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="publications-year">
+                            <h3>2019</h3>
+                            <ul class="publications-list">
+                                <li>
+                                    <a href="https://iopscience.iop.org/article/10.1088/1741-4326/ab0248"
+                                        target="_blank">
+                                        M. Kakati, T. Sarmah, N. Aomoa, G. Sabavath, P. Dihingia, M. Rahman, J. Ghosh,
+                                        Y.C. Saxena, B. Satpati, G. Sharma, A. Gupta G.De. Temmerman. Design,
+                                        development, and recent experiments of the CIMPLE-PSI device,
+                                        <strong><em>Nuclear Fusion 59 (2019) 112008</em></strong>
+                                        <span class="if-badge">IF: 3.179</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="publications-year">
+                            <h3>2018</h3>
+                            <ul class="publications-list">
+                                <li>
+                                    <a href="https://www.sciencedirect.com/science/article/abs/pii/S0925838818311320?via%3Dihub"
+                                        target="_blank">
+                                        L. Sarma, N. Aomoa, T. Sarmah, S. Sarma, A. Srinivasan, G. Sharma, A. Gupta,
+                                        V.R. Reddy, B. Satpati, D.N. Srivastava, S. Deka, L.M. Pandey and M. Kakati,
+                                        Synthesis of finest superparamagnetic carbon-encapsulated magnetic nanoparticles
+                                        by a plasma expansion method for biomedical applications,
+                                        <strong><em>J. Alloys Compd. 749, 768 (2018)</em></strong>
+                                        <span class="if-badge">IF: 5.316</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://iopscience.iop.org/article/10.1088/1361-6463/aaba93"
+                                        target="_blank">
+                                        L. Sarma, T. Sarmah, N. Aomoa, S. Sarma, U. Deshpande, H. Bhuyan, S. Ojha, U.
+                                        Bora, and M. Kakati, Size-controlled synthesis of superparamagnetic iron-oxide
+                                        and iron-oxide/iron/carbon nanotube nanocomposites by supersonic plasma
+                                        expansion technique,
+                                        <strong><em>Journal of Physics D: Applied Physics 51, no. 19 (2018):
+                                                195003</em></strong>
+                                        <span class="if-badge">IF: 3.207</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="publications-year">
+                            <h3>2017</h3>
+                            <ul class="publications-list">
+                                <li>
+                                    <a href="https://www.sciencedirect.com/science/article/abs/pii/S0925838817325823?via%3Dihub"
+                                        target="_blank">
+                                        T. Sarmah, N. Aomoa, G. Bhattacharjee, S. Sarma, B. Bora, D.N. Srivastava, H.
+                                        Bhuyan, M. Kakati and G. De Temmerman, Plasma expansion synthesis of tungsten
+                                        nanopowder,
+                                        <strong><em>J. Alloys Compd. 725, 606 (2017)</em></strong>
+                                        <span class="if-badge">IF: 5.316</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.sciencedirect.com/science/article/pii/S0920379617309572?via%3Dihub"
+                                        target="_blank">
+                                        T. Sarmah, N. Aomoa, S. Sarma, U. Deshpande, B. Satpati, D. N. Srivastava, S.
+                                        Kumar, M. Kakati, G. De Temmerman, Studies on synthesis of plasma fusion
+                                        relevant tungsten dust particles and measurement of their hydrogen absorption
+                                        properties,
+                                        <strong><em>Fusion Eng. Des. 127, 120 (2017)</em></strong>
+                                        <span class="if-badge">IF: 1.453</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="publications-year">
+                            <h3>2016</h3>
+                            <ul class="publications-list">
+                                <li>
+                                    <a href="https://www.sciencedirect.com/science/article/pii/S0920379616302678?via%3Dihub"
+                                        target="_blank">
+                                        N. Aomoa, T. Sarmah, P. Sah, P. Chaudhuri, S. Khirwarker, J. Ghosh, B. Satpati,
+                                        M. Kakati, G. De Temmerman, Development of a plasma assisted ITER level
+                                        controlled heat source and observation of novel micro/nanostructures produced
+                                        upon exposure of tungsten targets,
+                                        <strong><em>Fusion Eng. Des. 106, 63 (2016)</em></strong>
+                                        <span class="if-badge">IF: 1.453</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="publications-year">
+                            <h3>2015</h3>
+                            <ul class="publications-list">
+                                <li>
+                                    <a href="https://www.sciencedirect.com/science/article/abs/pii/S0008622314011336?via%3Dihub"
+                                        target="_blank">
+                                        N. Aomoa, T. Sarmah, U. Deshpande, V. Sathe, A. Baneerjee, T. Shripathi, V.R.
+                                        Reddy, N. P. Lalla, A. Gupta, R. Gupta, D. N. Srivastava, R.K. Bordoloi, S.
+                                        Sarma, A. Srinivasan and M. Kakati, Plasma-assisted synthesis of carbon
+                                        encapsulated magnetic nanoparticles with controlled sizes correlated to smooth
+                                        variation of magnetic properties,
+                                        <strong><em>Carbon 84, 24 (2015)</em></strong>
+                                        <span class="if-badge">IF: 9.594</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="publications-year">
+                            <h3>2013</h3>
+                            <ul class="publications-list">
+                                <li>
+                                    <a href="https://iopscience.iop.org/article/10.1088/0022-3727/46/16/165501"
+                                        target="_blank">
+                                        N. Aomoa, H. Bhuyan, A. L. Cabrera, M. Favre, D. E. Diaz-Droguett, S. Rojas, P.
+                                        Ferrari, D. N. Srivastava and M. Kakati, Rapid synthesis of carbon nanoparticles
+                                        with an optimized combination of specific surface area and crystallinity by a
+                                        plasma assisted single-step process,
+                                        <strong><em>J. Phys. D: Appl. Phys. 46, 165501 (2013)</em></strong>
+                                        <span class="if-badge">IF: 3.207</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.sciencedirect.com/science/article/abs/pii/S0032591013003963?via%3Dihub"
+                                        target="_blank">
+                                        B. Bora, N. Aomoa, M. Kakati and H. Bhuyan, Studies on a supersonic thermal
+                                        plasma expansion process for synthesis of titanium nitride nanoparticles,
+                                        <strong><em>Powder Technol. 246, 413 (2013)</em></strong>
+                                        <span class="if-badge">IF: 5.134</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="publications-year">
+                            <h3>2012</h3>
+                            <ul class="publications-list">
+                                <li>
+                                    <a href="https://www.sciencedirect.com/science/article/abs/pii/S1567173911005992?via%3Dihub"
+                                        target="_blank">
+                                        B. Bora, N. Aomoa, R.K. Bordoloi, D.N. Srivastava, H. Bhuyan and M. Kakati,
+                                        Transparent, Non-agglomerated gamma-alumina nanoparticles synthesized by a
+                                        supersonic thermal plasma expansion technique,
+                                        <strong><em>Curr. Appl. Phys. 12, 880 (2012)</em></strong>
+                                        <span class="if-badge">IF: 2.48</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="publications-year">
+                            <h3>2010</h3>
+                            <ul class="publications-list">
+                                <li>
+                                    <a href="https://www.sciencedirect.com/science/article/pii/S0042207X10002095?via%3Dihub"
+                                        target="_blank">
+                                        B. Bora, C. Borgohain, B.J. Saikia, A.K. Das and M. Kakati, Numerical
+                                        investigation of nanoparticle growth in supersonic thermal plasma expansion
+                                        method,
+                                        <strong><em>Vacuum 85, 283 (2010)</em></strong>
+                                        <span class="if-badge">IF: 3.627</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="publications-year">
+                            <h3>2009</h3>
+                            <ul class="publications-list">
+                                <li>
+                                    <a href="https://www.sciencedirect.com/science/article/pii/S004060900901092X?via%3Dihub"
+                                        target="_blank">
+                                        M. Kakati, B. Bora, U. Deshpande, D.M. Phase, N.P. Lalla, T. Shripathi, N.K.
+                                        Joshi and A.K. Das. Study of a thermal plasma expansion process for synthesis of
+                                        nanostructured TiO2,
+                                        <strong><em>Thin Solid Films 518, 84 (2009)</em></strong>
+                                        <span class="if-badge">IF: 2.183</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="publications-year">
+                            <h3>2008</h3>
+                            <ul class="publications-list">
+                                <li>
+                                    <a href="https://www.sciencedirect.com/science/article/pii/S0042207X07003910?via%3Dihub"
+                                        target="_blank">
+                                        M. Kakati, B. Bora, S. Sarma, B.J. Saikia, T. Sripathi, U. Deshpande, A. Dubey,
+                                        G. Ghosh and A.K. Das, Synthesis of titanium oxide and titanium nitride
+                                        nanoparticles with narrow size distribution by supersonic thermal plasma
+                                        expansion,
+                                        <strong><em>Vacuum 82, 833 (2008)</em></strong>
+                                        <span class="if-badge">IF: 3.627</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Awards Tab -->
+                    <div id="awards" class="tab-panel">
+                        <ul class="awards-list">
+                            <li class="bilingual-text" data-hi="न्यूक्लियर फ्यूजन जर्नल में तीन पेपर प्रकाशित।"
+                                data-en="Published three papers in the journal: Nuclear Fusion."><em>Published three
+                                    papers in the journal: Nuclear Fusion.</em></li>
+                            <li class="bilingual-text"
+                                data-hi="आईएईए फ्यूजन एनर्जी कॉन्फ्रेंस (एफईसी), गांधीनगर, 2018 में एक अवलोकन-पोस्टर प्रस्तुत किया। एफईसी-2023, लंदन, अक्टूबर 2023 में दूसरा पोस्टर प्रस्तुत किया।"
+                                data-en="Presented an overview-poster in the IAEA Fusion Energy Conference (FEC), Gandhinagar, 2018. Second poster presented in FEC-2023, London, October 2023.">
+                                <em>Presented an overview-poster in the IAEA Fusion Energy Conference (FEC),
+                                    Gandhinagar, 2018. Second poster presented in FEC-2023, London, October 2023.</em>
+                            </li>
+                            <li class="bilingual-text"
+                                data-hi="इस प्रयोगशाला के प्लाज्मा सतह अंतःक्रिया परिणामों को आईटीईआर आईटीपीए समन्वय समिति की बैठकों में आईटीईआर-इंडिया द्वारा भारत के घरेलू फ्यूजन कार्यक्रम के अभिन्न अंग के रूप में लगातार हाइलाइट किया गया।"
+                                data-en="Plasma surface interaction results from this laboratory were continuously highlighted by ITER-India, in the ITER ITPA Coordination Committee meetings, as integral part of India's domestic fusion program">
+                                <em>Plasma surface interaction results from this laboratory were continuously
+                                    highlighted by ITER-India, in the ITER ITPA Coordination Committee meetings, as
+                                    integral part of India's domestic fusion program</em>
+                            </li>
+                            <li class="bilingual-text"
+                                data-hi="इस प्रयोगशाला के एक संकाय सदस्य को आईटीईआर आईटीपीए डिवएसओएल टॉपिकल समूह के भारतीय सदस्य के रूप में चुना गया।"
+                                data-en="A faculty from this laboratory was selected as an Indian member of the ITER ITPA DivSOL topical group.">
+                                <em>A faculty from this laboratory was selected as an Indian member of the ITER ITPA
+                                    DivSOL topical group.</em>
+                            </li>
+                            <li class="bilingual-text"
+                                data-hi="इस प्रयोगशाला ने क्योटो, 2024 में आयोजित आईटीईआर आईटीपीए डिवएसओएल टॉपिकल समूह की बैठक में भाग लिया। समूह ने सिम्पल-पीएसआई को उनकी रुचि की एक विशिष्ट समस्या, आईटीईआर डायवर्टर जैसे वातावरण में पुनः जमा टंगस्टन की स्थिरता का अध्ययन करने के लिए प्रोत्साहित किया।"
+                                data-en="This laboratory participated in an ITER ITPA DivSOL topical group meeting, held at Kyoto, 2024. The group encouraged CIMPLE-PSI to study a specific problem of their interest, stability of redeposited tungsten in ITER divertor like environments.">
+                                <em>This laboratory participated in an ITER ITPA DivSOL topical group meeting, held at
+                                    Kyoto, 2024. The group encouraged CIMPLE-PSI to study a specific problem of their
+                                    interest, stability of redeposited tungsten in ITER divertor like environments.</em>
+                            </li>
+                            <li class="bilingual-text"
+                                data-hi="सर्वश्रेष्ठ-मौखिक प्रस्तुति, तीसरा (मिज़ानुर रहमान) 'प्लाज्मा विज्ञान और प्रौद्योगिकी में हालिया विकास और उभरते रुझान पर राष्ट्रीय सम्मेलन और औद्योगिक प्लाज्मा के मॉडलिंग और सिमुलेशन पर पूर्व-सम्मेलन कार्यशाला', भौतिकी विभाग, भारतीय विश्वविद्यालय, कोयंबटूर, 22-24 सितंबर, 2022 में।"
+                                data-en="Best-Oral Presentation, 3rd (Mizanur Rahman) at 'National Conference on Recent Developments and Evolving Trends in Plasma Science and Technology & Pre-conference Workshop on Modelling and Simulation of Industrial Plasmas', Department of Physics, Bharathiar University, Coimbatore, 22-24 September, 2022.">
+                                <em>Best-Oral Presentation, 3rd (Mizanur Rahman) at "National Conference on Recent
+                                    Developments and Evolving Trends in Plasma Science and Technology & Pre-conference
+                                    Workshop on Modelling and Simulation of Industrial Plasmas", Department of Physics,
+                                    Bharathiar University, Coimbatore, 22-24 September, 2022.</em>
+                            </li>
+                            <li class="bilingual-text"
+                                data-hi="पीएसएसआई पोस्टर पुरस्कार 2021 (मिज़ानुर रहमान) 36वीं राष्ट्रीय संगोष्ठी में प्लाज्मा विज्ञान और प्रौद्योगिकी पर।"
+                                data-en="PSSI Poster award 2021 (Mizanur Rahman) at 36th National Symposium on Plasma Science and Technology.">
+                                <em>PSSI Poster award 2021 (Mizanur Rahman) at 36th National Symposium on Plasma Science
+                                    and Technology.</em>
+                            </li>
+                            <li class="bilingual-text"
+                                data-hi="सर्वश्रेष्ठ-पोस्टर पुरस्कार (मिज़ानुर रहमान) 'डीएसटी-यूकेआईईआई समर्थित कार्यशाला-सह-संगोष्ठी - 2020 पर्यावरणीय अनुप्रयोगों के लिए जैव-प्रेरित नैनोमटेरियल्स', आईआईटी गुवाहाटी में।"
+                                data-en="Best-Poster Award (Mizanur Rahman) at 'DST-UKIERI supported Workshop cum Symposium - 2020 on Bio-inspired Nanomaterials for Environmental Applications', IIT Guwahati.">
+                                <em>Best-Poster Award (Mizanur Rahman) at "DST-UKIERI supported Workshop cum Symposium -
+                                    2020 on Bio-inspired Nanomaterials for Environmental Applications", IIT
+                                    Guwahati.</em>
+                            </li>
+                            <li class="bilingual-text"
+                                data-hi="चार विद्वानों को गौहाटी विश्वविद्यालय, गुवाहाटी द्वारा पीएचडी की उपाधि प्रदान की गई, जिनमें डॉ. बिस्वजीत बोरा (2010), डॉ. नगांगोम अओमोआ (2015), डॉ. लविता सरमा (2019) और डॉ. त्रिनयन सरमा (2019) शामिल हैं।"
+                                data-en="Four scholars were awarded Ph.D. degree by Gauhati University, Guwahati, including Dr. Biswajit Bora (2010), Dr. Ngangom Aomoa (2015), Dr. Lavita Sarmah (2019) and Dr. Trinayan Sarmah (2019).">
+                                <em>Four scholars were awarded Ph.D. degree by Gauhati University, Guwahati, including
+                                    Dr. Biswajit Bora (2010), Dr. Ngangom Aomoa (2015), Dr. Lavita Sarmah (2019) and Dr.
+                                    Trinayan Sarmah (2019).</em>
+                            </li>
+                            <li class="bilingual-text"
+                                data-hi="शोलापुरवाला पुरस्कार (2010) (एम. काकती), भारत में किए गए फ्यूजन विज्ञान और प्रौद्योगिकी के इंजीनियरिंग पहलू पर उत्कृष्ट कार्यों के लिए, प्लाज्मा विज्ञान सोसायटी ऑफ इंडिया, 25वीं पीएसएसआई संगोष्ठी प्लाज्मा विज्ञान और प्रौद्योगिकी पर, गुवाहाटी द्वारा।"
+                                data-en="SHOLAPURWALA AWARD (2010) (M. Kakati), for outstanding works on engineering aspect of Fusion science & Technology done in India, by Plasma Science Society of India, 25th PSSI Symposium on Plasma Science and Technology, Guwahati.">
+                                <em>SHOLAPURWALA AWARD (2010) (M. Kakati), for outstanding works on engineering aspect
+                                    of Fusion science & Technology done in India, by Plasma Science Society of India,
+                                    25th PSSI Symposium on Plasma Science and Technology, Guwahati.</em>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Alumni Tab -->
+                    <div id="alumni" class="tab-panel">
+                        <ul class="alumni-list">
+                            <li><em>Dr. Biswajit Bora, Investigator, Comisión Chilena de Energía Nuclear, Santiago,
+                                    Chile, E-mail: biswajit.bora@cchen.cl.</em></li>
+                            <li><em>Dr. Ngangom Aomoa, Scientific Officer-D, CPP-IPR, Sonapur, Assam, E-mail:
+                                    ngangom.aomoa@cppipr.res.in.</em></li>
+                            <li><em>Dr. Lavita Sarma, Assistant Professor, Jagiroad College, E-mail:
+                                    lavitasarma02@gmail.com</em></li>
+                            <li><em>Dr. Trinayan Sarmah, Assistant Professor, Nowgong College, Nagaon, Assam, E-mail:
+                                    trinayansarmah02@gmail.com</em></li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-container"></div>
+
+    <script>
+        function switchTab(tabName) {
+            // Hide all panels
+            document.querySelectorAll('.tab-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+
+            // Remove active from all tabs
+            document.querySelectorAll('.lab-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected panel
+            document.getElementById(tabName).classList.add('active');
+
+            // Activate clicked tab - using closest to handle clicks on inner spans
+            let clickedTab = event.target.closest('.lab-tab');
+            if (clickedTab) {
+                clickedTab.classList.add('active');
+            }
+
+            // Scroll active tab into view on mobile
+            if (window.innerWidth <= 900 && clickedTab) {
+                clickedTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+        }
+
+        let hasInteracted = false;
+        const labTabs = document.getElementById('labTabs');
+        const scrollLeft = document.getElementById('scrollLeft');
+        const scrollRight = document.getElementById('scrollRight');
+
+        if (labTabs) {
+            labTabs.addEventListener('scroll', function () {
+                if (!hasInteracted) {
+                    hasInteracted = true;
+                    if (scrollLeft) scrollLeft.style.display = 'none';
+                    if (scrollRight) scrollRight.style.display = 'none';
+                }
+            }, { once: true });
+
+            labTabs.addEventListener('touchstart', function () {
+                if (!hasInteracted) {
+                    hasInteracted = true;
+                    if (scrollLeft) scrollLeft.style.display = 'none';
+                    if (scrollRight) scrollRight.style.display = 'none';
+                }
+            }, { once: true });
+        }
+
+        function filterPeople(category) {
+            const allCards = document.querySelectorAll('.person-card');
+
+            // Update button states
+            document.querySelectorAll('.people-cat-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Show/hide cards
+            allCards.forEach(card => {
+                if (category === 'all') {
+                    card.classList.add('show');
+                } else {
+                    if (card.dataset.category === category) {
+                        card.classList.add('show');
+                    } else {
+                        card.classList.remove('show');
+                    }
+                }
+            });
+        }
+
+        function loadFragment(url, containerId) {
+            fetch(url)
+                .then(res => res.text())
+                .then(html => {
+                    const container = document.getElementById(containerId);
+                    container.innerHTML = html;
+
+                    container.querySelectorAll('script').forEach(oldScript => {
+                        const newScript = document.createElement('script');
+                        if (oldScript.src) {
+                            newScript.src = oldScript.src;
+                        } else {
+                            newScript.textContent = oldScript.textContent;
+                        }
+                        oldScript.replaceWith(newScript);
+                    });
+                })
+                .catch(err => console.error('Error loading fragment:', url, err));
+        }
+
+        loadFragment('/UI/header.html', 'header-container');
+        loadFragment('/UI/footer.html', 'footer-container');
+    </script>
+
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                processEscapes: true
+            }
+        });
+    </script>
+    <script type="text/javascript"
+        src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+
+</html>

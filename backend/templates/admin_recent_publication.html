@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Recent Publication Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    /* =====================================================
+       GLOBAL RESET & BASE
+       ===================================================== */
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 1.5rem 4vw;
+      background: #0f172a;
+      color: #e5e7eb;
+      line-height: 1.5;
+    }
+
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* =====================================================
+       HEADER
+       ===================================================== */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.4rem;
+      white-space: nowrap;
+    }
+
+    h2 {
+      margin: 0 0 1rem;
+      font-size: 1.1rem;
+    }
+
+    /* =====================================================
+       FLASH MESSAGES
+       ===================================================== */
+    .flash-messages {
+      margin-bottom: 1rem;
+    }
+
+    .flash-message {
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .flash-success {
+      background: #166534;
+      color: #dcfce7;
+      border: 1px solid #22c55e;
+    }
+
+    .flash-error {
+      background: #7f1d1d;
+      color: #fecaca;
+      border: 1px solid #ef4444;
+    }
+
+    /* =====================================================
+       CARDS
+       ===================================================== */
+    .card {
+      background: #020617;
+      border-radius: 14px;
+      padding: 1.25rem;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      margin-bottom: 1.75rem;
+    }
+
+    /* =====================================================
+       FORMS
+       ===================================================== */
+    label {
+      display: block;
+      font-size: 0.9rem;
+      margin-bottom: 0.25rem;
+      color: #cbd5f5;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="url"] {
+      width: 100%;
+      padding: 0.5rem 0.6rem;
+      border-radius: 8px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 0.9rem;
+      margin-bottom: 0.75rem;
+      font-family: inherit;
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(0.8);
+      cursor: pointer;
+    }
+
+    input[type="date"]:focus {
+      outline: none;
+      border-color: #f59e0b;
+    }
+
+    .inline-input {
+      width: 100%;
+      padding: 0.5rem 0.6rem;
+      border-radius: 8px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .muted {
+      color: #94a3b8;
+      font-size: 0.85rem;
+    }
+
+    /* Style for file input */
+    input[type="file"] {
+      padding: 0.5rem;
+      cursor: pointer;
+    }
+
+    input[type="file"]::-webkit-file-upload-button {
+      background: #1e293b;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      border-radius: 6px;
+      color: #e5e7eb;
+      padding: 0.3rem 0.8rem;
+      margin-right: 0.8rem;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .inline-input {
+      width: 100%;
+      padding: 0.5rem 0.6rem;
+      border-radius: 8px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .muted {
+      color: #94a3b8;
+      font-size: 0.85rem;
+      margin-top: -0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .reorder-hint {
+      font-size: 0.9rem;
+      color: #94a3b8;
+      margin-bottom: 0.75rem;
+      padding: 0.5rem;
+      background: rgba(15, 23, 42, 0.6);
+      border-radius: 6px;
+    }
+
+    /* Edit mode styles */
+    .edit-mode {
+      background: rgba(15, 23, 42, 0.6);
+      padding: 0.75rem;
+      border-radius: 8px;
+      margin-top: 0.5rem;
+    }
+
+    .edit-mode label {
+      margin-top: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* =====================================================
+       BUTTONS
+       ===================================================== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem 1.1rem;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: 0.18s ease;
+      text-decoration: none;
+      color: inherit;
+      min-width: 88px;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(to right, #f59e0b, #ec4899);
+      color: #0b1120;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.9;
+    }
+
+    .btn-danger {
+      background: #ef4444;
+      color: #fee2e2;
+    }
+
+    .btn-danger:hover {
+      background: #dc2626;
+    }
+
+    .btn-secondary {
+      background: #fff8c2;
+      color: #000;
+      border: 1px solid #e6d98a;
+    }
+
+    .btn-secondary:hover {
+      background: #fef08a;
+    }
+
+    .btn-exit {
+      background: transparent;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    .btn-exit:hover {
+      background: rgba(148, 163, 184, 0.1);
+    }
+
+    /* =====================================================
+       TABLE (DESKTOP)
+       ===================================================== */
+    .table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border-radius: 8px;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      min-width: 900px;
+    }
+
+    .table th,
+    .table td {
+      padding: 0.6rem;
+      border-bottom: 1px solid rgba(30, 64, 175, 0.4);
+      vertical-align: top;
+    }
+
+    .table th {
+      color: #93c5fd;
+      background: rgba(15, 23, 42, 0.6);
+      text-align: left;
+    }
+
+    .drag-handle {
+      cursor: grab;
+      font-size: 1.2rem;
+      color: #94a3b8;
+      user-select: none;
+    }
+
+    .drag-handle:active {
+      cursor: grabbing;
+    }
+
+    tbody.draggable-rows tr.dragging {
+      opacity: 0.4;
+    }
+
+    .actions-row {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .url-link {
+      color: #60a5fa;
+      text-decoration: none;
+      word-break: break-all;
+    }
+
+    .url-link:hover {
+      text-decoration: underline;
+    }
+
+    /* =====================================================
+       MOBILE CARD LAYOUT (PORTRAIT)
+       ===================================================== */
+    .mobile-publications-list {
+      display: none;
+    }
+
+    .mobile-publication-card {
+      background: #071031;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      transition: opacity 0.2s;
+    }
+
+    .mobile-publication-card.dragging {
+      opacity: 0.4;
+    }
+
+    .mobile-publication-card .card-drag-handle {
+      font-size: 1.5rem;
+      cursor: grab;
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      margin-bottom: 0.5rem;
+      color: #94a3b8;
+      user-select: none;
+    }
+
+    .mobile-publication-card .card-drag-handle:active {
+      cursor: grabbing;
+    }
+
+    .mobile-publication-card .card-section {
+      margin-bottom: 0.75rem;
+    }
+
+    .mobile-publication-card .card-section label {
+      font-size: 0.8rem;
+      color: #93c5fd;
+      margin-bottom: 0.25rem;
+      display: block;
+    }
+
+    .mobile-publication-card .card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #60a5fa;
+      margin-bottom: 0.5rem;
+    }
+
+    .mobile-publication-card .actions-row {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .mobile-publication-card .actions-row .btn {
+      width: 100%;
+    }
+
+    /* =====================================================
+       RESPONSIVE — PORTRAIT / TABLET
+       ===================================================== */
+    @media (orientation: portrait) {
+
+      body {
+        padding: 1rem;
+      }
+
+      .header {
+        flex-wrap: wrap;
+      }
+
+      .header h1 {
+        flex: 1 1 100%;
+      }
+
+      /* Hide desktop table, show mobile cards */
+      .table-wrapper {
+        display: none;
+      }
+
+      .mobile-publications-list {
+        display: block;
+      }
+    }
+
+    /* =====================================================
+       RESPONSIVE — MOBILE (SMALL PORTRAIT)
+       ===================================================== */
+    @media (max-width: 480px) {
+
+      .actions-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .actions-row .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+
+    <div class="header">
+      <h1>Recent Publication Admin</h1>
+      <a href="{{ url_for('admin_home.admin_home') }}" class="btn btn-exit">Exit</a>
+    </div>
+
+    <!-- FLASH MESSAGES -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-messages">
+      {% for category, message in messages %}
+      <div class="flash-message flash-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <!-- ADD PUBLICATION -->
+    <div class="card">
+      <h2>Add New Publication</h2>
+      <form method="POST" action="{{ url_for('admin_publication.add_recent_publication') }}"
+        onsubmit="return validateAddForm(this)">
+        <label>Title (English) *</label>
+        <input type="text" name="title_en" required>
+
+        <label>Title (Hindi)</label>
+        <input type="text" name="title_hi">
+
+        <label>URL *</label>
+        <input type="url" name="url" required placeholder="https://example.com/paper.pdf">
+
+        <label>Publication Date * (must be in the past)</label>
+        <input type="date" name="date" id="addDate" max="{{ now().strftime('%Y-%m-%d') }}" required>
+
+        <button class="btn btn-primary" style="margin-top: 0.6rem;">Add Publication</button>
+      </form>
+    </div>
+
+    <!-- EXISTING PUBLICATIONS -->
+    <div class="card">
+      <h2>Existing Publications</h2>
+
+      {% if items|length == 0 %}
+      <p class="muted">No publications added yet.</p>
+      {% else %}
+      <button id="saveOrderBtn" class="btn btn-primary" style="margin-bottom:0.6rem;">
+        Save Order
+      </button>
+
+      <!-- DESKTOP TABLE VIEW (LANDSCAPE) -->
+      <div class="table-wrapper">
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="width:40px;"></th>
+              <th>Title</th>
+              <th>URL</th>
+              <th>Date</th>
+              <th>Uploaded</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody class="draggable-rows" id="publicationTbody">
+            {% for p in items %}
+            <tr draggable="true" data-id="{{ p.id }}">
+              <td><span class="drag-handle">☰</span></td>
+
+              <td>
+                <div class="view-mode">
+                  <strong>EN:</strong> <span class="title-en-view">{{ p.title_en }}</span><br>
+                  <strong>HI:</strong> <span class="title-hi-view">{{ p.title_hi or '—' }}</span>
+                </div>
+
+                <div class="edit-mode" style="display:none;">
+                  <input class="inline-input title-en" value="{{ p.title_en }}" placeholder="Title (English)">
+                  <input class="inline-input title-hi" value="{{ p.title_hi }}" placeholder="Title (Hindi)">
+                </div>
+              </td>
+
+              <td>
+                <div class="view-mode">
+                  <a href="{{ p.url }}" target="_blank" class="url-link">{{ p.url }}</a>
+                </div>
+                <div class="edit-mode" style="display:none;">
+                  <input class="inline-input url-input" type="url" value="{{ p.url }}" placeholder="https://...">
+                </div>
+              </td>
+
+              <td>
+                <div class="view-mode">
+                  <span class="date-view">{{ p.date }}</span>
+                </div>
+                <div class="edit-mode" style="display:none;">
+                  <input class="inline-input date-input" type="date" value="{{ p.date }}"
+                    max="{{ now().strftime('%Y-%m-%d') }}">
+                </div>
+              </td>
+
+              <td class="muted">{{ format_date(p.uploaded_at) }}</td>
+
+              <td>
+                <div class="actions-row">
+                  <button class="btn btn-secondary" onclick="toggleEdit(this)" data-id="{{ p.id }}">
+                    Edit
+                  </button>
+
+                  <button class="btn btn-primary" style="display:none;" onclick="saveEdit(this)" data-id="{{ p.id }}">
+                    Save
+                  </button>
+
+                  <button class="btn btn-secondary" style="display:none;" onclick="cancelEdit(this)">
+                    Cancel
+                  </button>
+
+                  <button class="btn btn-danger" data-id="{{ p.id }}" onclick="deletePublication(this.dataset.id)">
+                    Delete
+                  </button>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- MOBILE CARD VIEW (PORTRAIT ONLY) -->
+      <div class="mobile-publications-list" id="mobilePublicationsList">
+        {% for p in items %}
+        <div class="mobile-publication-card" draggable="true" data-id="{{ p.id }}">
+          <span class="card-drag-handle" title="Drag to reorder">☰</span>
+
+          <div class="card-section">
+            <label>Title</label>
+            <div class="view-mode">
+              <strong>EN:</strong> <span class="title-en-view">{{ p.title_en }}</span><br>
+              <strong>HI:</strong> <span class="title-hi-view">{{ p.title_hi or '—' }}</span>
+            </div>
+
+            <div class="edit-mode" style="display:none;">
+              <input class="inline-input title-en" value="{{ p.title_en }}" placeholder="Title (English)">
+              <input class="inline-input title-hi" value="{{ p.title_hi }}" placeholder="Title (Hindi)">
+            </div>
+          </div>
+
+          <div class="card-section">
+            <label>URL</label>
+            <div class="view-mode">
+              <a href="{{ p.url }}" target="_blank" class="url-link">{{ p.url }}</a>
+            </div>
+            <div class="edit-mode" style="display:none;">
+              <input class="inline-input url-input" type="url" value="{{ p.url }}" placeholder="https://...">
+            </div>
+          </div>
+
+          <div class="card-section">
+            <label>Date</label>
+            <div class="view-mode">
+              <span class="date-view">{{ p.date }}</span>
+            </div>
+            <div class="edit-mode" style="display:none;">
+              <input class="inline-input date-input" type="date" value="{{ p.date }}"
+                max="{{ now().strftime('%Y-%m-%d') }}">
+            </div>
+          </div>
+
+          <div class="card-section">
+            <label>Uploaded</label>
+            <span class="muted">{{ format_date(p.uploaded_at) }}</span>
+          </div>
+
+          <div class="actions-row">
+            <button class="btn btn-secondary" onclick="toggleEdit(this)" data-id="{{ p.id }}">
+              Edit
+            </button>
+
+            <button class="btn btn-primary" style="display:none;" onclick="saveEdit(this)" data-id="{{ p.id }}">
+              Save
+            </button>
+
+            <button class="btn btn-secondary" style="display:none;" onclick="cancelEdit(this)">
+              Cancel
+            </button>
+
+            <button class="btn btn-danger" data-id="{{ p.id }}" onclick="deletePublication(this.dataset.id)">
+              Delete
+            </button>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <script>
+    /* ------- URL VALIDATION FUNCTION ------- */
+    function validateUrl(url) {
+      try {
+        new URL(url);
+        return true;
+      } catch {
+        return false;
+      }
+    }
+
+    /* ------- DATE VALIDATION FUNCTION (PAST DATES ONLY) ------- */
+    function isPastDate(dateString) {
+      // Check if date matches YYYY-MM-DD format
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+        return false;
+      }
+
+      // Parse the date parts
+      const parts = dateString.split('-');
+      const year = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10);
+      const day = parseInt(parts[2], 10);
+
+      // Check year is 4 digits (between 1000 and 9999)
+      if (year < 1000 || year > 9999) {
+        return false;
+      }
+
+      // Check if month is valid (1-12)
+      if (month < 1 || month > 12) {
+        return false;
+      }
+
+      // Check if day is valid for the given month
+      const date = new Date(year, month - 1, day);
+      if (date.getFullYear() !== year ||
+        date.getMonth() !== month - 1 ||
+        date.getDate() !== day) {
+        return false;
+      }
+
+      // Check if date is in the past (not today or future)
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); // Set to beginning of today
+
+      return date < today;
+    }
+
+    /* ------- FORM VALIDATION ------- */
+    function validateAddForm(form) {
+      const titleEn = form.querySelector('input[name="title_en"]').value.trim();
+      const url = form.querySelector('input[name="url"]').value.trim();
+      const dateValue = form.querySelector('input[name="date"]').value;
+
+      if (!titleEn) {
+        alert('Title (English) is required.');
+        return false;
+      }
+
+      if (!url) {
+        alert('URL is required.');
+        return false;
+      }
+
+      if (!validateUrl(url)) {
+        alert('Please enter a valid URL (e.g., https://example.com/paper.pdf).');
+        return false;
+      }
+
+      if (!isPastDate(dateValue)) {
+        alert('Please enter a valid past date (YYYY-MM-DD format). The date must be before today.');
+        return false;
+      }
+      return true;
+    }
+
+    /* ------- INLINE EDITING ------- */
+    function toggleEdit(btn) {
+      const container = btn.closest('tr') || btn.closest('.mobile-publication-card');
+
+      const viewModes = container.querySelectorAll('.view-mode');
+      const editModes = container.querySelectorAll('.edit-mode');
+
+      viewModes.forEach(el => el.style.display = 'none');
+      editModes.forEach(el => el.style.display = 'block');
+
+      btn.style.display = 'none';
+      container.querySelector('[onclick^="saveEdit"]').style.display = 'inline-flex';
+      container.querySelector('[onclick^="cancelEdit"]').style.display = 'inline-flex';
+    }
+
+    function cancelEdit(btn) {
+      const container = btn.closest('tr') || btn.closest('.mobile-publication-card');
+
+      const viewModes = container.querySelectorAll('.view-mode');
+      const editModes = container.querySelectorAll('.edit-mode');
+
+      editModes.forEach(el => el.style.display = 'none');
+      viewModes.forEach(el => el.style.display = 'block');
+
+      container.querySelector('[onclick^="toggleEdit"]').style.display = 'inline-flex';
+      container.querySelector('[onclick^="saveEdit"]').style.display = 'none';
+      container.querySelector('[onclick^="cancelEdit"]').style.display = 'none';
+    }
+
+    async function saveEdit(btn) {
+      const container = btn.closest('tr') || btn.closest('.mobile-publication-card');
+      const id = btn.dataset.id;
+
+      const titleEn = container.querySelector('.title-en').value.trim();
+      const url = container.querySelector('.url-input').value.trim();
+      const dateValue = container.querySelector('.date-input').value;
+
+      // Validate required fields
+      if (!titleEn) {
+        alert('Title (English) is required.');
+        return;
+      }
+
+      if (!url) {
+        alert('URL is required.');
+        return;
+      }
+
+      if (!validateUrl(url)) {
+        alert('Please enter a valid URL (e.g., https://example.com/paper.pdf).');
+        return;
+      }
+
+      // Validate date is in the past
+      if (!isPastDate(dateValue)) {
+        alert('Please enter a valid past date (YYYY-MM-DD format). The date must be before today.');
+        return;
+      }
+
+      const payload = {
+        title_en: titleEn,
+        title_hi: container.querySelector('.title-hi').value.trim(),
+        url: url,
+        date: dateValue
+      };
+
+      try {
+        const res = await fetch(`{{ url_for('admin_publication.edit_recent_publication', item_id=0) }}`.replace('/0', `/${id}`), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          location.reload();
+        } else {
+          const error = await res.json();
+          alert(error.error || 'Save failed');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Error saving: ' + err.message);
+      }
+    }
+
+    /* ------- DELETE ------- */
+    function deletePublication(id) {
+      if (!confirm('Delete this publication permanently? This action cannot be undone.')) return;
+
+      fetch(`{{ url_for('admin_publication.delete_recent_publication', item_id=0) }}`.replace('/0', `/${Number(id)}`), { method: 'POST' })
+        .then(res => {
+          if (res.ok) {
+            location.reload();
+          } else {
+            return res.json().then(data => {
+              throw new Error(data.error || 'Delete failed');
+            });
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          alert('Delete error: ' + err.message);
+        });
+    }
+
+    /* ------- DRAG & DROP REORDER ------- */
+    const tbody = document.getElementById('publicationTbody');
+    const mobileList = document.getElementById('mobilePublicationsList');
+    let draggingRow = null;
+
+    // Desktop table drag handlers
+    if (tbody) {
+      tbody.addEventListener('dragstart', e => {
+        draggingRow = e.target.closest('tr');
+        if (draggingRow) draggingRow.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+      });
+
+      tbody.addEventListener('dragover', e => {
+        e.preventDefault();
+        const target = e.target.closest('tr');
+        if (!target || target === draggingRow) return;
+
+        const bounding = target.getBoundingClientRect();
+        const offset = e.clientY - bounding.top;
+        const after = offset > (bounding.height / 2);
+
+        if (after) {
+          tbody.insertBefore(draggingRow, target.nextSibling);
+        } else {
+          tbody.insertBefore(draggingRow, target);
+        }
+      });
+
+      tbody.addEventListener('dragend', () => {
+        if (draggingRow) draggingRow.classList.remove('dragging');
+        draggingRow = null;
+      });
+    }
+
+    // Mobile cards drag handlers
+    if (mobileList) {
+      mobileList.addEventListener('dragstart', e => {
+        draggingRow = e.target.closest('.mobile-publication-card');
+        if (draggingRow) draggingRow.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+      });
+
+      mobileList.addEventListener('dragover', e => {
+        e.preventDefault();
+        const target = e.target.closest('.mobile-publication-card');
+        if (!target || target === draggingRow) return;
+
+        const bounding = target.getBoundingClientRect();
+        const offset = e.clientY - bounding.top;
+        const after = offset > (bounding.height / 2);
+
+        if (after) {
+          mobileList.insertBefore(draggingRow, target.nextSibling);
+        } else {
+          mobileList.insertBefore(draggingRow, target);
+        }
+      });
+
+      mobileList.addEventListener('dragend', () => {
+        if (draggingRow) draggingRow.classList.remove('dragging');
+        draggingRow = null;
+      });
+    }
+
+    /* ------- SAVE ORDER ------- */
+    document.getElementById('saveOrderBtn')?.addEventListener('click', async () => {
+      let order = [];
+
+      // Get order from whichever view is visible
+      if (tbody) {
+        const rows = tbody.querySelectorAll('tr');
+        if (rows.length > 0) {
+          order = [...rows].map(tr => tr.dataset.id);
+        }
+      }
+
+      if (order.length === 0 && mobileList) {
+        const cards = mobileList.querySelectorAll('.mobile-publication-card');
+        if (cards.length > 0) {
+          order = [...cards].map(card => card.dataset.id);
+        }
+      }
+
+      if (order.length === 0) {
+        alert('No publications to save');
+        return;
+      }
+
+      try {
+        const res = await fetch("{{ url_for('admin_publication.reorder_recent_publication') }}", {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ order })
+        });
+
+        if (res.ok) {
+          alert('Order saved successfully!');
+        } else {
+          const error = await res.json();
+          alert('Failed to save order: ' + (error.error || 'Unknown error'));
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Error saving order: ' + err.message);
+      }
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>History - CPP-IPR</title>
+
+  <style>
+    :root {
+      --history-bg: #ffffff;
+      --history-border: #d0d7e2;
+      --history-text: #111827;
+      --history-muted: #6b7280;
+      --history-accent: #2563eb;
+      --history-radius-lg: 16px;
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      font-family: Arial, sans-serif;
+    }
+
+    #header-container,
+    #footer-container {
+      flex-shrink: 0;
+    }
+
+    main {
+      flex: 1;
+      padding: 1.5rem 5vw;
+      box-sizing: border-box;
+    }
+
+    /* ---------- GLOBAL SECTION WIDTH ---------- */
+    .page-section {
+      max-width: 1600px;
+      margin: 0 auto 2rem auto;
+    }
+
+    /* ---------- HISTORY SECTION STYLES ---------- */
+    .history-section {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      box-sizing: border-box;
+    }
+
+    /* BANNER IMAGE */
+    .history-banner {
+      width: 100%;
+      height: auto;
+      border-radius: var(--history-radius-lg);
+      object-fit: cover;
+    }
+
+    /* MAIN BODY */
+    .history-main {
+      position: relative;
+      width: 100%;
+      background: var(--history-bg);
+      border: 1.5px solid var(--history-border);
+      border-radius: var(--history-radius-lg);
+      overflow: hidden;
+    }
+
+    /* HEADER INSIDE BOX */
+    .history-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem 1.75rem 1rem 1.75rem;
+      position: relative;
+    }
+
+    /* Horizontal line with custom width */
+    .history-header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      height: 2px;
+      background-color: var(--history-border);
+    }
+
+    .history-title {
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: var(--history-text);
+      text-align: center;
+      margin: 0;
+    }
+
+    /* CONTENT AREA */
+    .history-content {
+      padding: 1.75rem 1.75rem;
+      box-sizing: border-box;
+    }
+
+    .history-content p {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: var(--history-text);
+      margin-bottom: 1.5rem;
+      text-align: justify;
+      text-justify: inter-word;
+      hyphens: auto;
+    }
+
+    .history-content p:last-child {
+      margin-bottom: 0;
+    }
+
+    .history-content a {
+      color: var(--history-accent);
+      text-decoration: none;
+    }
+
+    .history-content a:hover {
+      text-decoration: underline;
+    }
+
+    /* FOUNDER DIRECTOR CARD */
+    .director-card {
+      float: right;
+      max-width: 350px;
+      background: var(--history-bg);
+      border: 1.5px solid var(--history-border);
+      border-radius: var(--history-radius-lg);
+      padding: 20px;
+      margin: 0 0 20px 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .director-card img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      border: 1px solid var(--history-border);
+    }
+
+    .director-caption {
+      text-align: center;
+      font-style: italic;
+      color: var(--history-text);
+      margin-top: 10px;
+      font-size: 0.95rem;
+    }
+
+    /* INFO TEXT */
+    .info {
+      font-size: 0.9rem;
+      color: var(--history-muted);
+      font-style: italic;
+      text-align: right;
+      margin-top: 2rem;
+    }
+
+    /* ---------- MOBILE ---------- */
+    @media (max-width: 900px) {
+      .history-title {
+        font-size: 1.35rem;
+      }
+
+      .history-header {
+        padding: 1.25rem 1.25rem 0.85rem 1.25rem;
+      }
+
+      .history-header::after {
+        width: 80%;
+      }
+
+      .history-content {
+        padding: 1.5rem 1.25rem;
+      }
+
+      .history-content p {
+        font-size: 0.95rem;
+        /* Changed from text-align: left to text-align: justify */
+        text-align: justify;
+        text-justify: inter-word;
+        hyphens: auto;
+        /* Optional: Adjust word spacing for better mobile justification */
+        word-spacing: -0.5px;
+      }
+
+      .director-card {
+        float: none;
+        max-width: 100%;
+        margin: 0 0 20px 0;
+      }
+    }
+
+    /* Small mobile screens */
+    @media (max-width: 480px) {
+      .history-content p {
+        font-size: 0.9rem;
+        line-height: 1.6;
+        /* Further adjustments for very small screens */
+        letter-spacing: 0.2px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <div id="header-container"></div>
+
+  <!-- PAGE CONTENT -->
+  <main>
+    <div class="page-section history-section">
+
+      <!-- BANNER IMAGE -->
+      <img src="/assets/images/about_banner.jpg" alt="CPP-IPR Banner" class="history-banner">
+
+      <!-- MAIN BODY -->
+      <div class="history-main">
+
+        <!-- HEADER INSIDE BOX -->
+        <div class="history-header">
+          <h1 class="history-title bilingual-title" data-hi="इतिहास" data-en="History">
+            History
+          </h1>
+        </div>
+
+        <!-- CONTENT -->
+        <div class="history-content">
+
+          <!-- FOUNDER DIRECTOR CARD -->
+          <div class="director-card">
+            <img src="/assets/images/static/sb.png" alt="Prof. S. Bujarbarua">
+            <p class="director-caption bilingual-text" data-hi="प्रो. एस. बुजरबरुआ, संस्थापक निदेशक"
+              data-en="Prof. S. Bujarbarua, Founder Director">
+              Prof. S. Bujarbarua<br>Founder Director
+            </p>
+          </div>
+
+          <p class="bilingual-text"
+            data-hi="प्लाज्मा भौतिकी केंद्र (जिसे अब प्लाज्मा भौतिकी केंद्र-प्लाज्मा अनुसंधान संस्थान के रूप में नाम दिया गया है) भारत के उत्तर पूर्व में अग्रणी अनुसंधान संगठनों में से एक है। इसकी स्थापना 1991 में विज्ञान और प्रौद्योगिकी विभाग, असम सरकार के तहत सैद्धांतिक और साथ ही प्रायोगिक प्लाज्मा भौतिकी और इसके संबंधित क्षेत्रों में बुनियादी अनुसंधान को आगे बढ़ाने के उद्देश्य से एक स्वायत्त अनुसंधान संस्थान के रूप में की गई थी। केंद्र ने अप्रैल 1991 से सप्तशवाहिद पथ, दिसपुर, गुवाहाटी में स्थित एक किराए के मकान में काम करना शुरू किया। अपनी स्थापना के बाद से, इसका नेतृत्व निदेशक द्वारा किया जाता था और एक शासी परिषद द्वारा इसका प्रबंधन किया जाता था। केंद्र की शासी परिषद में देश के चार प्रतिष्ठित वैज्ञानिक शामिल थे, जिनमें प्लाज्मा अनुसंधान संस्थान, गांधीनगर, भौतिक अनुसंधान प्रयोगशाला, अहमदाबाद, भाभा परमाणु अनुसंधान केंद्र, बॉम्बे और साहा परमाणु भौतिकी संस्थान, कलकत्ता के प्रतिनिधि; शीर्ष स्तर के राज्य सरकार के अधिकारी और कुछ स्थानीय सदस्य थे। गवर्निंग काउंसिल के पहले अध्यक्ष स्वर्गीय प्रोफेसर प्रधिमान कृष्ण काव (प्लाज्मा अनुसंधान संस्थान, गांधीनगर के पूर्व निदेशक) थे, जो विश्व प्रसिद्ध प्लाज्मा भौतिक विज्ञानी थे, जिन्होंने केंद्र के सर्वांगीण विकास में गहरी रुचि दिखाई। अपने 3 साल के कार्यकाल की समाप्ति के बाद, केंद्र की गवर्निंग काउंसिल का गठन शिक्षा विभाग द्वारा किया गया, जिसके अध्यक्ष भौतिक अनुसंधान प्रयोगशाला के डीन प्रोफेसर ए.सी. दास थे। केंद्र के संस्थापक निदेशक, प्रोफेसर सर्वेश्वर बुजरबरुआ, देश के एक प्रतिष्ठित प्लाज्मा वैज्ञानिक हैं और उन्हें 1989 में 'विक्रम साराभाई अनुसंधान पुरस्कार' और 1993 में कमल कुमारी राष्ट्रीय पुरस्कार से सम्मानित किया गया है।"
+            data-en="Centre of Plasma Physics (now renamed as Centre of Plasma Physics – Institute For Plasma Research) is one of the leading research organizations in North East of India. It was established in 1991 under Department of Science and Technology, Govt. of Assam, as an autonomous research institute to the objectives pursue basic research in theoretical as well as experimental plasma physics and its related areas. The Centre started functioning since April 1991 in a rented house located at Saptaswahid Path, Dispur, Guwahati. Since its inception, it was headed by Director and was managed by a Governing Council. The Governing Council of the Centre consisted of four eminent scientists of the country with representatives from Institute for Plasma Research, Gandhinagar, Physical Research Laboratory, Ahmedabad, Bhabha Atomic Research Center, Bombay and Saha Institute of Nuclear Physics, Calcutta; top level State Government officers and some local members. The first Chairman of the Governing Council was Late Professor Predhiman Krishan Kaw (the former director of Institute for Plasma Research, Gandhinagar), a world renowned Plasma Physicist who took keen interest for the all-round development of the Centre. After the expiry of its 3 years' term, the Governing Council of the Centre was reconstituted by the Education Department with Prof. A.C. Das, Dean of Physical Research Laboratory as its chairman. The founder Director of the Centre, Prof. Sarbeswar Bujarbaruah, is a distinguished plasma scientist of the country and recipient of 'Vikram Sarabhai Research Award' in 1989 and Kamal Kumari National Award in 1993.">
+            Centre of Plasma Physics (now renamed as Centre of Plasma Physics – Institute For Plasma Research) is one of
+            the leading research organizations in North East of India. It was established in 1991 under Department of
+            Science and Technology, Govt. of Assam, as an autonomous research institute to the objectives pursue basic
+            research in theoretical as well as experimental plasma physics and its related areas. The Centre started
+            functioning since April 1991 in a rented house located at Saptaswahid Path, Dispur, Guwahati. Since its
+            inception, it was headed by Director and was managed by a Governing Council. The Governing Council of the
+            Centre consisted of four eminent scientists of the country with representatives from Institute for Plasma
+            Research, Gandhinagar, Physical Research Laboratory, Ahmedabad, <a
+              href="http://en.wikipedia.org/wiki/Bhabha_Atomic_Research_Center" target="_blank">Bhabha Atomic Research
+              Center</a>, Bombay and <a href="http://en.wikipedia.org/wiki/Saha_Institute_of_Nuclear_Physics"
+              target="_blank">Saha Institute of Nuclear Physics</a>, Calcutta; top level State Government officers and
+            some local members. The first Chairman of the Governing Council was Late Professor <a
+              href="http://en.wikipedia.org/wiki/Predhiman_Krishan_Kaw" target="_blank">Predhiman Krishan Kaw</a> (the
+            former director of Institute for Plasma Research, Gandhinagar), a world renowned Plasma Physicist who took
+            keen interest for the all-round development of the Centre. After the expiry of its 3 years' term, the
+            Governing Council of the Centre was reconstituted by the Education Department with Prof. A.C. Das, Dean of
+            <a href="http://en.wikipedia.org/wiki/Physical_Research_Laboratory" target="_blank">Physical Research
+              Laboratory</a> as its chairman. The founder Director of the Centre, Prof. Sarbeswar Bujarbaruah, is a
+            distinguished plasma scientist of the country and recipient of 'Vikram Sarabhai Research Award' in 1989 and
+            <a href="http://en.wikipedia.org/wiki/Kamal_Kumari_National_Award" target="_blank">Kamal Kumari National
+              Award</a> in 1993.
+          </p>
+
+          <p class="bilingual-text"
+            data-hi="अपने गठन के बाद पिछले कुछ वर्षों में, केंद्र ने मौलिक प्लाज्मा प्रक्रियाओं जैसे कि गैर-रेखीय घटना, अस्थिरता, धूल भरे प्लाज्मा में कई सैद्धांतिक जांच की है और बुनियादी प्लाज्मा भौतिकी प्रयोगों के संचालन के लिए सुविधाएं स्थापित की हैं। कई केंद्रीय सरकारी एजेंसियों (जैसे परमाणु ऊर्जा विभाग, विज्ञान और प्रौद्योगिकी विभाग) से धन उपलब्ध हैं। केंद्र ने प्लाज्मा भौतिकी के अग्रणी क्षेत्रों जैसे कि घने प्लाज्मा फोकस और धूल भरे प्लाज्मा में प्रयोगात्मक कार्यक्रम शुरू किए हैं। केंद्र के वैज्ञानिक राष्ट्रीय और अंतर्राष्ट्रीय संस्थानों जैसे कि प्लाज्मा अनुसंधान संस्थान, गांधीनगर, भौतिक अनुसंधान प्रयोगशाला, अहमदाबाद, भाभा परमाणु अनुसंधान केंद्र, बॉम्बे, क्षेत्रीय अनुसंधान प्रयोगशाला, भुवनेश्वर, साहा परमाणु भौतिकी संस्थान, कलकत्ता, क्यूशू विश्वविद्यालय, जापान, बेयरुथ विश्वविद्यालय, जर्मनी, कुल्हम प्रयोगशाला, यूके और फ्लिंडर्स विश्वविद्यालय, ऑस्ट्रेलिया के साथ मिलकर काम कर रहे हैं। केंद्र गुवाहाटी विश्वविद्यालय में पंजीकृत छात्रों के साथ पीएचडी कार्यक्रम भी चलाता है। केंद्र की शैक्षणिक गतिविधि का एक अन्य घटक प्लाज्मा भौतिकी और भौतिक विज्ञान की अन्य शाखाओं पर व्याख्यान और संगोष्ठी आयोजित करना है।"
+            data-en="Over the last few years after its formation, the Centre has taken up several theoretical investigations in fundamental plasma processes such as nonlinear phenomena, instabilities, dusty plasma and has set up facilities for conducting basic plasma physics experiments. Funds are available from several Central Government agencies (like Department of Atomic Energy, Department of Science and Technology), the Centre has taken up experimental programmes in the frontline areas of plasma physics, such as dense plasma focus and dusty plasma. The scientists of the Centre are working in close collaboration with national and international institutes like Institute for Plasma Research, Gandhinagar, Physical Research Laboratory, Ahmedabad, Bhabha Atomic Research Centre, Bombay, Regional Research Laboratory, Bhubaneswar, Saha Institute of Nuclear Physics, Calcutta, Kyushu University, Japan, University of Bayreuth, Germany, Culham Laboratory, UK, and Flinders University, Australia, to name a few. The Centre also runs a Ph.D. programme with students registering with Guwahati University. Another component of the academic activity of the Centre consist of holding lecturers and colloquia on plasma physics and other branches of physical sciences.">
+            Over the last few years after its formation, the Centre has taken up several theoretical investigations in
+            fundamental plasma processes such as nonlinear phenomena, instabilities, dusty plasma and has set up
+            facilities for conducting basic plasma physics experiments. Funds are available from several Central
+            Government agencies (like Department of Atomic Energy, Department of Science and Technology), the Centre has
+            taken up experimental programmes in the frontline areas of plasma physics, such as dense plasma focus and
+            dusty plasma. The scientists of the Centre are working in close collaboration with national and
+            international institutes like <a href="http://en.wikipedia.org/wiki/Institute_for_Plasma_Research"
+              target="_blank">Institute for Plasma Research</a>, Gandhinagar, <a
+              href="http://en.wikipedia.org/wiki/Physical_Research_Laboratory" target="_blank">Physical Research
+              Laboratory</a>, Ahmedabad, <a href="http://en.wikipedia.org/wiki/Bhabha_Atomic_Research_Centre"
+              target="_blank">Bhabha Atomic Research Centre</a>, Bombay, <a
+              href="http://en.wikipedia.org/wiki/Regional_Research_Laboratory" target="_blank">Regional Research
+              Laboratory</a>, Bhubaneswar, <a href="http://en.wikipedia.org/wiki/Saha_Institute_of_Nuclear_Physics"
+              target="_blank">Saha Institute of Nuclear Physics</a>, Calcutta, <a
+              href="http://en.wikipedia.org/wiki/Kyushu_University" target="_blank">Kyushu University</a>, Japan, <a
+              href="http://en.wikipedia.org/wiki/University_of_Bayreuth" target="_blank">University of Bayreuth</a>,
+            Germany, Culham Laboratory, UK, and <a href="http://en.wikipedia.org/wiki/Flinders_University"
+              target="_blank">Flinders University</a>, Australia, to name a few. The Centre also runs a Ph.D. programme
+            with students registering with Guwahati University. Another component of the academic activity of the Centre
+            consist of holding lecturers and colloquia on plasma physics and other branches of physical sciences.
+          </p>
+
+          <p class="bilingual-text"
+            data-hi="2004 में, केंद्र को नाज़िराखाट, सोनापुर, कामरूप, असम स्थित अपने स्थायी परिसर में स्थानांतरित किया गया, जो दिसपुर से लगभग 20 किलोमीटर दूर है। स्थायी परिसर का मुख्य भवन भारत सरकार के एनई पूल फंड से निर्मित किया गया था। प्रशासनिक भवन का निर्माण टाटा टी द्वारा वित्तपोषित किया गया, जबकि छात्रावास-सह-कैंटीन भवन का निर्माण असम से राज्यसभा सांसद रहे स्वर्गीय डॉ. मनमोहन सिंह (भारत के पूर्व प्रधानमंत्री) द्वारा सांसद स्थानीय क्षेत्र विकास योजना (एमपीएलएडीएस) के अंतर्गत प्रदत्त निधि से किया गया।"
+            data-en="In 2004, the Centre was shifted to its permanent campus at Nazirakhat, Sonapur, Kamrup, Assam, which is approximately 20 km from Dispur. The main building of the permanent campus was constructed with funds from the NE Pool Fund of the Government of India. The administrative building was funded by TATA Tea, while the hostel-cum-canteen building was constructed using funds allocated under the Members of Parliament Local Area Development Scheme (MPLADS) by Late Dr. Manmohan Singh (Former Prime Minister of India), who was a Rajya Sabha Member of Parliament from Assam at that time.">
+            In 2004, the Centre was shifted to its permanent campus at Nazirakhat, Sonapur, Kamrup, Assam, which is
+            approximately 20 km from Dispur. The main building of the permanent campus was constructed with funds from
+            the NE Pool Fund of the Government of India. The administrative building was funded by TATA Tea, while the
+            hostel-cum-canteen building was constructed using funds allocated under the Members of Parliament Local Area
+            Development Scheme (MPLADS) by Late Dr. Manmohan Singh (Former Prime Minister of India), who was a Rajya
+            Sabha Member of Parliament from Assam at that time.
+          </p>
+
+          <p class="bilingual-text"
+            data-hi="केंद्र को अपने अधीन लेने के भारत सरकार के निर्देशानुसार, अंततः भारत सरकार ने इसे भारत के अहमदाबाद स्थित प्लाज्मा अनुसंधान संस्थान की सहयोगी संस्था के रूप में परमाणु ऊर्जा विभाग के अधीन लेने का निर्णय लिया। 29 मई 2009 को केंद्र को औपचारिक रूप से आईपीआर में एक नए नाम, प्लाज्मा भौतिकी केंद्र-प्लाज्मा अनुसंधान संस्थान के साथ विलय कर दिया गया। तब से, इसका नेतृत्व केंद्र निदेशक करते हैं और इसका प्रबंधन आईपीआर के निदेशक की अध्यक्षता वाले प्रबंध मंडल द्वारा किया जाता है। पहले केंद्र निदेशक प्रो. एस. बुजरबरुआ थे, जो संस्थान के संस्थापक निदेशक थे। प्रो. बुजरबरुआ की सेवानिवृत्ति के बाद, प्रो. के.एस. गोस्वामी को संस्थान का केंद्र निदेशक नियुक्त किया गया। इसमें वर्तमान में बारह संकाय सदस्य, चौदह अन्य कर्मचारी और कई शोध विद्वान और परियोजना वैज्ञानिक हैं। सैद्धांतिक और प्रायोगिक अनुसंधान बुनियादी प्लाज्मा भौतिकी के साथ-साथ आईपीआर में प्रमुख कार्यक्रमों के पूरक कार्यक्रमों की ओर उन्मुख है। वर्तमान में, संस्थान का नेतृत्व केंद्र निदेशक प्रो.स्मृति रंजन महान्ति कर रहे हैं।"
+            data-en="In pursuance to Govt of India, to take up the centre under its banner, finally Govt of India decided to take it under the DAE as a sister organization of Institute for Plasma Research, Ahmedabad, India. It was 29th May 2009, the centre was formally merged with IPR with a new name, Centre of Plasma Physics-Institute for Plasma Research. Since then, it has been headed by Centre Director and is managed by a Managing Board headed by Director, IPR. The first Centre director was Prof. S. Bujarbarua, the founder director of the institute. After retirement of Prof. Bujarbarua, Prof. K.S. Goswami was appointed as Centre Director of the Institute. It has at present twelve faculty members, fourteen other staff and a number of research scholars and project scientists. The theoretical and experimental research is oriented towards basic plasma physics as well as programs that compliment the major programs at IPR. Presently, the institute is headed by Prof. Smruti Ranjan Mohanty, Centre Director.">
+            In pursuance to Govt of India, to take up the centre under its banner, finally Govt of India decided to take
+            it under the DAE as a sister organization of Institute for Plasma Research, Ahmedabad, India. It was 29th
+            May 2009, the centre was formally merged with IPR with a new name, Centre of Plasma Physics-Institute for
+            Plasma Research. Since then, it has been headed by Centre Director and is managed by a Managing Board headed
+            by Director, IPR. The first Centre director was <strong>Prof. S. Bujarbarua</strong>, the founder director
+            of the institute. After retirement of Prof. Bujarbarua, Prof. K.S. Goswami was appointed as Centre Director
+            of the Institute. It has at present twelve faculty members, fourteen other staff and a number of research
+            scholars and project scientists. The theoretical and experimental research is oriented towards basic plasma
+            physics as well as programs that compliment the major programs at IPR. Presently, the institute is headed by
+            Prof. Smruti Ranjan Mohanty, <em>Centre Director.</em>
+          </p>
+
+          <p class="info bilingual-text" data-hi="(जानकारी अंतिम बार 19/01/2026 को बदली गई हैं।)"
+            data-en="(Information last updated on 19/01/2026)">
+            (Information last updated on 19/01/2026)
+          </p>
+
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <div id="footer-container"></div>
+
+  <!-- FRAGMENT LOADER -->
+  <script>
+    function loadFragment(url, containerId) {
+      fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const container = document.getElementById(containerId);
+          container.innerHTML = html;
+
+          container.querySelectorAll('script').forEach(oldScript => {
+            const newScript = document.createElement('script');
+            if (oldScript.src) {
+              newScript.src = oldScript.src;
+            } else {
+              newScript.textContent = oldScript.textContent;
+            }
+            oldScript.replaceWith(newScript);
+          });
+        })
+        .catch(err => console.error('Error loading fragment:', url, err));
+    }
+
+    loadFragment('/UI/header.html', 'header-container');
+    loadFragment('/UI/footer.html', 'footer-container');
+  </script>
+
+  <!-- INCLUDE BILINGUAL LOGIC -->
+  <script src="/UI/bilingual.js"></script>
+
+</body>
+
+</html>

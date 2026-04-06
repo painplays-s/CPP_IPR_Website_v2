@@ -1,0 +1,173 @@
+<!-- =========================
+     WELCOME BANNER FRAGMENT
+     ========================= -->
+<section class="welcome-banner">
+
+  <div class="welcome-card outlined">
+
+    <!-- LEFT: PHOTO -->
+    <div class="welcome-photo">
+      <img src="/assets/images/static/srm.jpg" alt="Dr. Smruti Ranjan Mohanty">
+    </div>
+
+    <!-- RIGHT: CONTENT -->
+    <div class="welcome-content">
+
+      <p class="designation">
+        Centre Director / केंद्र निदेशक
+      </p>
+
+      <h2 class="name-hi">
+        डॉ. स्मृति रंजन महान्ति, प्रोफेसर – जी
+      </h2>
+      <h2 class="name-en">
+        Dr. Smruti Ranjan Mohanty, Professor - G
+      </h2>
+
+      <p class="contact">
+        <strong>E-mail:</strong>
+        <a href="mailto:smruti@cppipr.res.in">smruti@cppipr.res.in</a><br>
+        <strong>Phone:</strong> 0361-2801501 / 02
+      </p>
+
+      <h3 class="welcome-title">Welcome to CPP-IPR</h3>
+
+      <p class="welcome-text">
+        Centre of Plasma Physics – Institute for Plasma Research (CPP-IPR) is a
+        research centre of Institute for Plasma Research (IPR), Gandhinagar,
+        Gujarat, an autonomous institute under the Department of Atomic Energy
+        (DAE), Government of India.
+      </p>
+
+      <p class="welcome-text hi">
+        प्लाज़्मा भौतिकी केंद्र – प्लाज़्मा अनुसंधान संस्थान (सीपीपी-आईपीआर),
+        प्लाज़्मा अनुसंधान संस्थान (आईपीआर), गांधीनगर, गुजरात का एक अनुसंधान
+        केंद्र है, जो परमाणु ऊर्जा विभाग (पऊवि), भारत सरकार के अंतर्गत एक
+        स्वायत्त संस्थान है।
+      </p>
+
+      <a href="/pages/Profile/about.html" class="read-more">
+        Continue reading…
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<style>
+/* ---------- WELCOME BANNER ---------- */
+.welcome-banner {
+  margin: 1rem auto;
+}
+
+/* CARD */
+.welcome-card.outlined {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  padding: 1.75rem;
+  border: 1px solid #d0d7e2;
+  border-radius: 16px;
+}
+
+/* PHOTO */
+.welcome-photo {
+  flex: 0 0 460px;
+}
+
+.welcome-photo img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  object-fit: cover;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+}
+
+/* CONTENT */
+.welcome-content {
+  flex: 1;
+}
+
+.designation {
+  margin: 0;
+  font-weight: 600;
+  color: #003366;
+}
+
+.name-hi,
+.name-en {
+  margin: 0.25rem 0;
+}
+
+.name-hi {
+  font-size: 1.2rem;
+}
+
+.name-en {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.contact {
+  margin: 0.75rem 0 1.25rem;
+}
+
+.contact a {
+  color: #003366;
+  text-decoration: none;
+}
+
+.welcome-title {
+  margin: 1rem 0 0.5rem;
+}
+
+.welcome-text {
+  text-align: justify;
+  line-height: 1.6;
+  margin-bottom: 0.75rem;
+}
+
+.read-more {
+  display: inline-block;
+  margin-top: 0.5rem;
+  color: #003366;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* ---------- TABLET ---------- */
+@media (max-width: 1024px) {
+  .welcome-photo {
+    flex: 0 0 380px;
+  }
+}
+
+/* ---------- MOBILE ---------- */
+@media (max-width: 768px) {
+  .welcome-card.outlined {
+    flex-direction: column;
+    align-items: center;
+    padding: 1.25rem;
+  }
+
+  .welcome-photo {
+    flex: none;
+    width: 100%;
+    max-width: 380px;
+  }
+
+  .welcome-content {
+    text-align: left;
+  }
+
+  .name-hi,
+  .name-en {
+    text-align: center;
+  }
+
+  .designation,
+  .contact {
+    text-align: center;
+  }
+}
+</style>

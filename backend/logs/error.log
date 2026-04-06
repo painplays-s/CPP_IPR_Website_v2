@@ -1,0 +1,1 @@
+2026-03-18 23:28:54 | ERROR | {"request_id": "77e2032d", "ip": "10.127.37.121", "user": "Anonymous", "method": "GET", "path": "/jhjk", "status": 404, "type": "ACCESS", "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36", "details": {"duration_ms": 2.48}} | F:\CPP Website\backend\app.py:192

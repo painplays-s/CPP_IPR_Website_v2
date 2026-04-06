@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Helicon Plasma Source Laboratory - CPP-IPR</title>
+
+  <style>
+    :root {
+      --lab-bg: #ffffff;
+      --lab-border: #d0d7e2;
+      --lab-text: #111827;
+      --lab-muted: #6b7280;
+      --lab-accent: #2563eb;
+      --lab-radius-lg: 16px;
+      --lab-tab-active: #2563eb;
+      --lab-tab-hover: #e5e7eb;
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      line-height: 1.6;
+    }
+
+    #header-container,
+    #footer-container {
+      flex-shrink: 0;
+    }
+
+    main {
+      flex: 1;
+      padding: 1.5rem 5vw;
+      box-sizing: border-box;
+      background: #f9fafb;
+    }
+
+    .page-section {
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    .lab-banner {
+      width: 100%;
+      height: auto;
+      max-height: 300px;
+      border-radius: var(--lab-radius-lg);
+      object-fit: cover;
+      margin-bottom: 1.5rem;
+    }
+
+    .lab-container {
+      background: var(--lab-bg);
+      border: 1.5px solid var(--lab-border);
+      border-radius: var(--lab-radius-lg);
+      overflow: hidden;
+    }
+
+    .lab-header {
+      padding: 2rem 2rem 1.5rem;
+      text-align: center;
+      border-bottom: 2px solid var(--lab-border);
+    }
+
+    .lab-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--lab-text);
+      margin: 0;
+    }
+
+    .lab-tabs-wrapper {
+      position: relative;
+      border-bottom: 2px solid var(--lab-border);
+      background: #f9fafb;
+    }
+
+    .lab-tabs {
+      display: flex;
+      gap: 0.5rem;
+      padding: 1.5rem 2rem 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: thin;
+      -ms-overflow-style: auto;
+    }
+
+    .lab-tabs::-webkit-scrollbar {
+      height: 4px;
+    }
+
+    .lab-tabs::-webkit-scrollbar-track {
+      background: var(--lab-border);
+      border-radius: 10px;
+    }
+
+    .lab-tabs::-webkit-scrollbar-thumb {
+      background: var(--lab-accent);
+      border-radius: 10px;
+    }
+
+    .lab-tab {
+      padding: 0.75rem 1.5rem;
+      background: transparent;
+      border: none;
+      border-radius: 8px 8px 0 0;
+      color: var(--lab-muted);
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .lab-tab:hover {
+      background: var(--lab-tab-hover);
+      color: var(--lab-text);
+    }
+
+    .lab-tab.active {
+      background: var(--lab-tab-active);
+      color: #ffffff;
+    }
+
+    .lab-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--lab-accent);
+    }
+
+    .scroll-indicator {
+      display: none;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(37, 99, 235, 0.9);
+      color: white;
+      padding: 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      pointer-events: none;
+      z-index: 10;
+      animation: fadeInOut 2s infinite;
+    }
+
+    .scroll-indicator.left {
+      left: 0.5rem;
+    }
+
+    .scroll-indicator.right {
+      right: 0.5rem;
+    }
+
+    @keyframes fadeInOut {
+
+      0%,
+      100% {
+        opacity: 0.7;
+      }
+
+      50% {
+        opacity: 1;
+      }
+    }
+
+    .lab-content {
+      padding: 2rem 5%;
+      text-align: justify;
+      text-justify: inter-word;
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .overview-section {
+      max-width: 100%;
+    }
+
+    .overview-section h3 {
+      font-size: 1.5rem;
+      color: var(--lab-text);
+      margin: 0 0 1rem;
+      font-weight: 600;
+    }
+
+    .overview-section h4 {
+      font-size: 1.3rem;
+      color: var(--lab-text);
+      margin: 1.5rem 0 1rem;
+      font-weight: 600;
+    }
+
+    .overview-section p {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: var(--lab-text);
+      margin-bottom: 1.2rem;
+      text-align: justify;
+    }
+
+    .overview-section img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 12px;
+      margin: 1.5rem auto;
+      border: 1px solid var(--lab-border);
+      display: block;
+    }
+
+    .research-item {
+      margin-bottom: 3rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--lab-border);
+    }
+
+    .research-item:last-child {
+      border-bottom: none;
+    }
+
+    .research-item h3 {
+      font-size: 1.4rem;
+      color: var(--lab-accent);
+      margin: 0 0 1rem;
+      font-weight: 600;
+    }
+
+    .research-item p {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: var(--lab-text);
+      margin-bottom: 1rem;
+      text-align: justify;
+    }
+
+    .people-categories {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .people-cat-btn {
+      padding: 0.6rem 1.2rem;
+      background: #f3f4f6;
+      border: 1px solid var(--lab-border);
+      border-radius: 8px;
+      color: var(--lab-text);
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .people-cat-btn:hover {
+      background: #e5e7eb;
+    }
+
+    .people-cat-btn.active {
+      background: var(--lab-tab-active);
+      color: #ffffff;
+      border-color: var(--lab-accent);
+    }
+
+    .people-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .person-card {
+      display: none;
+      background: #ffffff;
+      border: 1.5px solid var(--lab-border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      transition: all 0.2s;
+    }
+
+    .person-card.show {
+      display: block;
+    }
+
+    .person-card:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .person-photo {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin: 0 auto 1rem;
+      border: 3px solid var(--lab-border);
+    }
+
+    .person-name {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--lab-text);
+      margin: 0 0 0.5rem;
+    }
+
+    .person-name a {
+      color: var(--lab-text);
+      text-decoration: none;
+    }
+
+    .person-name a:hover {
+      color: var(--lab-accent);
+      text-decoration: underline;
+    }
+
+    .person-role {
+      font-size: 0.95rem;
+      color: var(--lab-muted);
+      margin: 0 0 1rem;
+      font-style: italic;
+    }
+
+    .person-email {
+      font-size: 0.9rem;
+      word-break: break-all;
+      margin-bottom: 0.75rem;
+    }
+
+    .person-email a {
+      color: var(--lab-accent);
+      text-decoration: none;
+    }
+
+    .person-links {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .person-links a {
+      padding: 0.4rem 0.8rem;
+      background: #f3f4f6;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      color: var(--lab-text);
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .person-links a:hover {
+      background: var(--lab-accent);
+      color: #ffffff;
+    }
+
+    .person-expertise {
+      margin-top: 1rem;
+      text-align: left;
+    }
+
+    .person-expertise h5 {
+      font-size: 0.9rem;
+      color: var(--lab-text);
+      margin: 0 0 0.5rem;
+      font-weight: 600;
+    }
+
+    .person-expertise ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .person-expertise li {
+      font-size: 0.85rem;
+      color: var(--lab-muted);
+      padding: 0.25rem 0;
+      padding-left: 1rem;
+      position: relative;
+    }
+
+    .person-expertise li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: var(--lab-accent);
+    }
+
+    .publications-year {
+      margin-bottom: 2.5rem;
+    }
+
+    .publications-year h3 {
+      font-size: 1.3rem;
+      color: var(--lab-text);
+      margin: 0 0 1rem;
+      font-weight: 600;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--lab-border);
+    }
+
+    .publications-list {
+      list-style: decimal;
+      padding-left: 1.5rem;
+      margin: 0;
+    }
+
+    .publications-list li {
+      padding: 1rem;
+      margin-bottom: 0.75rem;
+      background: #f9fafb;
+      border-radius: 8px;
+      border-left: 3px solid var(--lab-accent);
+      font-size: 0.95rem;
+      line-height: 1.7;
+      text-align: justify;
+    }
+
+    .new-badge {
+      display: inline-block;
+      background: #ef4444;
+      color: #ffffff;
+      font-size: 0.7rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-weight: 600;
+      vertical-align: middle;
+      margin-left: 0.5rem;
+    }
+
+    .awards-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .awards-list li {
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      border-radius: 8px;
+      border-left: 4px solid #f59e0b;
+      font-size: 1rem;
+      line-height: 1.7;
+      text-align: justify;
+    }
+
+    .facility-item {
+      margin-bottom: 2.5rem;
+    }
+
+    .facility-item p {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: var(--lab-text);
+      margin-bottom: 1rem;
+      text-align: justify;
+    }
+
+    /* ---------- BILINGUAL TEXT STYLES ---------- */
+    .bilingual-title,
+    .bilingual-text {
+      transition: all 0.2s ease;
+    }
+
+    @media (max-width: 900px) {
+      .lab-title {
+        font-size: 1.5rem;
+      }
+
+      .lab-header {
+        padding: 1.5rem 1.25rem 1rem;
+      }
+
+      .lab-tabs-wrapper {
+        padding: 0;
+      }
+
+      .lab-tabs {
+        padding: 1rem 1rem 0;
+        gap: 0.75rem;
+        -webkit-overflow-scrolling: touch;
+        scroll-behavior: smooth;
+      }
+
+      .lab-tab {
+        font-size: 0.9rem;
+        padding: 0.6rem 1rem;
+      }
+
+      .lab-content {
+        padding: 1.5rem 5%;
+      }
+
+      .people-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .scroll-indicator {
+        display: block;
+      }
+    }
+
+    @media (orientation: portrait) {
+      .lab-tabs {
+        -webkit-overflow-scrolling: touch;
+        scroll-behavior: smooth;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <div id="header-container"></div>
+
+  <!-- PAGE CONTENT -->
+  <main>
+    <div class="page-section">
+
+      <!-- BANNER IMAGE -->
+      <img src="/assets/images/dpd/helicon.jpg" alt="Helicon Plasma Source Laboratory Banner" class="lab-banner">
+
+      <!-- LAB CONTAINER -->
+      <div class="lab-container">
+
+        <!-- LAB HEADER -->
+        <div class="lab-header">
+          <h1 class="lab-title bilingual-title" data-hi="हेलिकॉन प्लाज्मा स्रोत प्रयोगशाला"
+            data-en="Helicon Plasma Source Laboratory">
+            Helicon Plasma Source Laboratory
+          </h1>
+        </div>
+
+        <!-- TAB NAVIGATION -->
+        <div class="lab-tabs-wrapper">
+          <div class="lab-tabs" id="labTabs">
+            <button class="lab-tab active" onclick="switchTab('overview')">
+              <span class="bilingual-text" data-hi="अवलोकन" data-en="Overview">Overview</span>
+            </button>
+            <button class="lab-tab" onclick="switchTab('research')">
+              <span class="bilingual-text" data-hi="अनुसंधान" data-en="Research">Research</span>
+            </button>
+            <button class="lab-tab" onclick="switchTab('facilities')">
+              <span class="bilingual-text" data-hi="सुविधाएं" data-en="Facilities">Facilities</span>
+            </button>
+            <button class="lab-tab" onclick="switchTab('people')">
+              <span class="bilingual-text" data-hi="लोग" data-en="People">People</span>
+            </button>
+            <button class="lab-tab" onclick="switchTab('publications')">
+              <span class="bilingual-text" data-hi="प्रकाशन" data-en="Publications">Publications</span>
+            </button>
+            <button class="lab-tab" onclick="switchTab('awards')">
+              <span class="bilingual-text" data-hi="पुरस्कार" data-en="Awards">Awards</span>
+            </button>
+          </div>
+
+          <!-- Scroll indicators -->
+          <div class="scroll-indicator left" id="scrollLeft">◄ Swipe</div>
+          <div class="scroll-indicator right" id="scrollRight">Swipe ►</div>
+        </div>
+
+        <!-- TAB CONTENT -->
+        <div class="lab-content">
+
+          <!-- ========== OVERVIEW TAB ========== -->
+          <div id="overview" class="tab-panel active">
+            <div class="overview-section">
+              <h3 class="bilingual-text" data-hi="हेलिकॉन प्लाज्मा स्रोत प्रयोगशाला का अवलोकन"
+                data-en="Overview of Helicon Plasma Source Laboratory">Overview of Helicon Plasma Source Laboratory</h3>
+
+              <p class="bilingual-text"
+                data-hi="प्लाज्मा भौतिकी केंद्र-प्लाज्मा अनुसंधान संस्थान में डिजाइन और विकसित हेलिकॉन प्लाज्मा स्रोत (HeliPS) अनुसंधान गतिविधियों की एक विस्तृत श्रृंखला करने के लिए एक बहुमुखी उपकरण है। हेलिकॉन डिस्चार्ज कई लाभ प्रदान करने के लिए जाना जाता है जैसे लंबी परिचालन अवधि, बेहतर युग्मन, कम दबाव पर स्थिरता, उच्च प्लाज्मा घनत्व (10¹¹ cm⁻³ और उससे अधिक), कम इलेक्ट्रॉन तापमान (2-10 eV) अपेक्षाकृत कम ऑपरेटिंग शक्ति पर और संपूर्ण प्लाज्मा आयतन पर बेहतर प्लाज्मा एकरूपता। सीपीपी-आईपीआर में प्रणाली 13.56 मेगाहर्ट्ज रेडियो फ्रीक्वेंसी (आरएफ) बिजली आपूर्ति के साथ संचालित की जाती है। ऑपरेटिंग शक्ति को 3 किलोवाट तक भिन्न किया जा सकता है। सेट-अप के वैक्यूम कक्ष के दो भाग हैं; एक स्रोत कक्ष और एक विस्तार कक्ष। स्रोत कक्ष क्वार्ट्ज ग्लास से बना है; और इसकी लंबाई 60 सेमी और व्यास 10 सेमी है। स्टेनलेस स्टील से बना 40 सेमी लंबाई और 30 सेमी व्यास का एक विस्तार कक्ष, स्रोत कक्ष से जुड़ा हुआ है। ग्लास कक्ष के चारों ओर एक दाएं हाथ का अर्ध-हेलिकल एंटीना लपेटा गया है जिसके माध्यम से स्रोत में इंजेक्ट की गई गैस को शक्ति प्रदान की जाती है। स्रोत कक्ष के चारों ओर छह विद्युत चुंबक हैं, जो स्रोत में 500 G तक लगभग एक समान अक्षीय चुंबकीय क्षेत्र उत्पन्न करते हैं।"
+                data-en="The Helicon Plasma Source (HeliPS) designed and developed at the Centre of Plasma Physics-Institute for Plasma Research is a versatile device for performing a broad range of research activities. A helicon discharge is known to provide many benefits such as longer operational lifetime, better coupling, stability at low pressures, higher plasma densities (10¹¹ cm⁻³ and above), low electron temperature (2-10 eV) at comparatively lower operating power and better plasma uniformity over the entire plasma volume. The system in CPP-IPR is operated with a 13.56 MHz radio frequency (RF) power supply. The operating power can be varied upto 3 kWatt. The vacuum chamber of the set-up has two parts; a source chamber and an expansion chamber. The source chamber is made of quartz glass; and has a length of 60 cm and diameter of 10 cm. An expansion chamber of length 40 cm and diameter 30 cm, made of stainless steel, is attached with the source chamber. A right-handed half helical antenna is wrapped around the glass chamber through which power is delivered to the gas injected in the source. There are six electromagnets around the source chamber, which produces an almost uniform axial magnetic field upto 500 G in the source.">
+                The Helicon Plasma Source (HeliPS) designed and developed at the Centre of Plasma Physics-Institute for
+                Plasma Research is a versatile device for performing a broad range of research activities. A helicon
+                discharge is known to provide many benefits such as longer operational lifetime, better coupling,
+                stability at low pressures, higher plasma densities (10¹¹ cm⁻³ and above), low electron temperature
+                (2-10 eV) at comparatively lower operating power and better plasma uniformity over the entire plasma
+                volume. The system in CPP-IPR is operated with a 13.56 MHz radio frequency (RF) power supply. The
+                operating power can be varied upto 3 kWatt. The vacuum chamber of the set-up has two parts; a source
+                chamber and an expansion chamber. The source chamber is made of quartz glass; and has a length of 60 cm
+                and diameter of 10 cm. An expansion chamber of length 40 cm and diameter 30 cm, made of stainless steel,
+                is attached with the source chamber. A right-handed half helical antenna is wrapped around the glass
+                chamber through which power is delivered to the gas injected in the source. There are six electromagnets
+                around the source chamber, which produces an almost uniform axial magnetic field upto 500 G in the
+                source.
+              </p>
+
+              <p class="bilingual-text"
+                data-hi="पहले HeliPS में, आर्गन, ऑक्सीजन, हाइड्रोजन, नाइट्रोजन और क्लोरीन जैसी गैसों में प्रयोग किए जाते हैं। Ar-N2, Ar-N2-SF6 जैसे गैस मिश्रणों का भी उपयोग किया जाता है। बाहरी सर्किट पैरामीटर, जैसे एंटीना करंट, प्लाज्मा प्रतिरोध, और आंतरिक पैरामीटर, जैसे इलेक्ट्रॉन घनत्व और तापमान, मापा गया है और कैपेसिटिव से इंडक्टिव और अंततः हेलिकॉन मोड में मोड संक्रमण अध्ययन भी किए गए हैं। ऑक्सीजन और हाइड्रोजन प्लाज्मा के लिए आयन-आयन प्लाज्मा अध्ययन किए गए हैं क्योंकि आयन-आयन प्लाज्मा का प्लाज्मा अनुसंधान और विकास में काफी महत्व है। यह अर्धचालक उद्योग में पतली फिल्मों के नक़्क़ाशी और जमाव के लिए व्यापक रूप से उपयोग किया जाता है और नकारात्मक आयन स्रोतों में इसके अनुप्रयोग हैं। डबल लेयर और आयन बीम जैसी अरेखीय संरचनाएं भी विशिष्ट कार्य स्थितियों के लिए देखी और अध्ययन की गई हैं।"
+                data-en="Previously in HeliPS, experiments are performed in gases such as argon, oxygen, hydrogen, nitrogen and chlorine. Gas mixtures like Ar-N2, Ar-N2-SF6 are also used. External circuit parameters, such as antenna current, plasma resistance, and internal parameters, such as electron density and temperature, have been measured and mode transition studies from capacitive to inductive and finally to helicon mode as well have been carried out. Ion-ion plasma studies for oxygen and hydrogen plasma are done as ion – ion plasmas have considerable importance in plasma R&D. It is widely used in the semiconductor industry for etching and deposition of thin films and have applications in negative ion sources. Nonlinear structures like double layer and ion beam are also observed and studied for specific working conditions.">
+                Previously in HeliPS, experiments are performed in gases such as argon, oxygen, hydrogen, nitrogen and
+                chlorine. Gas mixtures like Ar-N2, Ar-N2-SF6 are also used. External circuit parameters, such as antenna
+                current, plasma resistance, and internal parameters, such as electron density and temperature, have been
+                measured and mode transition studies from capacitive to inductive and finally to helicon mode as well
+                have been carried out. Ion-ion plasma studies for oxygen and hydrogen plasma are done as ion – ion
+                plasmas have considerable importance in plasma R&D. It is widely used in the semiconductor industry for
+                etching and deposition of thin films and have applications in negative ion sources. Nonlinear structures
+                like double layer and ion beam are also observed and studied for specific working conditions.
+              </p>
+
+              <p class="bilingual-text"
+                data-hi="HeliPS का उपयोग बुनियादी हेलिकॉन प्लाज्मा गुणों, अरेखीय अध्ययन, तरंग प्रसार, तरंग युग्मन और प्लाज्मा अस्थिरता पर प्रायोगिक अध्ययन के लिए किया जा सकता है। आयन आरोपण के साथ सतह संशोधन (पीबीआईआई या पीआईआईआई) जैसे विभिन्न प्लाज्मा अनुप्रयोगों का भी भविष्य में पता लगाया जा सकता है।"
+                data-en="HeliPS can be used for experimental studies on basic helicon plasma properties, nonlinear studies, wave propagation, wave coupling, and plasma instability. Different plasma applications like surface modification with ion implantation (PBII or PIII) may also be explored in future.">
+                HeliPS can be used for experimental studies on basic helicon plasma properties, nonlinear studies, wave
+                propagation, wave coupling, and plasma instability. Different plasma applications like surface
+                modification with ion implantation (PBII or PIII) may also be explored in future.
+              </p>
+
+              <img src="/assets/images/dpd/helicon_2.jpg" alt="Helicon Plasma Source">
+
+            </div>
+          </div>
+
+          <!-- ========== RESEARCH TAB ========== -->
+          <div id="research" class="tab-panel">
+            <div class="research-item">
+              <p class="bilingual-text" data-hi="सूचना अभी अद्यतन की जानी है। कृपया बाद में पुनः प्रयास करें।"
+                data-en="Information is yet to be updated. Please check back later.">
+                <em>Information is yet to be updated. Please check back later.</em>
+              </p>
+            </div>
+          </div>
+
+          <!-- ========== FACILITIES TAB ========== -->
+          <div id="facilities" class="tab-panel">
+            <div class="facility-item">
+              <p class="bilingual-text" data-hi="सूचना अभी अद्यतन की जानी है। कृपया बाद में पुनः प्रयास करें।"
+                data-en="Information is yet to be updated. Please check back later.">
+                <em>Information is yet to be updated. Please check back later.</em>
+              </p>
+            </div>
+          </div>
+
+          <!-- ========== PEOPLE TAB ========== -->
+          <div id="people" class="tab-panel">
+
+            <!-- People Category Buttons -->
+            <div class="people-categories">
+              <button class="people-cat-btn active" onclick="filterPeople('all')">
+                <span class="bilingual-text" data-hi="सभी" data-en="All">All</span>
+              </button>
+              <button class="people-cat-btn" onclick="filterPeople('faculty')">
+                <span class="bilingual-text" data-hi="संकाय" data-en="Faculty">Faculty</span>
+              </button>
+              <button class="people-cat-btn" onclick="filterPeople('pdf')">
+                <span class="bilingual-text" data-hi="पोस्ट-डॉक्टरल फेलो" data-en="Post-Doctoral Fellows">Post-Doctoral
+                  Fellows</span>
+              </button>
+              <button class="people-cat-btn" onclick="filterPeople('scholar')">
+                <span class="bilingual-text" data-hi="शोध विद्वार्थी" data-en="Research Scholars">Research
+                  Scholars</span>
+              </button>
+              <button class="people-cat-btn" onclick="filterPeople('former')">
+                <span class="bilingual-text" data-hi="पूर्व सदस्य" data-en="Former Members">Former Members</span>
+              </button>
+            </div>
+
+            <!-- People Grid -->
+            <div class="people-grid">
+
+              <!-- Faculty 1 -->
+              <div class="person-card show" data-category="faculty">
+                <img src="/assets/images/dpd/monojit_2.jpg" alt="Dr. M. Chakraborty" class="person-photo">
+                <h4 class="person-name">Dr. M. Chakraborty</h4>
+                <p class="person-role bilingual-text" data-hi="वैज्ञानिक अधिकारी - एफ" data-en="Scientific Officer - F">
+                  Scientific Officer - F</p>
+                <div class="person-email">
+                  <a href="mailto:monojit@cppipr.res.in">monojit@cppipr.res.in</a>
+                </div>
+                <div class="person-links">
+                  <a href="https://www.researchgate.net/profile/M_Chakraborty" target="_blank">ResearchGate</a>
+                </div>
+                <div class="person-expertise">
+                  <h5 class="bilingual-text" data-hi="विशेषज्ञता का क्षेत्र:" data-en="Area of Expertise:">Area of
+                    Expertise:</h5>
+                  <ul>
+                    <li class="bilingual-text" data-hi="धूलयुक्त प्लाज्मा" data-en="Dusty Plasma">Dusty Plasma</li>
+                    <li class="bilingual-text" data-hi="चुंबकीय प्लाज्मा" data-en="Magnetized Plasma">Magnetized Plasma
+                    </li>
+                    <li class="bilingual-text" data-hi="हेलिकॉन प्लाज्मा" data-en="Helicon Plasma">Helicon Plasma</li>
+                    <li class="bilingual-text" data-hi="नकारात्मक आयन" data-en="Negative Ions">Negative Ions</li>
+                  </ul>
+                </div>
+              </div>
+
+              <!-- Faculty 2 -->
+              <div class="person-card show" data-category="faculty">
+                <img src="/assets/images/dpd/neog_2.jpg" alt="Dr. N. K. Neog" class="person-photo">
+                <h4 class="person-name">Dr. N. K. Neog</h4>
+                <p class="person-role bilingual-text" data-hi="वैज्ञानिक अधिकारी - एफ" data-en="Scientific Officer - F">
+                  Scientific Officer - F</p>
+                <div class="person-email">
+                  <a href="mailto:nirod@cppipr.res.in">nirod@cppipr.res.in</a>
+                </div>
+                <div class="person-links">
+                  <a href="https://www.researchgate.net/profile/Nk-Neog" target="_blank">ResearchGate</a>
+                </div>
+              </div>
+
+              <!-- PDF 1 -->
+              <div class="person-card show" data-category="pdf">
+                <img src="/assets/images/dpd/narayan.jpg" alt="Mr. Narayan Sharma" class="person-photo">
+                <h4 class="person-name">Mr. Narayan Sharma</h4>
+                <p class="person-role bilingual-text" data-hi="पोस्ट डॉक्टरल फेलो<br>हेलिपीएस प्रयोगशाला"
+                  data-en="Post Doctoral Fellow<br>HeliPS laboratory">Post Doctoral Fellow<br>HeliPS laboratory</p>
+                <div class="person-email">
+                  <a href="mailto:narayan.sharma@cppipr.res.in">narayan.sharma@cppipr.res.in</a>
+                </div>
+                <div class="person-links">
+                  <a href="https://www.researchgate.net/profile/Narayan_Sharma15" target="_blank">ResearchGate</a>
+                </div>
+                <div class="person-expertise">
+                  <h5 class="bilingual-text" data-hi="विशेषज्ञता का क्षेत्र:" data-en="Area of Expertise:">Area of
+                    Expertise:</h5>
+                  <ul>
+                    <li class="bilingual-text" data-hi="हेलिकॉन प्लाज्मा" data-en="Helicon Plasma">Helicon Plasma</li>
+                    <li class="bilingual-text" data-hi="आरएफ प्लाज्मा" data-en="RF Plasma">RF Plasma</li>
+                    <li class="bilingual-text" data-hi="नकारात्मक आयन" data-en="Negative Ions">Negative Ions</li>
+                  </ul>
+                </div>
+              </div>
+
+              <!-- PDF 2 -->
+              <div class="person-card show" data-category="pdf">
+                <img src="/assets/images/tsl/dharitree.jpg" alt="Ms. Dharitree Dutta" class="person-photo">
+                <h4 class="person-name">Ms. Dharitree Dutta</h4>
+                <p class="person-role bilingual-text" data-hi="पोस्ट डॉक्टरल फेलो<br>हेलिपीएस प्रयोगशाला"
+                  data-en="Post Doctoral Fellow<br>HeliPS laboratory">Post Doctoral Fellow<br>HeliPS laboratory</p>
+                <div class="person-email">
+                  <a href="mailto:dharitree.dutta@cppipr.res.in">dharitree.dutta@cppipr.res.in</a>
+                </div>
+                <div class="person-links">
+                  <a href="https://www.researchgate.net/profile/Dharitree_Dutta" target="_blank">ResearchGate</a>
+                </div>
+                <div class="person-expertise">
+                  <h5 class="bilingual-text" data-hi="विशेषज्ञता का क्षेत्र:" data-en="Area of Expertise:">Area of
+                    Expertise:</h5>
+                  <ul>
+                    <li class="bilingual-text" data-hi="धूलयुक्त प्लाज्मा" data-en="Dusty Plasma">Dusty Plasma</li>
+                    <li class="bilingual-text" data-hi="एकलक" data-en="Solitons">Solitons</li>
+                    <li class="bilingual-text" data-hi="दोहरी परत" data-en="Double layer">Double layer</li>
+                  </ul>
+                </div>
+              </div>
+
+              <!-- Research Scholar 1 -->
+              <div class="person-card show" data-category="scholar">
+                <img src="/assets/images/dpd/pabitra_2.jpg" alt="Mr. Pabitra Kumar Saha" class="person-photo">
+                <h4 class="person-name">Mr. Pabitra Kumar Saha</h4>
+                <p class="person-role bilingual-text" data-hi="वरिष्ठ शोध फेलो<br>हेलिपीएस प्रयोगशाला"
+                  data-en="Senior Research Fellow<br>HeliPS laboratory">Senior Research Fellow<br>HeliPS laboratory</p>
+                <div class="person-email">
+                  <a href="mailto:pabitra.saha@cppipr.res.in">pabitra.saha@cppipr.res.in</a>
+                </div>
+                <div class="person-links">
+                  <a href="https://www.researchgate.net/profile/Pabitra-Saha-3" target="_blank">ResearchGate</a>
+                </div>
+                <div class="person-expertise">
+                  <h5 class="bilingual-text" data-hi="विशेषज्ञता का क्षेत्र:" data-en="Area of Expertise:">Area of
+                    Expertise:</h5>
+                  <ul>
+                    <li class="bilingual-text" data-hi="दोहरी परत" data-en="Double Layer">Double Layer</li>
+                    <li class="bilingual-text" data-hi="हेलिकॉन प्लाज्मा" data-en="Helicon Plasma">Helicon Plasma</li>
+                    <li class="bilingual-text" data-hi="प्लाज्मा निदान" data-en="Plasma Diagnostics">Plasma Diagnostics
+                    </li>
+                    <li class="bilingual-text" data-hi="नकारात्मक आयन" data-en="Negative Ions">Negative Ions</li>
+                  </ul>
+                </div>
+              </div>
+
+              <!-- Research Scholar 2 -->
+              <div class="person-card show" data-category="scholar">
+                <img src="/assets/images/dpd/debanjali_2.jpg" alt="Ms. Debanjali Roy" class="person-photo">
+                <h4 class="person-name">Ms. Debanjali Roy</h4>
+                <p class="person-role bilingual-text" data-hi="वरिष्ठ शोध फेलो<br>हेलिपीएस प्रयोगशाला"
+                  data-en="Senior Research Fellow<br>HeliPS laboratory">Senior Research Fellow<br>HeliPS laboratory</p>
+                <div class="person-email">
+                  <a href="mailto:debanjali.roy@cppipr.res.in">debanjali.roy@cppipr.res.in</a>
+                </div>
+                <div class="person-links">
+                  <a href="https://www.researchgate.net/profile/Debanjali-Roy-2" target="_blank">ResearchGate</a>
+                </div>
+                <div class="person-expertise">
+                  <h5 class="bilingual-text" data-hi="विशेषज्ञता का क्षेत्र:" data-en="Area of Expertise:">Area of
+                    Expertise:</h5>
+                  <ul>
+                    <li class="bilingual-text" data-hi="हेलिकॉन प्लाज्मा" data-en="Helicon Plasma">Helicon Plasma</li>
+                    <li class="bilingual-text" data-hi="प्लाज्मा निदान" data-en="Plasma Diagnostics">Plasma Diagnostics
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <!-- Research Scholar 3 -->
+              <div class="person-card show" data-category="scholar">
+                <img src="/assets/images/dpd/tasneem_2.jpg" alt="Ms. Tasneem Sultana" class="person-photo">
+                <h4 class="person-name">Ms. Tasneem Sultana</h4>
+                <p class="person-role bilingual-text" data-hi="कनिष्ठ शोध फेलो<br>हेलिपीएस प्रयोगशाला"
+                  data-en="Junior Research Fellow<br>HeliPS laboratory">Junior Research Fellow<br>HeliPS laboratory</p>
+                <div class="person-email">
+                  <a href="mailto:tasneem.sultana@cppipr.res.in">tasneem.sultana@cppipr.res.in</a>
+                </div>
+                <div class="person-links">
+                  <a href="https://www.researchgate.net/profile/Tasneem-Sultana-9" target="_blank">ResearchGate</a>
+                </div>
+                <div class="person-expertise">
+                  <h5 class="bilingual-text" data-hi="विशेषज्ञता का क्षेत्र:" data-en="Area of Expertise:">Area of
+                    Expertise:</h5>
+                  <ul>
+                    <li class="bilingual-text" data-hi="रेडियो-फ्रीक्वेंसी प्लाज्मा" data-en="Radio-frequency Plasma">
+                      Radio-frequency Plasma</li>
+                    <li class="bilingual-text" data-hi="चुंबकीय प्लाज्मा" data-en="Magnetized Plasma">Magnetized Plasma
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <!-- Former Member 1 -->
+              <div class="person-card show" data-category="former">
+                <img src="/assets/images/dpd/narayan_2.jpg" alt="Dr. Narayan Sharma" class="person-photo">
+                <h4 class="person-name">Dr. Narayan Sharma</h4>
+                <p class="person-role bilingual-text"
+                  data-hi="सहायक प्रोफेसर<br>वैज्ञानिक एवं अनुप्रयुक्त अनुसंधान केंद्र (सीएसएआर), आईपीएस अकादमी, इंदौर – 452012, भारत"
+                  data-en="Assistant Professor<br>Centre for Scientific and Applied Research (CSAR), IPS Academy, Indore – 452012, India">
+                  Assistant Professor<br>Centre for Scientific and Applied Research (CSAR), IPS Academy, Indore –
+                  452012, India</p>
+                <div class="person-email">
+                  <a href="mailto:narayansharma@ipsacademy.org">narayansharma@ipsacademy.org</a>
+                </div>
+                <div class="person-links">
+                  <a href="https://www.researchgate.net/profile/Narayan-Sharma-6" target="_blank">ResearchGate</a>
+                </div>
+                <div class="person-expertise">
+                  <h5 class="bilingual-text" data-hi="विशेषज्ञता का क्षेत्र:" data-en="Area of Expertise:">Area of
+                    Expertise:</h5>
+                  <ul>
+                    <li class="bilingual-text" data-hi="आरएफ प्लाज्मा" data-en="RF Plasma">RF Plasma</li>
+                    <li class="bilingual-text" data-hi="हेलिकॉन प्लाज्मा" data-en="Helicon Plasma">Helicon Plasma</li>
+                    <li class="bilingual-text" data-hi="नकारात्मक आयन" data-en="Negative Ions">Negative Ions</li>
+                  </ul>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- ========== PUBLICATIONS TAB ========== -->
+          <div id="publications" class="tab-panel">
+
+            <div class="publications-year">
+              <h3 class="bilingual-text" data-hi="प्रकाशन" data-en="Publications">Publications</h3>
+
+              <ol class="publications-list">
+                <li>Sharma, N., Chakraborty, M., Neog, N. K., & Bandyopadhyay, M. (2017). Design of a helicon plasma
+                  source for ion–ion plasma production. Fusion Engineering and Design, 117, 30–38.</li>
+                <li>Sharma, N., Chakraborty, M., Neog, N. K., & Bandyopadhyay, M. (2018). Development and
+                  characterization of a helicon plasma source. Review of Scientific Instruments, 89(8).</li>
+                <li>Sharma, N., Chakraborty, M., Neog, N. K., & Bandyopadhyay, M. (2018). Influence of magnetic filter
+                  and magnetic cage in negative ion production in helicon oxygen plasma. Physics of Plasmas, 25(12).
+                </li>
+                <li>Chakraborty, M., Sharma, N., Neog, N. K., & Bandyopadhyay, M. (2020). Study on negative ion
+                  production by electronegative gases in a helicon source. Japanese Journal of Applied Physics, 59(SH),
+                  SHHC01.</li>
+                <li>Sharma, N., Chakraborty, M., Neog, N. K., & Bandyopadhyay, M. (2020). Discharge properties of
+                  helicon oxygen plasma in the source and expansion chambers. Plasma Research Express, 2(1), 015005.
+                </li>
+                <li>Sharma, N., Chakraborty, M., Saha, P. K., Mukherjee, A., Neog, N. K., & Bandyopadhyay, M. (2020).
+                  Effect of argon and oxygen gas concentration on mode transition and negative ion production in helicon
+                  discharge. Journal of Applied Physics, 128(18).</li>
+                <li>Sharma, N., Chakraborty, M., Borthakur, S., Neog, N. K., & Bandyopadhyay, M. (2022). Effect of
+                  directional nature of antenna and magnetic field strength on optimal power absorption in a helicon
+                  discharge. Plasma Physics Reports, 48(4), 395–407.</li>
+                <li>Sharma, N., Dutta, D., Chakraborty, M., Mukherjee, A., Neog, N. K., & Bandyopadhyay, M. (2022).
+                  Global model study of plasma parameter variation in helicon plasma source in oxygen discharge. Physics
+                  of Plasmas, 29(2).</li>
+                <li>Sharma, N., Chakraborty, M., Mukherjee, A., Saha, P. K., Neog, N. K., & Bandyopadhyay, M. (2022).
+                  Investigation of mode transition and negative ion production in helicon plasma source in hydrogen
+                  discharge. Plasma Physics Reports, 48(1), 37–47.</li>
+                <li>Sharma, N., Chakraborty, M., Mukherjee, A., & Saha, P. K. (2022). Influence of magnetic filter
+                  position on negative ion density in oxygen RF discharge. Plasma Research Express, 4(1), 015005.</li>
+                <li>Mukherjee, A., Sharma, N., Chakraborty, M., & Saha, P. K. (2022). A study on the influence of
+                  external magnetic field on nitrogen RF discharge using Langmuir probe and OES methods. Physica
+                  Scripta, 97(5), 055601.</li>
+                <li>Mukherjee, A., Chakraborty, M., Sharma, N., & Saha, P. K. (2023). Changing pattern of N₂
+                  dissociation in N₂–Ar RF plasma during E–H mode transition. Plasma Sources Science and Technology,
+                  32(8), 085004.</li>
+                <li>Saha, P. K., Chakraborty, M., Dutta, D., Sharma, N., & Mukherjee, A. (2023). Formation of multiple
+                  double layers in the presence of grounded ring in RF expanding plasma. Physics Letters A, 481, 129016.
+                </li>
+                <li>Saha, P. K., Roy, D., & Chakraborty, M. (2025). Generation of supersonic ion beams in the downstream
+                  of multiple double layer. Physics Letters A, 130486.</li>
+              </ol>
+            </div>
+
+          </div>
+
+          <!-- ========== AWARDS TAB ========== -->
+          <div id="awards" class="tab-panel">
+
+            <h4 class="bilingual-text"
+              style="font-size: 1.2rem; color: var(--lab-text); margin: 0 0 1rem; font-weight: 600;"
+              data-hi="पीएच.डी. उपाधि" data-en="Ph.D. Degree">Ph.D. Degree</h4>
+
+            <ul class="awards-list">
+              <li class="bilingual-text"
+                data-hi="डॉ. नारायण शर्मा को गौहाटी विश्वविद्यालय, असम, भारत द्वारा पीएच.डी. उपाधि प्रदान की गई।<br>थीसिस शीर्षक: <strong>'हेलिकॉन प्लाज्मा स्रोत का विकास और आयन-आयन प्लाज्मा का अध्ययन'</strong>"
+                data-en="Ph. D. Degree awarded to Dr. Narayan Sharma by Gauhati University, Assam, India.<br>Thesis Title: <strong>'Development of a Helicon Plasma Source and a Study of Ion-Ion Plasma'</strong>">
+                Ph. D. Degree awarded to Dr. Narayan Sharma by Gauhati University, Assam, India.<br>Thesis Title:
+                <strong>"Development of a Helicon Plasma Source and a Study of Ion-Ion Plasma"</strong>
+              </li>
+            </ul>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <div id="footer-container"></div>
+
+  <!-- SCRIPTS -->
+  <script>
+    // Tab Switching Function - Fixed to handle clicks on inner spans
+    function switchTab(tabName) {
+      // Hide all panels
+      document.querySelectorAll('.tab-panel').forEach(panel => {
+        panel.classList.remove('active');
+      });
+
+      // Remove active from all tabs
+      document.querySelectorAll('.lab-tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+
+      // Show selected panel
+      document.getElementById(tabName).classList.add('active');
+
+      // Activate clicked tab - using closest to handle clicks on inner spans
+      let clickedTab = event.target.closest('.lab-tab');
+      if (clickedTab) {
+        clickedTab.classList.add('active');
+      }
+
+      // Scroll active tab into view on mobile
+      if (window.innerWidth <= 900 && clickedTab) {
+        clickedTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
+    }
+
+    // Hide scroll indicators after first interaction
+    let hasInteracted = false;
+    const labTabs = document.getElementById('labTabs');
+    const scrollLeft = document.getElementById('scrollLeft');
+    const scrollRight = document.getElementById('scrollRight');
+
+    if (labTabs) {
+      labTabs.addEventListener('scroll', function () {
+        if (!hasInteracted) {
+          hasInteracted = true;
+          if (scrollLeft) scrollLeft.style.display = 'none';
+          if (scrollRight) scrollRight.style.display = 'none';
+        }
+      }, { once: true });
+
+      labTabs.addEventListener('touchstart', function () {
+        if (!hasInteracted) {
+          hasInteracted = true;
+          if (scrollLeft) scrollLeft.style.display = 'none';
+          if (scrollRight) scrollRight.style.display = 'none';
+        }
+      }, { once: true });
+    }
+
+    // People Filtering Function - Fixed to handle clicks on inner spans
+    function filterPeople(category) {
+      const allCards = document.querySelectorAll('.person-card');
+
+      // Update button states - using closest to handle clicks on inner spans
+      let clickedBtn = event.target.closest('.people-cat-btn');
+      if (clickedBtn) {
+        document.querySelectorAll('.people-cat-btn').forEach(btn => {
+          btn.classList.remove('active');
+        });
+        clickedBtn.classList.add('active');
+      }
+
+      // Show/hide cards
+      allCards.forEach(card => {
+        if (category === 'all') {
+          card.classList.add('show');
+        } else {
+          if (card.dataset.category === category) {
+            card.classList.add('show');
+          } else {
+            card.classList.remove('show');
+          }
+        }
+      });
+    }
+
+    // Fragment Loader
+    function loadFragment(url, containerId) {
+      fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const container = document.getElementById(containerId);
+          container.innerHTML = html;
+
+          container.querySelectorAll('script').forEach(oldScript => {
+            const newScript = document.createElement('script');
+            if (oldScript.src) {
+              newScript.src = oldScript.src;
+            } else {
+              newScript.textContent = oldScript.textContent;
+            }
+            oldScript.replaceWith(newScript);
+          });
+        })
+        .catch(err => console.error('Error loading fragment:', url, err));
+    }
+
+    loadFragment('/UI/header.html', 'header-container');
+    loadFragment('/UI/footer.html', 'footer-container');
+  </script>
+
+</body>
+
+</html>

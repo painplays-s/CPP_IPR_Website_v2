@@ -1,0 +1,202 @@
+<!-- UI/lab_card.html -->
+
+
+<style>
+  :root {
+    --lab-bg: #ffffff;
+    --lab-border: #d0d7e2;
+    --lab-text: #111827;
+    --lab-muted: #6b7280;
+    --lab-accent: #2563eb;
+    --lab-radius-lg: 16px;
+    --lab-btn-bg: #f8fafc;
+    --lab-btn-hover: #eef2ff;
+  }
+
+
+  /* OUTER WRAPPER */
+  .lab-card {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    box-sizing: border-box;
+  }
+
+
+  /* HEADER */
+  .lab-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0 0.25rem;
+    flex-wrap: wrap;
+  }
+
+
+  .lab-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--lab-text);
+  }
+
+
+  .lab-subtitle {
+    font-size: 0.85rem;
+    color: var(--lab-muted);
+    text-align: right;
+    white-space: nowrap;
+  }
+
+
+  /* MAIN CARD */
+  .lab-main {
+    background: var(--lab-bg);
+    border: 1.5px solid var(--lab-border);
+    border-radius: var(--lab-radius-lg);
+    padding: 1.2rem;
+  }
+
+
+  /* GRID */
+  .lab-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.9rem;
+  }
+
+
+  /* BUTTON */
+  .lab-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 70px;
+    padding: 0.75rem;
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--lab-text);
+    text-decoration: none;
+    background: var(--lab-btn-bg);
+    border: 1px solid var(--lab-border);
+    border-radius: 12px;
+    transition: all 0.2s ease;
+  }
+
+
+  .lab-btn:hover {
+    background: var(--lab-btn-hover);
+    border-color: var(--lab-accent);
+    color: var(--lab-accent);
+  }
+
+
+  /* ---------- TABLET ---------- */
+  @media (max-width: 1024px) {
+    .lab-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+
+  /* ---------- MOBILE ---------- */
+  @media (max-width: 640px) {
+    .lab-grid {
+      grid-template-columns: 1fr;
+    }
+
+
+    .lab-subtitle {
+      text-align: left;
+      white-space: normal;
+    }
+  }
+</style>
+
+
+<div class="lab-card">
+
+
+  <!-- HEADER -->
+  <div class="lab-header">
+    <div
+      class="lab-title bilingual-title"
+      data-en="Laboratories & Research Facilities"
+      data-hi="प्रयोगशालाएँ एवं अनुसंधान सुविधाएँ"
+    >
+      Laboratories & Research Facilities
+    </div>
+
+
+    <div
+      class="lab-subtitle bilingual-subtitle"
+      data-en="Research infrastructure & experimental platforms"
+      data-hi="अनुसंधान अवसंरचना एवं प्रायोगिक मंच"
+    >
+      Research infrastructure & experimental platforms
+    </div>
+  </div>
+
+
+  <!-- BODY -->
+  <div class="lab-main">
+    <div class="lab-grid">
+
+
+      <a class="lab-btn" href="/pages/RnD/cimple_psi.html" data-i18n-nav="nav.rnd.cimplePsi">
+        CIMPLE-PSI LABORATORY
+      </a>
+
+
+      <a class="lab-btn" href="/pages/RnD/tsl.html" data-i18n-nav="nav.rnd.tsl">
+        THEORY AND SIMULATION LABORATORY
+      </a>
+
+
+      <a class="lab-btn" href="/pages/RnD/pal.html" data-i18n-nav="nav.rnd.pal">
+        PLASMA ACCELERATOR LABORATORY
+      </a>
+
+
+      <a class="lab-btn" href="/pages/RnD/iecf.html" data-i18n-nav="nav.rnd.iecf">
+        IECF LABORATORY
+      </a>
+
+
+      <a class="lab-btn" href="/pages/RnD/dusty.html" data-i18n-nav="nav.rnd.dusty">
+        DUSTY PLASMA LABORATORY
+      </a>
+
+
+      <a class="lab-btn" href="/pages/RnD/double_plasma.html" data-i18n-nav="nav.rnd.doublePlasma">
+        DOUBLE PLASMA LABORATORY
+      </a>
+
+
+      <a class="lab-btn" href="/pages/RnD/cdps.html" data-i18n-nav="nav.rnd.cdps">
+        CROSS-DISCIPLINARY PLASMA SCIENCE LABORATORY
+      </a>
+
+
+      <a class="lab-btn" href="/pages/RnD/helicon.html" data-i18n-nav="nav.rnd.helicon">
+        HELICON LABORATORY
+      </a>
+
+
+      <a class="lab-btn" href="/pages/RnD/ppt_dpf1.html" data-i18n-nav="nav.rnd.pptDpf1">
+        PPT DPF-I LABORATORY
+      </a>
+
+
+      <a class="lab-btn" href="/pages/RnD/ppt_dpf2.html" data-i18n-nav="nav.rnd.pptDpf2">
+        PPT DPF-II LABORATORY
+      </a>
+
+
+    </div>
+  </div>
+
+
+</div>

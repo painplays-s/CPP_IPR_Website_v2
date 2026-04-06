@@ -1,0 +1,389 @@
+<!-- UI/recent_publication.html -->
+
+<style>
+  :root {
+    --publication-bg: #ffffff;
+    --publication-border: #d8dee9;
+    --publication-text: #1f2937;
+    --publication-muted: #6b7280;
+    --publication-accent: #1d4ed8;
+    --publication-radius-lg: 16px;
+  }
+
+  /* OUTER WRAPPER */
+  .recent-publication {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    box-sizing: border-box;
+  }
+
+  /* HEADER */
+  .publication-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  .publication-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    color: var(--publication-text);
+  }
+
+  .publication-subtitle {
+    font-size: 0.9rem;
+    color: var(--publication-muted);
+  }
+
+  /* MAIN CARD */
+  .publication-main {
+    position: relative;
+    width: 100%;
+    background: var(--publication-bg);
+    border: 1.5px solid var(--publication-border);
+    border-radius: var(--publication-radius-lg);
+    overflow: hidden;
+    min-height: 260px;
+  }
+
+  /* SCROLL AREA */
+  .publication-scroll {
+    position: absolute;
+    inset: 0;
+    padding: 1.2rem 1.4rem;
+    box-sizing: border-box;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+  }
+
+  .publication-scroll::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .publication-scroll::-webkit-scrollbar-thumb {
+    background: rgba(31, 41, 55, 0.3);
+    border-radius: 999px;
+  }
+
+  /* PUBLICATION LIST */
+  .publication-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  /* Publication items - let them have natural height */
+  .publication-item {
+    padding: 0.9rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .publication-item:last-child {
+    border-bottom: none;
+  }
+
+  /* TITLE LINK - Justified text */
+  .publication-link {
+    display: block;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--publication-text);
+    text-decoration: none;
+    text-align: justify;
+    text-justify: inter-word;
+    word-break: break-word;
+    transition: color 0.2s ease;
+  }
+
+  .publication-link:hover {
+    color: var(--publication-accent);
+    text-decoration: underline;
+  }
+
+  /* META */
+  .publication-meta {
+    margin-top: 0.5rem;
+    font-size: 0.78rem;
+    color: var(--publication-muted);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    text-align: left;
+  }
+
+  .publication-date {
+    font-style: italic;
+    display: inline-block;
+  }
+
+  /* Publication type badge */
+  .publication-type {
+    display: inline-block;
+    font-weight: 500;
+    background-color: rgba(29, 78, 216, 0.05);
+    color: var(--publication-accent);
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  /* Authors */
+  .publication-authors {
+    margin-top: 0.2rem;
+    font-size: 0.8rem;
+    color: var(--publication-muted);
+    font-style: italic;
+    white-space: normal;
+    text-align: left;
+  }
+
+  .publication-empty {
+    font-size: 0.9rem;
+    color: var(--publication-muted);
+    text-align: center;
+    padding: 2rem 1rem;
+  }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 1024px) {
+    .recent-publication {
+      max-width: 100%;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .publication-main {
+      position: relative;
+      height: auto !important;
+      min-height: 220px;
+    }
+
+    .publication-scroll {
+      position: relative;
+      max-height: 320px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .publication-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .publication-link {
+      font-size: 0.9rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .publication-link {
+      font-size: 0.85rem;
+    }
+
+    .publication-meta {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.2rem;
+    }
+  }
+</style>
+
+<div class="recent-publication" id="recent-publication-root">
+
+  <div class="publication-header">
+    <div class="publication-title" id="publication-title-text">Recent Publications</div>
+    <div class="publication-subtitle" id="publication-subtitle-text">
+      Latest research papers
+    </div>
+  </div>
+
+  <div class="publication-main" id="publication-main">
+    <div class="publication-scroll" id="publication-scroll">
+      <div class="publication-list" id="publication-list"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  (function () {
+
+    const DATA_URL = '/api/recent-publication';
+
+    const listEl = document.getElementById('publication-list');
+    const scrollEl = document.getElementById('publication-scroll');
+    const publicationMain = document.getElementById('publication-main');
+
+    let cachedData = [];
+
+    const headerText = {
+      en: {
+        title: 'Recent Publications',
+        subtitle: 'Latest research papers'
+      },
+      hi: {
+        title: 'हाल के प्रकाशन',
+        subtitle: 'नवीनतम शोध पत्र'
+      }
+    };
+
+    function getCurrentLang() {
+      return localStorage.getItem('preferred-language') || 'en';
+    }
+
+    function applyHeaderLang(lang) {
+      const set = headerText[lang] || headerText.en;
+      document.getElementById('publication-title-text').textContent = set.title;
+      document.getElementById('publication-subtitle-text').textContent = set.subtitle;
+    }
+
+    function getTitle(item, lang) {
+      if (lang === 'hi' && item.title_hi) return item.title_hi;
+      return item.title_en || item.title || '';
+    }
+
+    function formatDate(dateString) {
+      if (!dateString) return '';
+      const date = new Date(dateString);
+      const options = { year: 'numeric', month: 'short', day: 'numeric' };
+      return date.toLocaleDateString('en-US', options);
+    }
+
+    function createPublicationItem(item, lang) {
+      const div = document.createElement('div');
+      div.className = 'publication-item';
+
+      const link = document.createElement('a');
+      link.className = 'publication-link';
+      link.href = item.url || '#';
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.textContent = getTitle(item, lang);
+      div.appendChild(link);
+
+      if (item.authors) {
+        const authorsDiv = document.createElement('div');
+        authorsDiv.className = 'publication-authors';
+        authorsDiv.textContent = item.authors;
+        div.appendChild(authorsDiv);
+      }
+
+      const meta = document.createElement('div');
+      meta.className = 'publication-meta';
+
+      if (item.date) {
+        const dateSpan = document.createElement('span');
+        dateSpan.className = 'publication-date';
+        dateSpan.textContent = formatDate(item.date);
+        meta.appendChild(dateSpan);
+      }
+
+      if (item.type) {
+        const typeSpan = document.createElement('span');
+        typeSpan.className = 'publication-type';
+        typeSpan.textContent = item.type;
+        meta.appendChild(typeSpan);
+      }
+
+      if (meta.children.length > 0) {
+        div.appendChild(meta);
+      }
+
+      return div;
+    }
+
+    // UPDATED: Now looks for the research wrapper (same as notice panel looks for .carousel-main)
+    function syncHeightWithResearchHighlight() {
+      if (window.innerWidth < 900) {
+        publicationMain.style.height = 'auto';
+        return;
+      }
+
+      // Look for the research wrapper (which has the padding-top percentage)
+      const researchWrapper = document.querySelector('#research-highlight-container .research-carousel-wrapper');
+
+      if (!researchWrapper || !publicationMain) return;
+
+      publicationMain.style.height = researchWrapper.getBoundingClientRect().height + 'px';
+    }
+
+    function buildList(data) {
+      listEl.innerHTML = '';
+
+      if (!Array.isArray(data) || data.length === 0) {
+        const emptyDiv = document.createElement('div');
+        emptyDiv.className = 'publication-empty';
+        emptyDiv.textContent = 'No publications available.';
+        listEl.appendChild(emptyDiv);
+        return;
+      }
+
+      const lang = getCurrentLang();
+
+      // Sort by date (newest first)
+      const sortedData = [...data].sort((a, b) => {
+        if (a.date && b.date) {
+          return new Date(b.date) - new Date(a.date);
+        }
+        return 0;
+      });
+
+      // Create items
+      sortedData.forEach(item => {
+        listEl.appendChild(createPublicationItem(item, lang));
+      });
+
+      syncHeightWithResearchHighlight();
+    }
+
+    window.applyRecentPublicationLang = function (lang) {
+      applyHeaderLang(lang);
+      buildList(cachedData);
+    };
+
+    function init() {
+      applyHeaderLang(getCurrentLang());
+
+      fetch(DATA_URL)
+        .then(res => res.json())
+        .then(data => {
+          cachedData = Array.isArray(data) ? data : [];
+          buildList(cachedData);
+        })
+        .catch(() => {
+          const emptyDiv = document.createElement('div');
+          emptyDiv.className = 'publication-empty';
+          emptyDiv.textContent = 'Unable to load publications.';
+          listEl.appendChild(emptyDiv);
+        });
+
+      window.addEventListener('resize', () => {
+        syncHeightWithResearchHighlight();
+      });
+
+      // Listen for carousel ready event (for when research loads after publication)
+      window.addEventListener('carouselReady', (e) => {
+        if (window.innerWidth >= 900 && e.detail && e.detail.height) {
+          publicationMain.style.height = e.detail.height + 'px';
+        }
+      });
+    }
+
+    init();
+
+  })();
+</script>

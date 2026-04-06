@@ -1,0 +1,1708 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dusty Plasma Laboratory - CPP-IPR</title>
+
+    <style>
+        :root {
+            --lab-bg: #ffffff;
+            --lab-border: #d0d7e2;
+            --lab-text: #111827;
+            --lab-muted: #6b7280;
+            --lab-accent: #2563eb;
+            --lab-radius-lg: 16px;
+            --lab-tab-active: #2563eb;
+            --lab-tab-hover: #e5e7eb;
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+        }
+
+        #header-container,
+        #footer-container {
+            flex-shrink: 0;
+        }
+
+        main {
+            flex: 1;
+            padding: 1.5rem 5vw;
+            box-sizing: border-box;
+            background: #f9fafb;
+        }
+
+        .page-section {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .lab-banner {
+            width: 100%;
+            height: auto;
+            max-height: 300px;
+            border-radius: var(--lab-radius-lg);
+            object-fit: cover;
+            margin-bottom: 1.5rem;
+        }
+
+        .lab-container {
+            background: var(--lab-bg);
+            border: 1.5px solid var(--lab-border);
+            border-radius: var(--lab-radius-lg);
+            overflow: hidden;
+        }
+
+        .lab-header {
+            padding: 2rem 2rem 1.5rem;
+            text-align: center;
+            border-bottom: 2px solid var(--lab-border);
+        }
+
+        .lab-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--lab-text);
+            margin: 0;
+        }
+
+        .lab-tabs-wrapper {
+            position: relative;
+            border-bottom: 2px solid var(--lab-border);
+            background: #f9fafb;
+        }
+
+        .lab-tabs {
+            display: flex;
+            gap: 0.5rem;
+            padding: 1.5rem 2rem 0;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scrollbar-width: thin;
+            -ms-overflow-style: auto;
+        }
+
+        .lab-tabs::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .lab-tabs::-webkit-scrollbar-track {
+            background: var(--lab-border);
+            border-radius: 10px;
+        }
+
+        .lab-tabs::-webkit-scrollbar-thumb {
+            background: var(--lab-accent);
+            border-radius: 10px;
+        }
+
+        .lab-tab {
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: none;
+            border-radius: 8px 8px 0 0;
+            color: var(--lab-muted);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .lab-tab:hover {
+            background: var(--lab-tab-hover);
+            color: var(--lab-text);
+        }
+
+        .lab-tab.active {
+            background: var(--lab-tab-active);
+            color: #ffffff;
+        }
+
+        .lab-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--lab-accent);
+        }
+
+        .scroll-indicator {
+            display: none;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(37, 99, 235, 0.9);
+            color: white;
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            pointer-events: none;
+            z-index: 10;
+            animation: fadeInOut 2s infinite;
+        }
+
+        .scroll-indicator.left {
+            left: 0.5rem;
+        }
+
+        .scroll-indicator.right {
+            right: 0.5rem;
+        }
+
+        @keyframes fadeInOut {
+
+            0%,
+            100% {
+                opacity: 0.7;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        .lab-content {
+            padding: 2rem 5%;
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .overview-section {
+            max-width: 100%;
+        }
+
+        .overview-section h3 {
+            font-size: 1.5rem;
+            color: var(--lab-text);
+            margin: 0 0 1rem;
+            font-weight: 600;
+        }
+
+        .overview-section p {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: var(--lab-text);
+            margin-bottom: 1.2rem;
+            text-align: justify;
+        }
+
+        .research-figures-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 1.5rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .research-figures-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .research-item {
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--lab-border);
+        }
+
+        .research-item:last-child {
+            border-bottom: none;
+        }
+
+        .research-item h3 {
+            font-size: 1.4rem;
+            color: var(--lab-accent);
+            margin: 0 0 1rem;
+            font-weight: 600;
+        }
+
+        .research-item h3 strong {
+            font-weight: 700;
+        }
+
+        .research-item p {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: var(--lab-text);
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+
+        .research-figure {
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+
+        .research-figure img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            border: 1px solid var(--lab-border);
+        }
+
+        .research-figure figcaption {
+            font-size: 0.95rem;
+            color: var(--lab-muted);
+            font-style: italic;
+            margin-top: 0.75rem;
+            padding: 0.5rem;
+            text-align: center;
+            border-radius: 4px;
+        }
+
+        .people-categories {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .people-cat-btn {
+            padding: 0.6rem 1.2rem;
+            background: #f3f4f6;
+            border: 1px solid var(--lab-border);
+            border-radius: 8px;
+            color: var(--lab-text);
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .people-cat-btn:hover {
+            background: #e5e7eb;
+        }
+
+        .people-cat-btn.active {
+            background: var(--lab-tab-active);
+            color: #ffffff;
+            border-color: var(--lab-accent);
+        }
+
+        .people-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .person-card {
+            display: none;
+            background: #ffffff;
+            border: 1.5px solid var(--lab-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .person-card.show {
+            display: block;
+        }
+
+        .person-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .person-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 1rem;
+            border: 3px solid var(--lab-border);
+        }
+
+        .person-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--lab-text);
+            margin: 0 0 0.5rem;
+        }
+
+        .person-name a {
+            color: var(--lab-text);
+            text-decoration: none;
+        }
+
+        .person-name a:hover {
+            color: var(--lab-accent);
+            text-decoration: underline;
+        }
+
+        .person-role {
+            font-size: 0.95rem;
+            color: var(--lab-muted);
+            margin: 0 0 0.5rem;
+            font-style: italic;
+        }
+
+        .person-institution {
+            font-size: 0.9rem;
+            color: var(--lab-muted);
+            margin: 0 0 1rem;
+        }
+
+        .person-email {
+            font-size: 0.9rem;
+            word-break: break-all;
+            margin-bottom: 0.5rem;
+        }
+
+        .person-email a {
+            color: var(--lab-accent);
+            text-decoration: none;
+        }
+
+        .person-links {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .person-links a {
+            padding: 0.4rem 0.8rem;
+            background: #f3f4f6;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: var(--lab-text);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .person-links a:hover {
+            background: var(--lab-accent);
+            color: #ffffff;
+        }
+
+        .person-expertise {
+            margin-top: 1rem;
+            text-align: left;
+        }
+
+        .person-expertise h5 {
+            font-size: 0.9rem;
+            color: var(--lab-text);
+            margin: 0 0 0.5rem;
+            font-weight: 600;
+        }
+
+        .person-expertise ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .person-expertise li {
+            font-size: 0.85rem;
+            color: var(--lab-muted);
+            padding: 0.25rem 0;
+            padding-left: 1rem;
+            position: relative;
+        }
+
+        .person-expertise li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--lab-accent);
+        }
+
+        .publications-year {
+            margin-bottom: 2.5rem;
+        }
+
+        .publications-year h3 {
+            font-size: 1.3rem;
+            color: var(--lab-text);
+            margin: 0 0 1rem;
+            font-weight: 600;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--lab-border);
+        }
+
+        .publications-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .publications-list li {
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            background: #f9fafb;
+            border-radius: 8px;
+            border-left: 3px solid var(--lab-accent);
+            font-size: 0.95rem;
+            line-height: 1.7;
+            text-align: justify;
+        }
+
+        .publications-list li a {
+            color: var(--lab-accent);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .publications-list li a:hover {
+            text-decoration: underline;
+        }
+
+        .publications-list li em {
+            font-style: italic;
+        }
+
+        .publications-list li strong {
+            font-weight: 600;
+        }
+
+        .new-badge {
+            display: inline-block;
+            background: #ef4444;
+            color: #ffffff;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+            vertical-align: middle;
+            margin-right: 0.5rem;
+        }
+
+        .awards-section {
+            margin-bottom: 2.5rem;
+        }
+
+        .awards-section h4 {
+            font-size: 1.2rem;
+            color: var(--lab-text);
+            margin: 0 0 1rem;
+            font-weight: 600;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--lab-border);
+        }
+
+        .awards-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .awards-list li {
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            background: #f9fafb;
+            border-radius: 8px;
+            border-left: 3px solid #f59e0b;
+            font-size: 1rem;
+            line-height: 1.7;
+            text-align: justify;
+        }
+
+        .awards-list li em {
+            font-style: italic;
+        }
+
+        @media (max-width: 900px) {
+            .lab-title {
+                font-size: 1.5rem;
+            }
+
+            .lab-header {
+                padding: 1.5rem 1.25rem 1rem;
+            }
+
+            .lab-tabs-wrapper {
+                padding: 0;
+            }
+
+            .lab-tabs {
+                padding: 1rem 1rem 0;
+                gap: 0.75rem;
+                -webkit-overflow-scrolling: touch;
+                scroll-behavior: smooth;
+            }
+
+            .lab-tab {
+                font-size: 0.9rem;
+                padding: 0.6rem 1rem;
+            }
+
+            .lab-content {
+                padding: 1.5rem 5%;
+            }
+
+            .people-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .scroll-indicator {
+                display: block;
+            }
+        }
+
+        @media (orientation: portrait) {
+            .lab-tabs {
+                -webkit-overflow-scrolling: touch;
+                scroll-behavior: smooth;
+            }
+        }
+
+        .auto-style1 {
+            font-size: large;
+            font-weight: 600;
+            color: var(--lab-accent);
+        }
+
+        /* ---------- BILINGUAL TEXT STYLES ---------- */
+        .bilingual-title,
+        .bilingual-text {
+            transition: all 0.2s ease;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="header-container"></div>
+
+    <main>
+        <div class="page-section">
+
+            <img src="/assets/images/dusty/dpl_banner.jpg" alt="Dusty Plasma Laboratory Banner" class="lab-banner">
+
+            <div class="lab-container">
+
+                <div class="lab-header">
+                    <h1 class="lab-title bilingual-title"
+                        data-hi="धूलयुक्त प्लाज्मा एवं नकारात्मक हाइड्रोजन आयन निष्कर्षण प्रयोगशाला"
+                        data-en="Dusty Plasma and Negative Hydrogen Ion Extraction Laboratory">
+                        Dusty Plasma and Negative Hydrogen Ion Extraction Laboratory
+                    </h1>
+                </div>
+
+                <div class="lab-tabs-wrapper">
+                    <div class="lab-tabs" id="labTabs">
+                        <button class="lab-tab active" onclick="switchTab('overview')">
+                            <span class="bilingual-text" data-hi="अवलोकन" data-en="Overview">Overview</span>
+                        </button>
+                        <button class="lab-tab" onclick="switchTab('research')">
+                            <span class="bilingual-text" data-hi="अनुसंधान" data-en="Research">Research</span>
+                        </button>
+                        <button class="lab-tab" onclick="switchTab('people')">
+                            <span class="bilingual-text" data-hi="लोग" data-en="People">People</span>
+                        </button>
+                        <button class="lab-tab" onclick="switchTab('publications')">
+                            <span class="bilingual-text" data-hi="प्रकाशन" data-en="Publications">Publications</span>
+                        </button>
+                        <button class="lab-tab" onclick="switchTab('awards')">
+                            <span class="bilingual-text" data-hi="पुरस्कार" data-en="Awards">Awards</span>
+                        </button>
+                    </div>
+
+                    <div class="scroll-indicator left" id="scrollLeft">◄ Swipe</div>
+                    <div class="scroll-indicator right" id="scrollRight">Swipe ►</div>
+                </div>
+
+                <div class="lab-content">
+
+                    <!-- Overview Tab -->
+                    <div id="overview" class="tab-panel active">
+                        <div class="overview-section">
+                            <h3 class="bilingual-text" data-hi="प्रयोगशाला का अवलोकन"
+                                data-en="Overview of the laboratory">Overview of the laboratory</h3>
+
+                            <p class="bilingual-text"
+                                data-hi="सीपीपी-आईपीआर की धूलयुक्त प्लाज्मा प्रयोगशाला की स्थापना 1997 में भारत सरकार के विज्ञान और प्रौद्योगिकी विभाग के वित्तीय सहयोग से की गई थी। विभिन्न वित्त पोषण एजेंसियों द्वारा वित्त पोषित कुछ परियोजनाएं सफलतापूर्वक पूरी की गई हैं। यह धूलयुक्त प्लाज्मा प्रयोगों के लिए आवश्यक विभिन्न नैदानिक उपकरणों से युक्त एक सुव्यवस्थित प्रयोगशाला है। विभिन्न शोधकर्ताओं ने प्रयोगशाला से विभिन्न अंतरराष्ट्रीय पत्रिकाओं में कई प्रकाशन प्रकाशित किए हैं। 12वीं योजना (परमाणु ऊर्जा विभाग, भारत सरकार) के तहत वर्तमान अनुसंधान परियोजना की एक झलक निम्नलिखित है।"
+                                data-en="The Dusty Plasma Laboratory of CPP-IPR was established in 1997 with the financial support of Department of Science and Technology, India. A few projects funded by different funding agencies have been completed successfully. It is a well-equipped laboratory with different diagnostic tools that are necessary for dusty plasma experiments. Different researchers have published a good number of publications in different international journals from the laboratory. A glimpse of present research project under 12th Plan (Department of Atomic Energy, Govt. of India) is as follows.">
+                                The Dusty Plasma Laboratory of CPP-IPR was established in 1997 with the financial
+                                support of Department of Science and Technology, India. A few projects funded by
+                                different funding agencies have been completed successfully. It is a well-equipped
+                                laboratory with different diagnostic tools that are necessary for dusty plasma
+                                experiments. Different researchers have published a good number of publications in
+                                different international journals from the laboratory. A glimpse of present research
+                                project under 12th Plan (Department of Atomic Energy, Govt. of India) is as follows.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Research Tab -->
+                    <div id="research" class="tab-panel">
+
+                        <!-- Research Item 1: Experimental Dusty Plasma -->
+                        <div class="research-item">
+                            <h3><strong class="bilingual-text" data-hi="प्रायोगिक धूलयुक्त प्लाज्मा"
+                                    data-en="Experimental Dusty Plasma">Experimental Dusty Plasma</strong></h3>
+
+                            <p class="bilingual-text"
+                                data-hi="प्रायोगिक धूलयुक्त प्लाज्मा उपकरण में एक क्षैतिज प्लाज्मा कक्ष और एक ऊर्ध्वाधर धूल गिराने वाली इकाई शामिल है। क्षैतिज प्लाज्मा कक्ष 100 सेमी लंबा और 30 सेमी व्यास वाला एक स्टेनलेस स्टील का बेलनाकार कक्ष है। कक्ष को रोटरी पंप द्वारा समर्थित डिफ्यूजन पंप की सहायता से 10^(-6) एमबार के दबाव तक खाली किया जाता है। प्लाज्मा एक हॉट कैथोड फिलामेंटरी डिस्चार्ज तकनीक द्वारा उत्पन्न किया जाता है। कक्ष में कई दृश्य पोर्ट उपलब्ध हैं। प्लाज्मा को सीमित करने के लिए बहु-कस्पड चुंबकीय कन्फाइनमेंट प्रणाली का उपयोग किया जाता है। ऊर्ध्वाधर धूल गिराने वाली इकाई क्षैतिज कक्ष के ऊपर स्थित है जिसकी ऊंचाई 72 सेमी और व्यास 15 सेमी है।"
+                                data-en="The experimental dusty plasma device consists of a horizontal plasma chamber and a vertical dust dropping unit. The horizontal plasma chamber is a stainless steel cylindrical chamber of length 100 cm and having a diameter of 30 cm. The chamber is evacuated up to a pressure of 10^(-6) mbar with the help of a diffusion pump backed by a rotary pump. Plasma is produced by a hot cathode filamentary discharge technique. Multiple viewing ports are available in the chamber. Multi-cusp magnetic confinement system is used for confining the plasma. The vertical dust dropping unit is placed above the horizontal chamber having a height of 72 cm and 15 cm in diameter.">
+                                The experimental dusty plasma device consists of a horizontal plasma chamber and a
+                                vertical dust dropping unit. The horizontal plasma chamber is a stainless steel
+                                cylindrical chamber of length 100 cm and having a diameter of 30 cm. The chamber is
+                                evacuated up to a pressure of 10^(-6) mbar with the help of a diffusion pump backed by a
+                                rotary pump. Plasma is produced by a hot cathode filamentary discharge technique.
+                                Multiple viewing ports are available in the chamber. Multi-cusp magnetic confinement
+                                system is used for confining the plasma. The vertical dust dropping unit is placed above
+                                the horizontal chamber having a height of 72 cm and 15 cm in diameter.
+                            </p>
+
+                            <h3><strong class="bilingual-text" data-hi="हालिया अनुसंधान परिणाम"
+                                    data-en="Recent Research Outcomes">Recent Research Outcomes</strong></h3>
+
+                            <p><span class="auto-style1 bilingual-text"
+                                    data-hi="धूल कण और चुंबकीय क्षेत्र का ईईपीएफ और प्लाज्मा दोलन पर प्रभाव"
+                                    data-en="Effect of dust particle and magnetic field on EEPF and plasma oscillation">Effect
+                                    of dust particle and magnetic field on EEPF and plasma oscillation</span></p>
+
+                            <p class="bilingual-text"
+                                data-hi="धूल कणों का इलेक्ट्रॉन ऊर्जा संभाव्यता फलन (ईईपीएफ) और प्लाज्मा दोलन पर महत्व विभिन्न चुंबकीय क्षेत्र शक्तियों के तहत फिलामेंटरी डिस्चार्ज हाइड्रोजन प्लाज्मा में अध्ययन किया जाता है। प्रायोगिक परिणाम दर्शाता है कि धूल घनत्व में वृद्धि के साथ, प्लाज्मा पृष्ठभूमि में धूल कणों के चार्जिंग के परिणामस्वरूप इलेक्ट्रॉन घनत्व कम हो जाता है। हमने देखा है कि चुंबकीय क्षेत्र में वृद्धि कम ऊर्जा वाले इलेक्ट्रॉन आबादी को कम करती है। प्लाज्मा दोलन के अध्ययन से यह देखा गया है कि प्लाज्मा दोलन से जुड़ी प्रमुख आवृत्ति आयन साइक्लोट्रॉन आवृत्ति से मेल खाती है। धूल घनत्व में वृद्धि के साथ आयन साइक्लोट्रॉन आवृत्ति का आयाम कम हो जाता है जो प्लाज्मा घनत्व में कमी के कारण हो सकता है।"
+                                data-en="The significance of dust particles for the electron energy probability function (EEPF) and plasma oscillations is studied under varying magnetic field strength in a filamentary discharge hydrogen plasma. The experimental result shows that with an increase in dust density, the electron density decreases as a result of the charging of dust grains in the plasma background. We have observed that the increase in magnetic field decreases the lower energy electron population. From the study of plasma oscillation, it is observed that the dominant frequency associated with the plasma oscillation is matched with the ion cyclotron frequency. The amplitude of the ion cyclotron frequency reduces with the increase of dust density which might be due to the decrease of plasma density.">
+                                The significance of dust particles for the electron energy probability function (EEPF)
+                                and plasma oscillations is studied under varying magnetic field strength in a
+                                filamentary discharge hydrogen plasma. The experimental result shows that with an
+                                increase in dust density, the electron density decreases as a result of the charging of
+                                dust grains in the plasma background. We have observed that the increase in magnetic
+                                field decreases the lower energy electron population. From the study of plasma
+                                oscillation, it is observed that the dominant frequency associated with the plasma
+                                oscillation is matched with the ion cyclotron frequency. The amplitude of the ion
+                                cyclotron frequency reduces with the increase of dust density which might be due to the
+                                decrease of plasma density.
+                            </p>
+
+                            <figure class="research-figure">
+                                <img src="/assets/images/dusty/fig1.png"
+                                    alt="EEPF for different magnetic field strengths">
+                                <figcaption class="bilingual-text"
+                                    data-hi="चित्र 1. विभिन्न धूल घनत्वों के साथ विभिन्न चुंबकीय क्षेत्र शक्तियों के लिए ईईपीएफ (काली रेखा = कोई धूल नहीं; लाल रेखा = 1×10^11 m^(-3); नीली रेखा = 3×10^11 m^(-3), गुलाबी रेखा = 5×10^11 m^(-3); हरी रेखा = 7×10^11 m^(-3))"
+                                    data-en="Figure 1. EEPFs for different magnetic field strengths with different dust densities (black line = no dust; red line = 1×10^11 m^(-3); blue line = 3×10^11 m^(-3), pink line = 5×10^11 m^(-3); green line = 7×10^11 m^(-3)).">
+                                    Figure 1. EEPFs for different magnetic field strengths with different dust densities
+                                    (black line = no dust; red line = 1×10^11 m^(-3); blue line = 3×10^11 m^(-3), pink
+                                    line = 5×10^11 m^(-3); green line = 7×10^11 m^(-3)).
+                                </figcaption>
+                            </figure>
+
+                            <figure class="research-figure">
+                                <img src="/assets/images/dusty/fig2.png"
+                                    alt="Low energy electron density versus magnetic field">
+                                <figcaption class="bilingual-text"
+                                    data-hi="चित्र 2. विभिन्न धूल घनत्वों के लिए चुंबकीय क्षेत्र शक्तियों के सापेक्ष कम ऊर्जा वाले इलेक्ट्रॉन घनत्व"
+                                    data-en="Figure 2. Low energy electron density versus magnetic field strengths for different dust densities.">
+                                    Figure 2. Low energy electron density versus magnetic field strengths for different
+                                    dust densities.
+                                </figcaption>
+                            </figure>
+
+                            <figure class="research-figure">
+                                <img src="/assets/images/dusty/fig3.png"
+                                    alt="Ion cyclotron frequency versus magnetic field">
+                                <figcaption class="bilingual-text"
+                                    data-hi="चित्र 3. धूल की अनुपस्थिति/उपस्थिति में चुंबकीय क्षेत्र शक्ति के सापेक्ष आयन साइक्लोट्रॉन आवृत्ति"
+                                    data-en="Figure 3. Ion cyclotron frequency versus magnetic field strength in absence/presence of dust.">
+                                    Figure 3. Ion cyclotron frequency versus magnetic field strength in absence/presence
+                                    of dust.
+                                </figcaption>
+                            </figure>
+
+                            <p><span class="auto-style1 bilingual-text"
+                                    data-hi="नकारात्मक हाइड्रोजन आयन उत्पादन की नवीन तकनीक"
+                                    data-en="Novel technique of producing negative hydrogen ions">Novel technique of
+                                    producing negative hydrogen ions</span></p>
+
+                            <p class="bilingual-text"
+                                data-hi="H− आयन आधारित न्यूट्रल बीम इंजेक्टर एक फ्यूजन रिएक्टर में एक महत्वपूर्ण हीटिंग और करंट ड्राइव प्रणाली है। हालांकि, वर्तमान H− आयन स्रोत विन्यास में उत्पादन, निष्कर्षण, सीज़ियम (Cs) इन्वेंटरी और प्रबंधन के मामले में सीमाएं हैं। इन सीमाओं को दूर करने के लिए, Cs लेपित टंगस्टन (W) धूल कणों (निम्न कार्य फलन सतह) को हाइड्रोजन प्लाज्मा में छिड़क कर सतह-सहायता प्राप्त आयतन H− आयन उत्पादन के संबंध में एक नई अवधारणा पर आधारित एक सिद्धांत-प्रमाण प्रयोग किया गया है। अवधारणा को मान्य करने के लिए चार अलग-अलग निदान उपकरणों का उपयोग किया गया है। H− आयन अंश का अनुमान (a) लैंगमुइर प्रोब निदान, (b) आयन ध्वनिक तरंगों का चरण वेग, (c) धूल धारा से लगाया गया है और (d) बाल्मर रेखा अनुपात के मापन द्वारा पुष्टि की गई है। विभिन्न डिस्चार्ज स्थितियों के लिए प्लाज्मा घनत्व के सापेक्ष मापा गया H− आयन अंश Cs लेपित W धूल कणों की उपस्थिति में ~0.2 से 0.3 तक भिन्न होता है।"
+                                data-en="H− ion based neutral beam injector is a critical heating and current drive system in a fusion reactor. However, the present H− ion source configuration has limitations in terms of production, extraction, cesium (Cs) inventory and management. To overcome these limitations, a proof-of-principle experiment based on a novel concept regarding surface assisted volume H− ions production by sprinkling Cs coated tungsten (W) dust grains (low work function surface) into a hydrogen plasma is carried out. Four different diagnostics have been used to validate the concept. The H− ion fraction is estimated from (a) Langmuir probe diagnostic, (b) phase velocity of ion acoustic waves, (c) dust current and confirmed by the measurement of (d) Balmer line ratio. The measured H− ion fraction with respect to the plasma density for different discharge conditions varies from ~0.2 to 0.3 in presence of Cs coated W dust particles.">
+                                H− ion based neutral beam injector is a critical heating and current drive system in a
+                                fusion reactor. However, the present H− ion source configuration has limitations in
+                                terms of production, extraction, cesium (Cs) inventory and management. To overcome these
+                                limitations, a proof-of-principle experiment based on a novel concept regarding surface
+                                assisted volume H− ions production by sprinkling Cs coated tungsten (W) dust grains (low
+                                work function surface) into a hydrogen plasma is carried out. Four different diagnostics
+                                have been used to validate the concept. The H− ion fraction is estimated from (a)
+                                Langmuir probe diagnostic, (b) phase velocity of ion acoustic waves, (c) dust current
+                                and confirmed by the measurement of (d) Balmer line ratio. The measured H− ion fraction
+                                with respect to the plasma density for different discharge conditions varies from ~0.2
+                                to 0.3 in presence of Cs coated W dust particles.
+                            </p>
+
+                            <figure class="research-figure">
+                                <img src="/assets/images/dusty/fig4.png" alt="I-V characteristics of Langmuir probe">
+                                <figcaption class="bilingual-text"
+                                    data-hi="चित्र 4. विभिन्न प्रायोगिक स्थितियों में लैंगमुइर प्रोब की I-V विशेषताएं"
+                                    data-en="Figure 4. I-V characteristics of a Langmuir probe at different experimental conditions.">
+                                    Figure 4. I-V characteristics of a Langmuir probe at different experimental
+                                    conditions.
+                                </figcaption>
+                            </figure>
+
+                            <figure class="research-figure">
+                                <img src="/assets/images/dusty/fig5.png"
+                                    alt="H_x^+ ion density and electron temperature">
+                                <figcaption class="bilingual-text"
+                                    data-hi="चित्र 5. विभिन्न डिस्चार्ज स्थितियों में H_x^+ आयन घनत्व और इलेक्ट्रॉन तापमान"
+                                    data-en="Figure 5. H_x^+ ion density and electron temperature at different discharge conditions.">
+                                    Figure 5. H_x^+ ion density and electron temperature at different discharge
+                                    conditions.
+                                </figcaption>
+                            </figure>
+
+                            <p><span class="auto-style1"><strong class="bilingual-text" data-hi="चल रहे प्रयोग"
+                                        data-en="Ongoing experiments">Ongoing experiments</strong></span></p>
+
+                            <p class="bilingual-text"
+                                data-hi="दो-इलेक्ट्रॉन तापमान प्लाज्मा का नियंत्रित उत्पादन और संबंधित प्रयोग"
+                                data-en="Controlled production of two-electron temperature plasma and related experiments">
+                                Controlled production of two-electron temperature plasma and related experiments</p>
+
+                            <p class="bilingual-text"
+                                data-hi="कम दबाव वाले फिलामेंट डिस्चार्ज प्लाज्मा में, इलेक्ट्रॉनों के तीन समूह देखे जाते हैं: आयनित इलेक्ट्रॉन, गर्म इलेक्ट्रॉन और ठंडे इलेक्ट्रॉन। आयनित इलेक्ट्रॉन फिलामेंट्स से उत्सर्जित होते हैं, जो डिस्चार्ज वोल्टेज द्वारा कक्ष की दीवारों की ओर त्वरित होते हैं। गर्म इलेक्ट्रॉन वे आयनित इलेक्ट्रॉन होते हैं जो पृष्ठभूमि गैस के साथ टकराव के कारण ऊर्जा खो देते हैं, और ठंडे इलेक्ट्रॉन तटस्थ गैस प्रजातियों के आयनीकरण के कारण बनते हैं। उच्च तटस्थ दबाव पर, आयनित इलेक्ट्रॉन न्यूट्रल के साथ अप्रत्यास्थ टकराव में वृद्धि के कारण गर्म इलेक्ट्रॉनों के समान हो जाते हैं और परिणामस्वरूप द्वि-मैक्सवेलियन इलेक्ट्रॉन वितरण प्राप्त होता है। चल रहा प्रयोग धूलयुक्त प्लाज्मा प्रायोगिक कक्ष में दो इलेक्ट्रॉन प्लाज्मा की एक नियंत्रणीय उत्पादन तकनीक विकसित करने पर केंद्रित है। अध्ययन का उद्देश्य दो इलेक्ट्रॉन समूहों के उत्पादन के लिए एक सुविधाजनक तंत्र स्थापित करना है और बाद में धूल चार्जिंग तंत्र पर गर्म इलेक्ट्रॉनों के प्रभाव के साथ-साथ तरंग प्रसार की जांच की जाएगी।"
+                                data-en="In low pressure filament discharge plasmas, three groups of electrons are observed, ionising electrons, hot electrons and cold electrons. The ionising electrons are emitted from the filaments, which are accelerated by the discharge voltage towards the chamber walls. The hot electrons are those ionising electrons who lose energy due to collisions with the background gas, and the cold electrons are formed due to ionisation of neutral gas species. At high neutral pressure, the ionising electrons become identical to the hot electrons due to an increase in inelastic collisions with the neutrals and consequently a bi-Maxwellian electron distribution is achieved. The ongoing experiment focuses on developing a controllable production technique of two electron plasma in the dusty plasma experimental chamber. The study aims at establishing a handy mechanism for the production of two electron groups and later on the effect of hot electrons on dust charging mechanism along with wave propagation will be investigated.">
+                                In low pressure filament discharge plasmas, three groups of electrons are observed,
+                                ionising electrons, hot electrons and cold electrons. The ionising electrons are emitted
+                                from the filaments, which are accelerated by the discharge voltage towards the chamber
+                                walls. The hot electrons are those ionising electrons who lose energy due to collisions
+                                with the background gas, and the cold electrons are formed due to ionisation of neutral
+                                gas species. At high neutral pressure, the ionising electrons become identical to the
+                                hot electrons due to an increase in inelastic collisions with the neutrals and
+                                consequently a bi-Maxwellian electron distribution is achieved. The ongoing experiment
+                                focuses on developing a controllable production technique of two electron plasma in the
+                                dusty plasma experimental chamber. The study aims at establishing a handy mechanism for
+                                the production of two electron groups and later on the effect of hot electrons on dust
+                                charging mechanism along with wave propagation will be investigated.
+                            </p>
+
+                            <figure class="research-figure">
+                                <img src="/assets/images/dusty/fig6.png" alt="Two-electron temperature plasma setup">
+                                <figcaption class="bilingual-text"
+                                    data-hi="चित्र 6. दो-इलेक्ट्रॉन तापमान प्लाज्मा से संबंधित प्रायोगिक सेट-अप का योजनाबद्ध आरेख"
+                                    data-en="Figure 6. Schematic diagram of two-electron temperature plasma related experimental set-up.">
+                                    Figure 6. Schematic diagram of two-electron temperature plasma related experimental
+                                    set-up.
+                                </figcaption>
+                            </figure>
+                        </div>
+
+                        <!-- Research Item 2: Extraction of Negative Hydrogen Ions -->
+                        <div class="research-item">
+                            <h3 class="bilingual-text"
+                                data-hi="सीज़ियम लेपित धूल द्वारा उत्पादित नकारात्मक हाइड्रोजन आयनों का निष्कर्षण"
+                                data-en="Extraction of Negative Hydrogen Ions produced by Cesium Coated Dust">Extraction
+                                of Negative Hydrogen Ions produced by Cesium Coated Dust</h3>
+
+                            <p class="bilingual-text"
+                                data-hi="नकारात्मक हाइड्रोजन आयन (H− आयन) कई स्थलीय और अलौकिक प्राकृतिक भौतिक घटनाओं में महत्वपूर्ण भूमिका निभाते हैं। नकारात्मक आयनों का उपयोग अक्सर कई अन्य औद्योगिक अनुप्रयोगों में किया जाता है, जैसे आयन बीम जमाव अध्ययन, माइक्रोमीटर आकार के पाउडर सतह संशोधन, क्वांटम उपकरणों के लिए क्षति-मुक्त नैनोकण निर्माण, तंत्रिका कोशिका इंजीनियरिंग क्षेत्रों में जैव-संगतता सतह उपचार, टेंडेम त्वरक और फ्यूजन रिएक्टर के लिए उच्च ऊर्जा न्यूट्रल बीम इंजेक्शन (एनबीआई) प्रणाली में। पिछले कुछ दशकों में, कई शोधकर्ताओं ने एनबीआई प्रणाली में इसे लागू करने के लिए उच्च धारा, निम्न-उत्सर्जन H− आयन स्रोत विकसित करने के लिए जबरदस्त प्रयास किए हैं। एनबीआई थर्मोन्यूक्लियर फ्यूजन के लिए फ्यूजन रिएक्टर में उपयोग की जाने वाली सबसे विश्वसनीय सहायक हीटिंग और करंट ड्राइव प्रणालियों में से एक है। थर्मोन्यूक्लियर फ्यूजन में आधुनिक दुनिया की बढ़ती ऊर्जा मांग को पूरा करने के लिए पर्याप्त ऊर्जा उत्पन्न करने की क्षमता है। थर्मोन्यूक्लियर फ्यूजन के लिए, प्लाज्मा को सौ मिलियन डिग्री सेल्सियस से अधिक गर्म करना आवश्यक है। प्लाज्मा को गर्म करने के लिए, एनबीआई प्रणाली की सहायता से उच्च ऊर्जावान न्यूट्रल परमाणुओं को प्लाज्मा में इंजेक्ट किया जाता है।"
+                                data-en="Negative hydrogen ions (H− ions) play an important role in many terrestrial as well as extra-terrestrial natural physical phenomena. The negative ions are often used in many other industrial applications, such as in ion beam deposition studies, for micrometre-sized powder surface modification, damage-free nano-particle formation for quantum devices, bio-compatibility surface treatment in nerve cell engineering fields, tandem accelerators and high energetic Neutral Beam Injection (NBI) system for fusion reactor. In last few decades, many researchers have paid tremendous efforts to develop a high current, low-emittance H− ion sources to implement it in a NBI system. NBI is one of the most reliable auxiliary heating and current drive system used in a fusion reactor for thermonuclear fusion. Thermonuclear fusion has the potential to produce sufficient energy to satisfy the mounting demand of energy of modern world. For thermonuclear fusion, it is necessary to heat the plasma above hundred million degrees centigrade. To heat the plasma, high energetic neutral atoms are injected into the plasma with the help of NBI system.">
+                                Negative hydrogen ions (H− ions) play an important role in many terrestrial as well as
+                                extra-terrestrial natural physical phenomena. The negative ions are often used in many
+                                other industrial applications, such as in ion beam deposition studies, for
+                                micrometre-sized powder surface modification, damage-free nano-particle formation for
+                                quantum devices, bio-compatibility surface treatment in nerve cell engineering fields,
+                                tandem accelerators and high energetic Neutral Beam Injection (NBI) system for fusion
+                                reactor. In last few decades, many researchers have paid tremendous efforts to develop a
+                                high current, low-emittance H− ion sources to implement it in a NBI system. NBI is one
+                                of the most reliable auxiliary heating and current drive system used in a fusion reactor
+                                for thermonuclear fusion. Thermonuclear fusion has the potential to produce sufficient
+                                energy to satisfy the mounting demand of energy of modern world. For thermonuclear
+                                fusion, it is necessary to heat the plasma above hundred million degrees centigrade. To
+                                heat the plasma, high energetic neutral atoms are injected into the plasma with the help
+                                of NBI system.
+                            </p>
+
+                            <p class="bilingual-text"
+                                data-hi="एनएचआईईएल सतह-सहायता प्राप्त आयतन उत्पादन तंत्र द्वारा उत्पादित नकारात्मक हाइड्रोजन आयनों को निकालने के लिए समर्पित है। इस उद्देश्य के लिए, संपूर्ण प्रायोगिक प्रणाली को इस तरह से विकसित किया गया है कि उत्पादन के साथ-साथ निष्कर्षण प्रक्रिया को भी बढ़ाया जा सके। दो उच्च वोल्टेज डीसी बिजली आपूर्ति (एचवीपीएस) विशेष रूप से सीज़ियम लेपित टंगस्टन धूल से उत्पादित नकारात्मक आयनों के निष्कर्षण और त्वरण के लिए विकसित की गई हैं। फाइबर ऑप्टिक लिंक मॉड्यूल के साथ 150 सिग्नल डेटा अधिग्रहण और नियंत्रण प्रणाली को विशेष रूप से प्रयोग के लिए डिजाइन और कमीशन किया गया है।"
+                                data-en="The NHIEL is devoted in extracting the negative hydrogen ions produced by surface assisted volume production mechanism. For that purpose, the entire experimental system is developed in such a manner to enhance the production as well as the extraction process. Two high voltage DC power supplies (HVPS) are specifically developed for extraction as well as for acceleration of the negative ions produced from cesium coated tungsten dust. A 150 signals Data acquisition and control system with fibre optic link modules has been particularly designed and commissioned for the experiment.">
+                                The NHIEL is devoted in extracting the negative hydrogen ions produced by surface
+                                assisted volume production mechanism. For that purpose, the entire experimental system
+                                is developed in such a manner to enhance the production as well as the extraction
+                                process. Two high voltage DC power supplies (HVPS) are specifically developed for
+                                extraction as well as for acceleration of the negative ions produced from cesium coated
+                                tungsten dust. A 150 signals Data acquisition and control system with fibre optic link
+                                modules has been particularly designed and commissioned for the experiment.
+                            </p>
+
+                            <figure class="research-figure">
+                                <img src="/assets/images/dusty/Dusty NHEL.JPG"
+                                    alt="Negative Hydrogen Ion Extraction Laboratory">
+                                <figcaption class="bilingual-text"
+                                    data-hi="नकारात्मक हाइड्रोजन आयन निष्कर्षण प्रयोगशाला सेटअप"
+                                    data-en="Negative Hydrogen Ion Extraction Laboratory setup">
+                                    Negative Hydrogen Ion Extraction Laboratory setup
+                                </figcaption>
+                            </figure>
+                        </div>
+                    </div>
+
+                    <!-- People Tab -->
+                    <div id="people" class="tab-panel">
+
+                        <div class="people-categories">
+                            <button class="people-cat-btn active" onclick="filterPeople('all')">
+                                <span class="bilingual-text" data-hi="सभी" data-en="All">All</span>
+                            </button>
+                            <button class="people-cat-btn" onclick="filterPeople('faculty')">
+                                <span class="bilingual-text" data-hi="संकाय" data-en="Faculty">Faculty</span>
+                            </button>
+                            <button class="people-cat-btn" onclick="filterPeople('pdf')">
+                                <span class="bilingual-text" data-hi="पोस्ट डॉक्टरल फेलो"
+                                    data-en="Post Doctoral Fellows">Post Doctoral Fellows</span>
+                            </button>
+                            <button class="people-cat-btn" onclick="filterPeople('scholar')">
+                                <span class="bilingual-text" data-hi="शोध विद्वार्थी"
+                                    data-en="Research Scholars">Research Scholars</span>
+                            </button>
+                            <button class="people-cat-btn" onclick="filterPeople('officer')">
+                                <span class="bilingual-text" data-hi="परियोजना वैज्ञानिक अधिकारी"
+                                    data-en="Project Scientific Officer">Project Scientific Officer</span>
+                            </button>
+                            <button class="people-cat-btn" onclick="filterPeople('technical')">
+                                <span class="bilingual-text" data-hi="तकनीकी कर्मचारी"
+                                    data-en="Technical Staff">Technical Staff</span>
+                            </button>
+                            <button class="people-cat-btn" onclick="filterPeople('former')">
+                                <span class="bilingual-text" data-hi="पूर्व सदस्य" data-en="Former Members">Former
+                                    Members</span>
+                            </button>
+                            <button class="people-cat-btn" onclick="filterPeople('collaborator')">
+                                <span class="bilingual-text" data-hi="सहयोगी"
+                                    data-en="Collaborators">Collaborators</span>
+                            </button>
+                        </div>
+
+                        <div class="people-grid">
+
+                            <!-- Faculty -->
+                            <div class="person-card show" data-category="faculty">
+                                <img src="/assets/images/dusty/bipul.jpg" alt="Prof. B. K. Saikia" class="person-photo">
+                                <h4 class="person-name">Prof. B. K. Saikia</h4>
+                                <p class="person-role bilingual-text" data-hi="प्रोफेसर - जी (कार्यकारी केंद्र निदेशक)"
+                                    data-en="Professor - G (Acting Centre Director)">Professor - G (Acting Centre
+                                    Director)</p>
+                                <div class="person-email">
+                                    <a href="mailto:bksaikia@cppipr.res.in">bksaikia@cppipr.res.in</a>
+                                </div>
+                                <div class="person-links">
+                                    <a href="https://www.researchgate.net/profile/Bk_Saikia"
+                                        target="_blank">ResearchGate</a>
+                                </div>
+                                <div class="person-expertise">
+                                    <h5 class="bilingual-text" data-hi="विशेषज्ञता का क्षेत्र:"
+                                        data-en="Area of expertise:">Area of expertise:</h5>
+                                    <ul>
+                                        <li class="bilingual-text" data-hi="धूलयुक्त प्लाज्मा" data-en="Dusty Plasma">
+                                            Dusty Plasma</li>
+                                        <li class="bilingual-text" data-hi="नकारात्मक H आयन उत्पादन और निष्कर्षण"
+                                            data-en="Negative H ion production and extraction">Negative H ion production
+                                            and extraction</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="person-card show" data-category="faculty">
+                                <img src="/assets/images/dusty/kausik.jpg" alt="Dr. S. S. Kausik" class="person-photo">
+                                <h4 class="person-name">Dr. S. S. Kausik</h4>
+                                <p class="person-role bilingual-text" data-hi="वैज्ञानिक अधिकारी - ई"
+                                    data-en="Scientific Officer - E">Scientific Officer - E</p>
+                                <div class="person-email">
+                                    <a href="mailto:kausik@cppipr.res.in">kausik@cppipr.res.in</a>
+                                </div>
+                                <div class="person-links">
+                                    <a href="https://www.researchgate.net/profile/Siddhartha_Kausik"
+                                        target="_blank">ResearchGate</a>
+                                </div>
+                                <div class="person-expertise">
+                                    <h5 class="bilingual-text" data-hi="विशेषज्ञता का क्षेत्र:"
+                                        data-en="Area of expertise:">Area of expertise:</h5>
+                                    <ul>
+                                        <li class="bilingual-text" data-hi="धूलयुक्त प्लाज्मा" data-en="Dusty Plasma">
+                                            Dusty Plasma</li>
+                                        <li class="bilingual-text" data-hi="नकारात्मक H आयन उत्पादन और निष्कर्षण"
+                                            data-en="Negative H ion production and extraction">Negative H ion production
+                                            and extraction</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- Research Scholars -->
+                            <div class="person-card show" data-category="scholar">
+                                <img src="/assets/images/dusty/birbaishri.jpg" alt="Ms. Birbaishri Bodo"
+                                    class="person-photo">
+                                <h4 class="person-name">Ms. Birbaishri Bodo</h4>
+                                <p class="person-role bilingual-text" data-hi="वरिष्ठ शोध फेलो"
+                                    data-en="Senior Research Fellow">Senior Research Fellow</p>
+                                <div class="person-email">
+                                    <a href="mailto:birbaishri.phy@gmail.com">birbaishri.phy@gmail.com</a>
+                                </div>
+                                <div class="person-expertise">
+                                    <h5 class="bilingual-text" data-hi="विशेषज्ञता का क्षेत्र:"
+                                        data-en="Area of expertise:">Area of expertise:</h5>
+                                    <ul>
+                                        <li class="bilingual-text" data-hi="सैद्धांतिक प्लाज्मा भौतिकी"
+                                            data-en="Theoretical Plasma Physics">Theoretical Plasma Physics</li>
+                                        <li class="bilingual-text" data-hi="चुंबकीय प्लाज्मा"
+                                            data-en="Magnetized Plasma">Magnetized Plasma</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="person-card show" data-category="scholar">
+                                <img src="/assets/images/dusty/rupali.jpg" alt="Ms. Rupali Paul" class="person-photo">
+                                <h4 class="person-name">Ms. Rupali Paul</h4>
+                                <p class="person-role bilingual-text" data-hi="वरिष्ठ शोध फेलो"
+                                    data-en="Senior Research Fellow">Senior Research Fellow</p>
+                                <div class="person-email">
+                                    <a href="mailto:rupali.paul@cppipr.res.in">rupali.paul@cppipr.res.in</a>
+                                </div>
+                                <div class="person-links">
+                                    <a href="https://www.researchgate.net/profile/Rupali_Paul"
+                                        target="_blank">ResearchGate</a>
+                                </div>
+                                <div class="person-expertise">
+                                    <h5 class="bilingual-text" data-hi="विशेषज्ञता का क्षेत्र:"
+                                        data-en="Area of expertise:">Area of expertise:</h5>
+                                    <ul>
+                                        <li class="bilingual-text" data-hi="प्लाज्मा भौतिकी" data-en="Plasma Physics">
+                                            Plasma Physics</li>
+                                        <li class="bilingual-text" data-hi="तरल गतिकी" data-en="Fluid Dynamics">Fluid
+                                            Dynamics</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="person-card show" data-category="scholar">
+                                <img src="/assets/images/dusty/gunjan.jpg" alt="Mr. Gunjan Sharma" class="person-photo">
+                                <h4 class="person-name">Mr. Gunjan Sharma</h4>
+                                <p class="person-role bilingual-text" data-hi="वरिष्ठ शोध फेलो"
+                                    data-en="Senior Research Fellow">Senior Research Fellow</p>
+                                <div class="person-email">
+                                    <a href="mailto:gunjan.sharma@cppipr.res.in">gunjan.sharma@cppipr.res.in</a>
+                                </div>
+                                <div class="person-links">
+                                    <a href="https://www.researchgate.net/profile/Gunjan_Sharma19"
+                                        target="_blank">ResearchGate</a>
+                                </div>
+                                <div class="person-expertise">
+                                    <h5 class="bilingual-text" data-hi="विशेषज्ञता का क्षेत्र:"
+                                        data-en="Area of expertise:">Area of expertise:</h5>
+                                    <ul>
+                                        <li class="bilingual-text" data-hi="प्लाज्मा भौतिकी" data-en="Plasma Physics">
+                                            Plasma Physics</li>
+                                        <li class="bilingual-text" data-hi="तरल गतिकी" data-en="Fluid Dynamics">Fluid
+                                            Dynamics</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="person-card show" data-category="scholar">
+                                <img src="/assets/images/dusty/kishor.jpg" alt="Mr. Kishor Deka" class="person-photo">
+                                <h4 class="person-name">Mr. Kishor Deka</h4>
+                                <p class="person-role bilingual-text" data-hi="वरिष्ठ शोध फेलो"
+                                    data-en="Senior Research Fellow">Senior Research Fellow</p>
+                                <div class="person-email">
+                                    <a href="mailto:kishor.deka@cppipr.res.in">kishor.deka@cppipr.res.in</a>
+                                </div>
+                                <div class="person-links">
+                                    <a href="https://www.researchgate.net/profile/Kishor_Deka"
+                                        target="_blank">ResearchGate</a>
+                                </div>
+                                <div class="person-expertise">
+                                    <h5 class="bilingual-text" data-hi="विशेषज्ञता का क्षेत्र:"
+                                        data-en="Area of expertise:">Area of expertise:</h5>
+                                    <ul>
+                                        <li class="bilingual-text" data-hi="प्लाज्मा भौतिकी" data-en="Plasma Physics">
+                                            Plasma Physics</li>
+                                        <li class="bilingual-text" data-hi="तरल गतिकी" data-en="Fluid Dynamics">Fluid
+                                            Dynamics</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- Project Scientific Officers -->
+                            <div class="person-card show" data-category="officer">
+                                <img src="/assets/images/dusty/nipan.jpg" alt="Dr. Nipan Das" class="person-photo">
+                                <h4 class="person-name">Dr. Nipan Das</h4>
+                                <p class="person-role bilingual-text"
+                                    data-hi="परियोजना वैज्ञानिक अधिकारी (इलेक्ट्रॉनिक्स एवं उपकरण)"
+                                    data-en="Project Scientific Officer (Electronics & Inst.)">Project Scientific
+                                    Officer (Electronics & Inst.)</p>
+                                <div class="person-email">
+                                    <a href="mailto:nipan.das@cppipr.res.in">nipan.das@cppipr.res.in</a>
+                                </div>
+                            </div>
+
+                            <div class="person-card show" data-category="officer">
+                                <img src="/assets/images/staff/bidyut.jpg" alt="Bidyut Chutia" class="person-photo">
+                                <h4 class="person-name">Bidyut Chutia</h4>
+                                <p class="person-role bilingual-text" data-hi="परियोजना वैज्ञानिक अधिकारी"
+                                    data-en="Project Scientific Officer">Project Scientific Officer</p>
+                                <div class="person-email">
+                                    <a href="mailto:bidyut.chutia@cppipr.res.in">bidyut.chutia@cppipr.res.in</a>
+                                </div>
+                                <div class="person-links">
+                                    <a href="https://www.researchgate.net/profile/Bidyut-Chutia"
+                                        target="_blank">ResearchGate</a>
+                                    <a href="https://scholar.google.com/citations?hl=en&user=Mvok8H8AAAAJ"
+                                        target="_blank">Google Scholar</a>
+                                </div>
+                                <div class="person-expertise">
+                                    <h5 class="bilingual-text" data-hi="विशेषज्ञता का क्षेत्र:"
+                                        data-en="Area of expertise:">Area of expertise:</h5>
+                                    <ul>
+                                        <li class="bilingual-text"
+                                            data-hi="धूलयुक्त प्लाज्मा, प्रतिक्रियाशील प्लाज्मा में नैनोकण वृद्धि"
+                                            data-en="Dusty plasma, Nanoparticle growth in reactive plasmas">Dusty
+                                            plasma, Nanoparticle growth in reactive plasmas</li>
+                                        <li class="bilingual-text"
+                                            data-hi="उच्च घनत्व वाले नैनो-धूलयुक्त प्लाज्मा में धूल घनत्व तरंग (डीडीडब्ल्यू) गतिकी"
+                                            data-en="Dust density wave (DDW) dynamics in high density nanodusty plasmas">
+                                            Dust density wave (DDW) dynamics in high density nanodusty plasmas</li>
+                                        <li class="bilingual-text" data-hi="आरएफ प्लाज्मा प्रणालियाँ आदि"
+                                            data-en="rf plasma systems etc.">rf plasma systems etc.</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- Technical Staff -->
+                            <div class="person-card show" data-category="technical">
+                                <img src="/assets/images/dusty/gobinda.jpg" alt="Mr. G. D. Sarma" class="person-photo">
+                                <h4 class="person-name">Mr. G. D. Sarma</h4>
+                                <p class="person-role bilingual-text" data-hi="तकनीशियन - डी" data-en="Technician - D">
+                                    Technician - D</p>
+                                <div class="person-email">
+                                    <a href="mailto:gobinda.sarma@cppipr.res.in">gobinda.sarma@cppipr.res.in</a>
+                                </div>
+                            </div>
+
+                            <div class="person-card show" data-category="technical">
+                                <img src="/assets/images/staff/Dipjyoti.jpg" alt="Mr. Dipjyoti Baishya"
+                                    class="person-photo">
+                                <h4 class="person-name">Mr. Dipjyoti Baishya</h4>
+                                <p class="person-role bilingual-text" data-hi="परियोजना वैज्ञानिक सहायक - रसायन विज्ञान"
+                                    data-en="Project Scientific Assistant - Chemistry">Project Scientific Assistant -
+                                    Chemistry</p>
+                                <div class="person-email">
+                                    <a href="mailto:dipjyoti.baishya@cppipr.res.in">dipjyoti.baishya@cppipr.res.in</a>
+                                </div>
+                            </div>
+
+                            <!-- Former Members -->
+                            <div class="person-card show" data-category="former">
+                                <img src="/assets/images/cimple_psi/mayur_k.jpg" alt="Dr. Mayur Kakati"
+                                    class="person-photo">
+                                <h4 class="person-name">Dr. Mayur Kakati</h4>
+                                <p class="person-role bilingual-text" data-hi="सहायक प्रोफेसर - ई"
+                                    data-en="Associate Professor - E">Associate Professor - E</p>
+                                <p class="person-institution">CPP-IPR, Assam, India</p>
+                                <div class="person-email">
+                                    <a href="mailto:mayur@cppipr.res.in">mayur@cppipr.res.in</a>
+                                </div>
+                                <div class="person-links">
+                                    <a href="https://scholar.google.co.in/citations?user=Ltkr9T0AAAAJ"
+                                        target="_blank">Google Scholar</a>
+                                </div>
+                            </div>
+
+                            <div class="person-card show" data-category="former">
+                                <img src="/assets/images/dpd/monojit.jpg" alt="Dr. M. Chakraborty" class="person-photo">
+                                <h4 class="person-name">Dr. M. Chakraborty</h4>
+                                <p class="person-role bilingual-text" data-hi="वैज्ञानिक अधिकारी - डी"
+                                    data-en="Scientific Officer - D">Scientific Officer - D</p>
+                                <p class="person-institution">CPP-IPR, Assam, India</p>
+                                <div class="person-email">
+                                    <a href="mailto:monojit@cppipr.res.in">monojit@cppipr.res.in</a>
+                                </div>
+                                <div class="person-links">
+                                    <a href="https://www.researchgate.net/profile/M_Chakraborty"
+                                        target="_blank">ResearchGate</a>
+                                </div>
+                            </div>
+
+                            <div class="person-card show" data-category="former">
+                                <img src="/assets/images/dusty/bharat.jpg" alt="Dr. B. Kakati" class="person-photo">
+                                <h4 class="person-name">Dr. B. Kakati</h4>
+                                <p class="person-role bilingual-text" data-hi="ओएसडी (शैक्षणिक)"
+                                    data-en="OSD (Academic)">OSD (Academic)</p>
+                                <p class="person-institution">ASTU, Assam, India</p>
+                                <div class="person-email">
+                                    <a href="mailto:bharatkakati15@gmail.com">bharatkakati15@gmail.com</a>
+                                </div>
+                                <div class="person-links">
+                                    <a href="https://www.researchgate.net/profile/Bharat_Kakati3"
+                                        target="_blank">ResearchGate</a>
+                                </div>
+                            </div>
+
+                            <!-- Collaborators -->
+                            <div class="person-card show" data-category="collaborator">
+                                <img src="/assets/images/dusty/mainak.jpg" alt="Dr. Mainak Bandyopadhyay"
+                                    class="person-photo">
+                                <h4 class="person-name">Dr. Mainak Bandyopadhyay</h4>
+                                <p class="person-role bilingual-text" data-hi="वैज्ञानिक अधिकारी - जी"
+                                    data-en="Scientific Officer - G">Scientific Officer - G</p>
+                                <p class="person-institution"><a href="https://www.iter-india.org/stafflist.php"
+                                        target="_blank">ITER India, Institute for Plasma Research</a></p>
+                                <div class="person-email">
+                                    <a
+                                        href="mailto:mainak.bandyopadhyay@iter-india.org">mainak.bandyopadhyay@iter-india.org</a>
+                                </div>
+                                <div class="person-links">
+                                    <a href="https://www.researchgate.net/profile/Mainak_Bandyopadhyay"
+                                        target="_blank">ResearchGate</a>
+                                </div>
+                                <div class="person-expertise">
+                                    <h5 class="bilingual-text" data-hi="विशेषज्ञता का क्षेत्र:"
+                                        data-en="Area of expertise:">Area of expertise:</h5>
+                                    <ul>
+                                        <li class="bilingual-text" data-hi="प्लाज्मा भौतिकी" data-en="Plasma Physics">
+                                            Plasma Physics</li>
+                                        <li class="bilingual-text" data-hi="नकारात्मक आयन निष्कर्षण"
+                                            data-en="Negative Ion Extraction">Negative Ion Extraction</li>
+                                        <li class="bilingual-text" data-hi="न्यूट्रल बीम इंजेक्शन प्रणाली"
+                                            data-en="Neutral Beam Injection System">Neutral Beam Injection System</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="person-card show" data-category="collaborator">
+                                <img src="/assets/images/dusty/agrajit.jpg" alt="Mr. Agrajit Gahlaut"
+                                    class="person-photo">
+                                <h4 class="person-name">Mr. Agrajit Gahlaut</h4>
+                                <p class="person-role bilingual-text" data-hi="वैज्ञानिक अधिकारी - एफ"
+                                    data-en="Scientific Officer - F">Scientific Officer - F</p>
+                                <p class="person-institution">Institute for Plasma Research</p>
+                                <div class="person-email">
+                                    <a href="mailto:agrajit@ipr.res.in">agrajit@ipr.res.in</a>
+                                </div>
+                                <div class="person-links">
+                                    <a href="https://www.researchgate.net/scientific-contributions/2148112995_A_Gahlaut"
+                                        target="_blank">ResearchGate</a>
+                                </div>
+                                <div class="person-expertise">
+                                    <h5 class="bilingual-text" data-hi="विशेषज्ञता का क्षेत्र:"
+                                        data-en="Area of expertise:">Area of expertise:</h5>
+                                    <ul>
+                                        <li class="bilingual-text" data-hi="डीसी और आरएफ बिजली आपूर्ति प्रणालियाँ"
+                                            data-en="DC and RF power supply systems">DC and RF power supply systems</li>
+                                        <li class="bilingual-text" data-hi="उच्च शक्ति एलटी वितरण प्रणालियाँ"
+                                            data-en="High power LT distribution systems">High power LT distribution
+                                            systems</li>
+                                        <li class="bilingual-text"
+                                            data-hi="माइक्रो-कंट्रोलर आधारित इलेक्ट्रॉनिक प्रणालियाँ"
+                                            data-en="Micro-controller based electronic systems">Micro-controller based
+                                            electronic systems</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="person-card show" data-category="collaborator">
+                                <img src="/assets/images/dusty/rakesh.jpg" alt="Dr. Rakesh Moulick"
+                                    class="person-photo">
+                                <h4 class="person-name">Dr. Rakesh Moulick</h4>
+                                <p class="person-role bilingual-text" data-hi="सहायक प्रोफेसर"
+                                    data-en="Assistant Professor">Assistant Professor</p>
+                                <p class="person-institution">Lovely Professional University</p>
+                                <div class="person-email">
+                                    <a href="mailto:rakesh.21797@lpu.co.in">rakesh.21797@lpu.co.in</a>
+                                </div>
+                                <div class="person-links">
+                                    <a href="https://www.researchgate.net/profile/Rakesh_Moulick"
+                                        target="_blank">ResearchGate</a>
+                                </div>
+                                <div class="person-expertise">
+                                    <h5 class="bilingual-text" data-hi="विशेषज्ञता का क्षेत्र:"
+                                        data-en="Area of expertise:">Area of expertise:</h5>
+                                    <ul>
+                                        <li class="bilingual-text" data-hi="प्लाज्मा आवरण" data-en="Plasma Sheath">
+                                            Plasma Sheath</li>
+                                        <li class="bilingual-text" data-hi="तरल गतिकी" data-en="Fluid Dynamics">Fluid
+                                            Dynamics</li>
+                                        <li class="bilingual-text" data-hi="बहु-घटक प्लाज्मा"
+                                            data-en="Multicomponent Plasma">Multicomponent Plasma</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="person-card show" data-category="collaborator">
+                                <img src="/assets/images/tsl/sayan.jpg" alt="Dr. Sayan Adhikari" class="person-photo">
+                                <h4 class="person-name">Dr. Sayan Adhikari</h4>
+                                <p class="person-role bilingual-text" data-hi="पोस्ट डॉक्टरल फेलो"
+                                    data-en="Post Doctoral Fellow">Post Doctoral Fellow</p>
+                                <p class="person-institution"><a href="tsl.html" target="_blank">Department of Physics,
+                                        University of Oslo, Norway</a></p>
+                                <div class="person-links">
+                                    <a href="https://www.researchgate.net/profile/Sayan_Adhikari"
+                                        target="_blank">ResearchGate</a>
+                                    <a href="https://www.sayanadhikari.com/" target="_blank">Website</a>
+                                </div>
+                                <div class="person-expertise">
+                                    <h5 class="bilingual-text" data-hi="विशेषज्ञता का क्षेत्र:"
+                                        data-en="Area of expertise:">Area of expertise:</h5>
+                                    <ul>
+                                        <li class="bilingual-text" data-hi="चुंबकीय प्लाज्मा आवरण"
+                                            data-en="Magnetized Plasma Sheath">Magnetized Plasma Sheath</li>
+                                        <li class="bilingual-text" data-hi="आयन गतिकी" data-en="Ion Dynamics">Ion
+                                            Dynamics</li>
+                                        <li class="bilingual-text" data-hi="तरल और गतिज सिमुलेशन"
+                                            data-en="Fluid and Kinetic Simulation">Fluid and Kinetic Simulation</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Publications Tab -->
+                    <div id="publications" class="tab-panel">
+
+                        <div class="publications-year">
+                            <h3>2022</h3>
+                            <ul class="publications-list">
+                                <li>
+                                    <span class="new-badge">NEW</span>
+                                    <a href="https://doi.org/10.1088/1361-6595/ac4c4b" target="_blank">Experimental
+                                        study on controlled production of two-electron temperature plasma, G. Sharma, K.
+                                        Deka, R. Paul, S. Adhikari, R. Moulick, S. S. Kausik, B. K. Saikia, <em>Plasma
+                                            Sources Science and Technology</em>, Vol. 31 025013 (2022)</a>
+                                </li>
+                                <li>
+                                    <span class="new-badge">NEW</span>
+                                    <a href="https://doi.org/10.1088/1361-6587/ac44e5" target="_blank">Experimental
+                                        study of charging of dust grains in the presence of energetic electrons, R.
+                                        Paul, G. Sharma, K. Deka, S. Adhikari, R. Moulick, S. S. Kausik, B. K. Saikia,
+                                        <em>Plasma Physics and Controlled Fusion</em>, Vol. 64 035009 (2022)</a>
+                                </li>
+                                <li>
+                                    <span class="new-badge">NEW</span>
+                                    <a href="https://doi.org/10.1007/978-981-16-5141-0_28" target="_blank">Programmable
+                                        Electro-Mechanical Dust Dispenser for Dusty Plasma Experimental Device, Nipan
+                                        Das, S. S. Kausik and B. K. Saikia, <em>Selected Progresses in Modern Physics.
+                                            Springer Proceedings in Physics</em>, vol 265 (2022) Springer,
+                                        Singapore.</a>
+                                </li>
+                                <li>
+                                    <span class="new-badge">NEW</span>
+                                    <a href="https://doi.org/10.1007/978-981-16-5141-0_38" target="_blank">Study of
+                                        Ion-Acoustic Waves in Two-Electron Temperature Plasma, G. Sharma, K. Deka, R.
+                                        Paul, S. Adhikari, R. Moulick, S. S. Kausik and B. K. Saikia, <em>Selected
+                                            Progresses in Modern Physics. Springer Proceedings in Physics</em>, vol 265
+                                        (2022) Springer, Singapore.</a>
+                                </li>
+                                <li>
+                                    <span class="new-badge">NEW</span>
+                                    <a href="https://doi.org/10.1007/978-981-16-5141-0_39" target="_blank">Study of
+                                        Plasma Sheath in the Presence of Dust Particles in an Inhomogeneous Magnetic
+                                        Field, K. Deka, R. Paul, G, Sharma, S. Adhikari, R. Moulick, S. S. Kausik and B.
+                                        K. Saikia, <em>Selected Progresses in Modern Physics. Springer Proceedings in
+                                            Physics</em>, vol 265 (2022) Springer, Singapore.</a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="publications-year">
+                            <h3>2021</h3>
+                            <ul class="publications-list">
+                                <li>
+                                    <a href="https://doi.org/10.1088/1402-4896/abfc81" target="_blank">Effect of
+                                        collisions on the plasma sheath in the presence of an inhomogeneous magnetic
+                                        field, K. Deka, S. Adhikari, R. Moulick, S. S. Kausik, B. K. Saikia, <em>Physica
+                                            Scripta</em>, Vol. 96 075606 (2021)</a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="publications-year">
+                            <h3>2020</h3>
+                            <ul class="publications-list">
+                                <li>
+                                    <a href="https://doi.org/10.1088/1402-4896/ab5548" target="_blank">Effect of two
+                                        temperature electrons in a collisional magnetized plasma sheath, G. Sharma, S.
+                                        Adhikari, R. Moulick, S. S. Kausik, and B.K. Saikia, <em>Phys. Scripta</em>, 95.
+                                        035605(2020)</a>
+                                </li>
+                                <li>
+                                    <a href="https://doi.org/10.1063/5.0004796" target="_blank">Magnetized plasma sheath
+                                        in the presence of negative ions, R. Paul, S. Adhikari, R. Moulick, S. S.
+                                        Kausik, and B.K. Saikia, <em>Phys. Plasmas</em>, 27, 063520 (2020)</a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="publications-year">
+                            <h3>2019</h3>
+                            <ul class="publications-list">
+                                <li>
+                                    Effect of dust particle and magnetic field on EEPF and plasma oscillation, D.
+                                    Kalita, B. Kakati , S. S. Kausik , B. K. Saikia, and M. Bandyopadhyay, <em>J. Plasma
+                                        Phys.</em> (2019), vol. 85, 905850402
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="publications-year">
+                            <h3>2018</h3>
+                            <ul class="publications-list">
+                                <li>
+                                    D. Kalita, B. Kakati, S. S. Kausik, B.K. Saikia and M. Bandyopadhyay , Studies on
+                                    probe measurements in presence of magnetic field in dust containing hydrogen plasma,
+                                    <em>Eur. Phys. J. D</em> 72: 74 (2018)
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="publications-year">
+                            <h3>2017</h3>
+                            <ul class="publications-list">
+                                <li>
+                                    D. Kalita, B. Kakati, B.K. Saikia, M. Bandyopadhyay and S. S. Kausik , Measurement
+                                    of electron energy probability function in weakly magnetized plasma, <em>IOP Conf
+                                        Series: J Physics: Conf. Series</em> 823 p 012068 (2017)
+                                </li>
+                                <li>
+                                    B. Kakati, S.S. Kausik, M. Bandyopadhyay, B.K. Saikia and P.K. Kaw, Development of a
+                                    novel surface assisted volume negative hydrogen ion source, <em>Nature Scientific
+                                        Reports</em>, 11078 | DOI:10.1038/s41598-017-10685-4(2017)
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="publications-year">
+                            <h3>2015</h3>
+                            <ul class="publications-list">
+                                <li>
+                                    "A process for production of negative hydrogen ion and apparatus thereof": Published
+                                    in the Indian Patents Office Journal Issue No. 30/2015, p 45998, with 23 claims and
+                                    37 pages. (July 2015)
+                                </li>
+                                <li>
+                                    D. Kalita, B. Kakati, B. K. Saikia, M. Bandyopadhyay and S. S. Kausik, Effect of
+                                    magnetic field on dust charging and corresponding probe measurement, <em>Phys.
+                                        Plasmas</em> 22, 113704 (2015)
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="publications-year">
+                            <h3>2014</h3>
+                            <ul class="publications-list">
+                                <li>
+                                    B. Kakati, S.S. Kausik, M. Bandyopadhyay, B. K. Saikia and Y. C. Saxena, Effect of
+                                    Argon addition on plasma parameters and dust charging in hydrogen plasma, <em>J.
+                                        Appl. Phys.</em> 116, 163302 (2014)
+                                </li>
+                                <li>
+                                    B. Kakati, D. Kalita, S.S. Kausik, M. Bandyopadhyay and B.K. Saikia, Studies on
+                                    hydrogen plasma and dust charging in low-pressure filament discharge, <em>Phys.
+                                        Plasmas</em>, 21, 083704 (2014)
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="publications-year">
+                            <h3>2013</h3>
+                            <ul class="publications-list">
+                                <li>
+                                    S. S. Kausik, B. Kakati and B.K. Saikia, Effect of confining wall potential on
+                                    charged collimated dust beam in low pressure plasma, <em>Phys. Plasmas</em>, 20,
+                                    053702 (2013)
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="publications-year">
+                            <h3>2011</h3>
+                            <ul class="publications-list">
+                                <li>
+                                    B. Kakati, S.S. Kausik, B.K. Saikia and M. Bandyopadhyay, Study on plasma parameters
+                                    and dust charging in an electrostatically plugged multicusp plasma device,
+                                    <em>Physics of Plasmas</em>, 18, 063704 (2011)
+                                </li>
+                                <li>
+                                    Effect of electrostatic confinement on charging of dust grains, S. S. Kausik, B.
+                                    Kakati, and B. K. Saikia, <em>AIP Conf. Proceedings</em>, 1397 p 239 (2011)
+                                </li>
+                                <li>
+                                    B. K. Saikia, B. Kakati, S. S. Kausik and M. Bandyopadhyay, Secondary electron
+                                    emission from dust and its effect on charging, <em>AIP Conf. Proceedings</em>, 1397
+                                    p 231 (2011)
+                                </li>
+                                <li>
+                                    B. Kakati, S.S. Kausik, B.K. Saikia and M. Bandyopadhyay, Effect of energetic
+                                    electrons on dust charging in hot cathode filament discharge, <em>Physics of
+                                        Plasmas</em>, 18, 033705 (2011)
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="publications-year">
+                            <h3>2010</h3>
+                            <ul class="publications-list">
+                                <li>
+                                    B. Kakati, S.S. Kausik, B.K. Saikia and M. Bandyopadhyay, Studies on plasma profiles
+                                    and its effect on dust charging in hydrogen plasma, <em>Journal of Physics :
+                                        CS</em>, 208,012139 (2010)
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="publications-year">
+                            <h3>2008</h3>
+                            <ul class="publications-list">
+                                <li>
+                                    S.S. Kausik, M.Chakraborty, P. Dutta, M. Kakati and B.K. Saikia, Study of charge
+                                    distribution in a dust beam using a Faraday cup, <em>Physics Letters A</em>, 372,
+                                    860 (2008)
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="publications-year">
+                            <h3>2007</h3>
+                            <ul class="publications-list">
+                                <li>
+                                    S. S. Kausik, M. Chakraborty and B. K. Saikia, Role of electron temperature on
+                                    charging of dust grains, <em>Physics of Plasmas</em>, 14, 024502 (2007)
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="publications-year">
+                            <h3>2003</h3>
+                            <ul class="publications-list">
+                                <li>
+                                    M. Chakraborty, S. S. Kausik, B. K. Saikia, M. Kakati and S. Bujarbarua, The effect
+                                    of the ambient plasma conditions on the variation of charge on dust grains,
+                                    <em>Physics of Plasmas</em>, 10, 554 (2003)
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="publications-year">
+                            <h3>2000</h3>
+                            <ul class="publications-list">
+                                <li>
+                                    M. Kakati, B. K. Saikia, M. Chakraborty, K. S. Goswami and S. Bujarbarua, An
+                                    experiment to measure the equilibrium charge of dust particles embedded in a plasma,
+                                    <em>Physics of Plasmas</em>, 7, 5263 (2000)
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Awards Tab -->
+                    <div id="awards" class="tab-panel">
+
+                        <div class="awards-section">
+                            <h4 class="bilingual-text" data-hi="शैक्षणिक पुरस्कार" data-en="Academic Awards">Academic
+                                Awards</h4>
+                            <ul class="awards-list">
+                                <li class="bilingual-text"
+                                    data-hi="पीएसएसआई सर्वश्रेष्ठ पोस्टर पुरस्कार - प्लाज्मा 2014 (सुश्री डी. कलिता)।"
+                                    data-en="PSSI Best Poster Award - Plasma 2014 (Ms. D. Kalita)."><em>PSSI Best Poster
+                                        Award - Plasma 2014 (Ms. D. Kalita).</em></li>
+                                <li class="bilingual-text"
+                                    data-hi="बुटी यंग साइंटिस्ट अवार्ड - प्लाज्मा 2011 (डॉ. बी. काकती)।"
+                                    data-en="Buti Young Scientist Award - Plasma 2011 (Dr. B. Kakati)."><em>Buti Young
+                                        Scientist Award - Plasma 2011 (Dr. B. Kakati).</em></li>
+                                <li class="bilingual-text"
+                                    data-hi="पीएसएसआई सर्वश्रेष्ठ पोस्टर पुरस्कार - प्लाज्मा 2012 (डॉ. बी. काकती)।"
+                                    data-en="PSSI Best Poster Award - Plasma 2012 (Dr. B. Kakati)."><em>PSSI Best Poster
+                                        Award - Plasma 2012 (Dr. B. Kakati).</em></li>
+                                <li class="bilingual-text"
+                                    data-hi="सर्वश्रेष्ठ पोस्टर पुरस्कार - भौतिकी में नए मोर्चे पर राष्ट्रीय सम्मेलन 2011, गौहाटी विश्वविद्यालय (डॉ. बी. काकती)।"
+                                    data-en="Best Poster Award - National Conference on New Frontier in Physics 2011, Gauhati University (Dr. B. Kakati).">
+                                    <em>Best Poster Award - National Conference on New Frontier in Physics 2011, Gauhati
+                                        University (Dr. B. Kakati).</em>
+                                </li>
+                                <li class="bilingual-text"
+                                    data-hi="पीएसएसआई सर्वश्रेष्ठ पोस्टर पुरस्कार - प्लाज्मा 2007 (डॉ. एस. एस. कौशिक)।"
+                                    data-en="PSSI Best Poster Award - Plasma 2007 (Dr. S. S. Kausik)."><em>PSSI Best
+                                        Poster Award - Plasma 2007 (Dr. S. S. Kausik).</em></li>
+                            </ul>
+                        </div>
+
+                        <div class="awards-section">
+                            <h4 class="bilingual-text" data-hi="पीएच.डी. उपाधि" data-en="Ph.D. Degree">Ph.D. Degree</h4>
+                            <ul class="awards-list">
+                                <li class="bilingual-text"
+                                    data-hi="डॉ. बी. काकती को गौहाटी विश्वविद्यालय, गुवाहाटी द्वारा पीएच.डी. उपाधि प्रदान की गई।"
+                                    data-en="Ph.D. degree awarded to Dr. B. Kakati by Gauhati University, Guwahati.">
+                                    <em>Ph.D. degree awarded to Dr. B. Kakati by Gauhati University, Guwahati.</em>
+                                </li>
+                                <li class="bilingual-text"
+                                    data-hi="डॉ. एस. एस. कौशिक को गौहाटी विश्वविद्यालय, गुवाहाटी द्वारा पीएच.डी. उपाधि प्रदान की गई।"
+                                    data-en="Ph.D. degree awarded to Dr. S. S. Kausik by Gauhati University, Guwahati.">
+                                    <em>Ph.D. degree awarded to Dr. S. S. Kausik by Gauhati University, Guwahati.</em>
+                                </li>
+                                <li class="bilingual-text"
+                                    data-hi="डॉ. एम. चक्रवर्ती को गौहाटी विश्वविद्यालय, गुवाहाटी द्वारा पीएच.डी. उपाधि प्रदान की गई।"
+                                    data-en="Ph.D. degree awarded to Dr. M. Chakraborty by Gauhati University, Guwahati.">
+                                    <em>Ph.D. degree awarded to Dr. M. Chakraborty by Gauhati University, Guwahati.</em>
+                                </li>
+                                <li class="bilingual-text"
+                                    data-hi="डॉ. एम. काकती को गौहाटी विश्वविद्यालय, गुवाहाटी द्वारा पीएच.डी. उपाधि प्रदान की गई।"
+                                    data-en="Ph.D. degree awarded to Dr. M. Kakati by Gauhati University, Guwahati.">
+                                    <em>Ph.D. degree awarded to Dr. M. Kakati by Gauhati University, Guwahati.</em>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-container"></div>
+
+    <script>
+        // Tab Switching Function - Fixed to handle clicks on inner spans
+        function switchTab(tabName) {
+            // Hide all panels
+            document.querySelectorAll('.tab-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+
+            // Remove active from all tabs
+            document.querySelectorAll('.lab-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected panel
+            document.getElementById(tabName).classList.add('active');
+
+            // Activate clicked tab - using closest to handle clicks on inner spans
+            let clickedTab = event.target.closest('.lab-tab');
+            if (clickedTab) {
+                clickedTab.classList.add('active');
+            }
+
+            // Scroll active tab into view on mobile
+            if (window.innerWidth <= 900 && clickedTab) {
+                clickedTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+        }
+
+        // Hide scroll indicators after first interaction
+        let hasInteracted = false;
+        const labTabs = document.getElementById('labTabs');
+        const scrollLeft = document.getElementById('scrollLeft');
+        const scrollRight = document.getElementById('scrollRight');
+
+        if (labTabs) {
+            labTabs.addEventListener('scroll', function () {
+                if (!hasInteracted) {
+                    hasInteracted = true;
+                    if (scrollLeft) scrollLeft.style.display = 'none';
+                    if (scrollRight) scrollRight.style.display = 'none';
+                }
+            }, { once: true });
+
+            labTabs.addEventListener('touchstart', function () {
+                if (!hasInteracted) {
+                    hasInteracted = true;
+                    if (scrollLeft) scrollLeft.style.display = 'none';
+                    if (scrollRight) scrollRight.style.display = 'none';
+                }
+            }, { once: true });
+        }
+
+        // People Filtering Function - Fixed to handle clicks on inner spans
+        function filterPeople(category) {
+            const allCards = document.querySelectorAll('.person-card');
+
+            // Update button states - using closest to handle clicks on inner spans
+            let clickedBtn = event.target.closest('.people-cat-btn');
+            if (clickedBtn) {
+                document.querySelectorAll('.people-cat-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                clickedBtn.classList.add('active');
+            }
+
+            // Show/hide cards
+            allCards.forEach(card => {
+                if (category === 'all') {
+                    card.classList.add('show');
+                } else {
+                    if (card.dataset.category === category) {
+                        card.classList.add('show');
+                    } else {
+                        card.classList.remove('show');
+                    }
+                }
+            });
+        }
+
+        // Fragment Loader
+        function loadFragment(url, containerId) {
+            fetch(url)
+                .then(res => res.text())
+                .then(html => {
+                    const container = document.getElementById(containerId);
+                    container.innerHTML = html;
+
+                    container.querySelectorAll('script').forEach(oldScript => {
+                        const newScript = document.createElement('script');
+                        if (oldScript.src) {
+                            newScript.src = oldScript.src;
+                        } else {
+                            newScript.textContent = oldScript.textContent;
+                        }
+                        oldScript.replaceWith(newScript);
+                    });
+                })
+                .catch(err => console.error('Error loading fragment:', url, err));
+        }
+
+        loadFragment('/UI/header.html', 'header-container');
+        loadFragment('/UI/footer.html', 'footer-container');
+    </script>
+
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                processEscapes: true
+            }
+        });
+    </script>
+    <script type="text/javascript"
+        src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+
+</html>

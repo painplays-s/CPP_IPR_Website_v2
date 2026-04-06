@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home - CPP-IPR</title>
+
+  <style>
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      font-family: Arial, sans-serif;
+    }
+
+    #header-container,
+    #footer-container {
+      flex-shrink: 0;
+    }
+
+    main {
+      flex: 1;
+      padding: 1.5rem 5vw;
+      box-sizing: border-box;
+    }
+
+    /* ---------- GLOBAL SECTION WIDTH ---------- */
+    .page-section {
+      max-width: 1600px;
+      margin: 0 auto 2rem auto;
+    }
+
+    /* ---------- SEARCH BAR SECTION ---------- */
+    .search-section {
+      max-width: 1600px;
+      margin: 0 auto 2rem auto;
+      background: linear-gradient(135deg, #f8fafc 0%, #eef2f7 100%);
+      border-radius: 20px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    /* ---------- TOP SECTION: CAROUSEL + NOTICE ---------- */
+    #home-top-section {
+      display: flex;
+      gap: 3rem;
+      align-items: stretch;
+    }
+
+    #home-carousel-container {
+      flex: 3 1 0;
+      min-width: 0;
+    }
+
+    #current-notice-container {
+      flex: 1.2 1 0;
+      min-width: 0;
+    }
+
+    /* ---------- MIDDLE SECTION: PUBLICATION + RESEARCH ---------- */
+    #home-middle-section {
+      display: flex;
+      gap: 3rem;
+      align-items: stretch;
+    }
+
+    #recent-publication-container {
+      flex: 1.2 1 0;
+      min-width: 0;
+    }
+
+    #research-highlight-container {
+      flex: 3 1 0;
+      min-width: 0;
+    }
+
+    @media (max-width: 900px) {
+
+      #home-top-section,
+      #home-middle-section {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <div id="header-container"></div>
+
+  <!-- PAGE CONTENT -->
+  <main>
+
+    <!-- SEARCH BAR SECTION - Placed right below header -->
+    <section class="search-section">
+      <div id="searchbar-container"></div>
+    </section>
+
+    <!-- TOP SECTION -->
+    <section id="home-top-section" class="page-section">
+      <div id="home-carousel-container"></div>
+      <div id="current-notice-container"></div>
+    </section>
+
+    <!-- WELCOME BANNER -->
+    <section id="welcome-banner-wrapper" class="page-section">
+      <div id="welcome-banner-container"></div>
+    </section>
+
+    <!-- MIDDLE SECTION: RECENT PUBLICATION + RESEARCH HIGHLIGHT -->
+    <section id="home-middle-section" class="page-section">
+      <div id="recent-publication-container"></div>
+      <div id="research-highlight-container"></div>
+    </section>
+
+    <!-- LABORATORIES SECTION -->
+    <section id="home-lab-section" class="page-section">
+      <div id="lab-card-container"></div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <div id="footer-container"></div>
+
+  <!-- FRAGMENT LOADER -->
+  <script>
+    function loadFragment(url, containerId) {
+      fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const container = document.getElementById(containerId);
+          container.innerHTML = html;
+
+          container.querySelectorAll('script').forEach(oldScript => {
+            const newScript = document.createElement('script');
+            if (oldScript.src) {
+              newScript.src = oldScript.src;
+            } else {
+              newScript.textContent = oldScript.textContent;
+            }
+            oldScript.replaceWith(newScript);
+          });
+        })
+        .catch(err => console.error('Error loading fragment:', url, err));
+    }
+
+    loadFragment('/UI/header.html', 'header-container');
+    loadFragment('/UI/searchbar.html', 'searchbar-container');
+    loadFragment('/UI/home_carousal.html', 'home-carousel-container');
+    loadFragment('/UI/current_notice.html', 'current-notice-container');
+    loadFragment('/UI/welcome_banner.html', 'welcome-banner-container');
+    loadFragment('/UI/recent_publication.html', 'recent-publication-container');
+    loadFragment('/UI/research_highlight.html', 'research-highlight-container');
+    loadFragment('/UI/lab_card.html', 'lab-card-container');
+    loadFragment('/UI/footer.html', 'footer-container');
+  </script>
+
+</body>
+
+</html>

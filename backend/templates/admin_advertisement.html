@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Advertisement Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    /* =====================================================
+       GLOBAL RESET & BASE
+       ===================================================== */
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 1.5rem 4vw;
+      background: #0f172a;
+      color: #e5e7eb;
+      line-height: 1.5;
+    }
+
+    .page {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* =====================================================
+       HEADER
+       ===================================================== */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.4rem;
+      white-space: nowrap;
+    }
+
+    h2 {
+      margin: 0 0 1rem;
+      font-size: 1.1rem;
+    }
+
+    /* =====================================================
+       TABS FOR YEAR SELECTION
+       ===================================================== */
+    .year-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .year-tab {
+      padding: 0.5rem 1rem;
+      background: #1e293b;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.2s;
+      font-size: 0.9rem;
+    }
+
+    .year-tab:hover {
+      background: #334155;
+    }
+
+    .year-tab.active {
+      background: linear-gradient(to right, #f59e0b, #ec4899);
+      color: #0b1120;
+      border-color: transparent;
+    }
+
+    .create-year-btn {
+      padding: 0.5rem 1rem;
+      background: #10b981;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .create-year-btn:hover {
+      background: #059669;
+    }
+
+    /* =====================================================
+       FLASH MESSAGES
+       ===================================================== */
+    .flash-messages {
+      margin-bottom: 1rem;
+    }
+
+    .flash-message {
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .flash-success {
+      background: #166534;
+      color: #dcfce7;
+      border: 1px solid #22c55e;
+    }
+
+    .flash-error {
+      background: #7f1d1d;
+      color: #fecaca;
+      border: 1px solid #ef4444;
+    }
+
+    /* =====================================================
+       CARDS
+       ===================================================== */
+    .card {
+      background: #020617;
+      border-radius: 14px;
+      padding: 1.25rem;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      margin-bottom: 1.75rem;
+    }
+
+    /* =====================================================
+       FORMS
+       ===================================================== */
+    label {
+      display: block;
+      font-size: 0.9rem;
+      margin-bottom: 0.25rem;
+      color: #cbd5f5;
+    }
+
+    input[type="text"],
+    input[type="datetime-local"],
+    input[type="date"],
+    input[type="file"],
+    input[type="number"],
+    textarea {
+      width: 100%;
+      padding: 0.5rem 0.6rem;
+      border-radius: 8px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 0.9rem;
+      margin-bottom: 0.75rem;
+      font-family: inherit;
+    }
+
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    /* Style for file input */
+input[type="file"] {
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+input[type="file"]::-webkit-file-upload-button {
+  background: #1e293b;
+  border: 1px solid rgba(148,163,184,0.35);
+  border-radius: 6px;
+  color: #e5e7eb;
+  padding: 0.3rem 0.8rem;
+  margin-right: 0.8rem;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.inline-input {
+  width: 100%;
+  padding: 0.5rem 0.6rem;
+  border-radius: 8px;
+  border: 1px solid rgba(148,163,184,0.35);
+  background: #020617;
+  color: #e5e7eb;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.muted {
+  color: #94a3b8;
+  font-size: 0.85rem;
+  margin-top: -0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.reorder-hint {
+  font-size: 0.9rem;
+  color: #94a3b8;
+  margin-bottom: 0.75rem;
+  padding: 0.5rem;
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 6px;
+}
+
+    /* Style for datetime-local and date inputs */
+    input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(0.8);
+      cursor: pointer;
+    }
+
+    input[type="datetime-local"]:focus,
+    input[type="date"]:focus {
+      outline: none;
+      border-color: #f59e0b;
+    }
+
+    input[type="checkbox"] {
+      margin-right: 0.5rem;
+      accent-color: #f59e0b;
+      width: 1rem;
+      height: 1rem;
+      cursor: pointer;
+    }
+
+    .inline-input {
+      width: 100%;
+      padding: 0.5rem 0.6rem;
+      border-radius: 8px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .inline-textarea {
+      width: 100%;
+      padding: 0.5rem 0.6rem;
+      border-radius: 8px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+      min-height: 60px;
+      resize: vertical;
+      font-family: inherit;
+    }
+
+    .muted {
+      color: #94a3b8;
+      font-size: 0.85rem;
+      margin-top: -0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    /* =====================================================
+       BUTTONS
+       ===================================================== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem 1.1rem;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: 0.18s ease;
+      text-decoration: none;
+      color: inherit;
+      min-width: 88px;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(to right, #f59e0b, #ec4899);
+      color: #0b1120;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.9;
+    }
+
+    .btn-danger {
+      background: #ef4444;
+      color: #fee2e2;
+    }
+
+    .btn-danger:hover {
+      background: #dc2626;
+    }
+
+    .btn-secondary {
+      background: #fff8c2;
+      color: #000;
+      border: 1px solid #e6d98a;
+    }
+
+    .btn-secondary:hover {
+      background: #fef08a;
+    }
+
+    .btn-exit {
+      background: transparent;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    .btn-exit:hover {
+      background: rgba(148, 163, 184, 0.1);
+    }
+
+    /* =====================================================
+       TABLE (DESKTOP)
+       ===================================================== */
+    .table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border-radius: 8px;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      min-width: 1000px;
+    }
+
+    .table th,
+    .table td {
+      padding: 0.6rem;
+      border-bottom: 1px solid rgba(30, 64, 175, 0.4);
+      vertical-align: top;
+    }
+
+    .table th {
+      color: #93c5fd;
+      background: rgba(15, 23, 42, 0.6);
+      text-align: left;
+    }
+
+    .drag-handle {
+      cursor: grab;
+      font-size: 1.2rem;
+      color: #94a3b8;
+      user-select: none;
+    }
+
+    .drag-handle:active {
+      cursor: grabbing;
+    }
+
+    tbody.draggable-rows tr.dragging {
+      opacity: 0.4;
+    }
+
+    .actions-row {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .file-link {
+      color: #60a5fa;
+      text-decoration: none;
+      word-break: break-all;
+    }
+
+    .file-link:hover {
+      text-decoration: underline;
+    }
+
+    .new-badge {
+      display: inline-block;
+      background: #ef4444;
+      color: white;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      margin-left: 0.25rem;
+      animation: blink 1.5s infinite;
+    }
+
+    @keyframes blink {
+
+      0%,
+      50%,
+      100% {
+        opacity: 1;
+      }
+
+      25%,
+      75% {
+        opacity: 0.5;
+      }
+    }
+
+    /* =====================================================
+       MOBILE CARD LAYOUT (PORTRAIT)
+       ===================================================== */
+    .mobile-ads-list {
+      display: none;
+    }
+
+    .mobile-ad-card {
+      background: #071031;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      transition: opacity 0.2s;
+    }
+
+    .mobile-ad-card.dragging {
+      opacity: 0.4;
+    }
+
+    .mobile-ad-card .card-drag-handle {
+      font-size: 1.5rem;
+      cursor: grab;
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      margin-bottom: 0.5rem;
+      color: #94a3b8;
+      user-select: none;
+    }
+
+    .mobile-ad-card .card-drag-handle:active {
+      cursor: grabbing;
+    }
+
+    .mobile-ad-card .card-section {
+      margin-bottom: 0.75rem;
+    }
+
+    .mobile-ad-card .card-section label {
+      font-size: 0.8rem;
+      color: #93c5fd;
+      margin-bottom: 0.25rem;
+      display: block;
+    }
+
+    .mobile-ad-card .card-ad-no {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #60a5fa;
+      margin-bottom: 0.5rem;
+    }
+
+    .mobile-ad-card .actions-row {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .mobile-ad-card .actions-row .btn {
+      width: 100%;
+    }
+
+    /* Edit mode styles */
+    .edit-mode {
+      background: rgba(15, 23, 42, 0.6);
+      padding: 0.75rem;
+      border-radius: 8px;
+      margin-top: 0.5rem;
+    }
+
+    .edit-mode label {
+      margin-top: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* =====================================================
+       RESPONSIVE — PORTRAIT / TABLET
+       ===================================================== */
+    @media (orientation: portrait) {
+      body {
+        padding: 1rem;
+      }
+
+      .header {
+        flex-wrap: wrap;
+      }
+
+      .header h1 {
+        flex: 1 1 100%;
+      }
+
+      .table-wrapper {
+        display: none;
+      }
+
+      .mobile-ads-list {
+        display: block;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .actions-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .actions-row .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+
+    <div class="header">
+      <h1>Advertisement Admin</h1>
+      <a href="{{ url_for('admin_home.admin_home') }}" class="btn btn-exit">Exit</a>
+    </div>
+
+    <!-- FLASH MESSAGES -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-messages">
+      {% for category, message in messages %}
+      <div class="flash-message flash-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <!-- YEAR TABS -->
+    <div class="card">
+      <div class="year-tabs" id="yearTabs">
+        <!-- Tabs will be populated dynamically -->
+      </div>
+      <button class="create-year-btn" onclick="createNewYear()">+ Create New Year</button>
+    </div>
+
+    <!-- ADD ADVERTISEMENT -->
+    <div class="card">
+      <h2>Add New Advertisement</h2>
+      <form method="POST" action="{{ url_for('admin_advertisement.upload_advertisement') }}"
+        enctype="multipart/form-data" id="uploadForm">
+        <input type="hidden" name="year" id="addYearField">
+
+        <label>Advertisement No.</label>
+        <input type="text" name="advertisement_no" required>
+
+        <label>Description</label>
+        <textarea name="description" required></textarea>
+
+        <div class="form-row">
+          <div>
+            <label>Advertisement Date</label>
+            <small class="muted">Format: YYYY-MM-DD HH:MM</small>
+            <input type="datetime-local" name="advertisement_date" required>
+          </div>
+          <div>
+            <label>Advertisement End Date</label>
+            <small class="muted">Format: YYYY-MM-DD HH:MM</small>
+            <input type="datetime-local" name="advertisement_end_date" required>
+          </div>
+        </div>
+
+        <label>Advertisement Details (PDF only)</label>
+        <input type="file" name="file" accept=".pdf" required>
+        <small class="muted">Only PDF files are allowed</small>
+
+        <label style="display: flex; align-items: center; gap: 0.5rem;">
+          <input type="checkbox" name="is_new"> Mark as NEW
+        </label>
+
+        <label>Auto-remove NEW after (days)</label>
+        <input type="number" name="new_expire_days" value="7" min="1" step="any">
+        <p class="muted">The NEW badge will be automatically removed after this many days (decimals will be rounded)</p>
+
+        <button class="btn btn-primary" style="margin-top: 0.6rem;">Add Advertisement</button>
+      </form>
+    </div>
+
+    <!-- EXISTING ADVERTISEMENTS -->
+    <div class="card">
+      <h2>Existing Advertisements for <span id="currentYearDisplay"></span></h2>
+
+      <div id="adsContainer">
+        <p class="muted">Loading...</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ------- FILE VALIDATION FUNCTION ------- */
+    function validatePdfFile(file) {
+      const allowedExtensions = ['.pdf'];
+      const fileName = file.name;
+      const ext = '.' + fileName.split('.').pop().toLowerCase();
+      return allowedExtensions.includes(ext);
+    }
+
+    /* ------- DATE VALIDATION FUNCTION ------- */
+    function validateDates(startDate, endDate) {
+      if (!startDate || !endDate) {
+        return { valid: false, message: 'Please fill in both date fields' };
+      }
+
+      if (endDate < startDate) {
+        return { valid: false, message: 'End date cannot be before start date' };
+      }
+
+      return { valid: true };
+    }
+
+    let currentYear = new Date().getFullYear();
+    let allYears = [];
+
+    // Load years and advertisements on page load
+    window.addEventListener('DOMContentLoaded', async () => {
+      await loadYears();
+      await loadAdvertisements(currentYear);
+    });
+
+    // Load available years
+    async function loadYears() {
+      try {
+        const res = await fetch("{{ url_for('admin_advertisement.get_advertisement_years') }}");
+        if (!res.ok) {
+          throw new Error(`Failed to load years: ${res.status}`);
+        }
+        const data = await res.json();
+        allYears = data.years;
+
+        if (allYears.length === 0) {
+          allYears = [currentYear];
+        }
+
+        renderYearTabs();
+      } catch (err) {
+        console.error(err);
+        alert('Error loading years: ' + err.message);
+      }
+    }
+
+    // Render year tabs
+    function renderYearTabs() {
+      const container = document.getElementById('yearTabs');
+      container.innerHTML = '';
+
+      allYears.forEach(year => {
+        const tab = document.createElement('div');
+        tab.className = 'year-tab';
+        tab.textContent = year;
+        if (year === currentYear) tab.classList.add('active');
+        tab.onclick = () => switchYear(year);
+        container.appendChild(tab);
+      });
+    }
+
+    // Switch to a different year
+    async function switchYear(year) {
+      currentYear = year;
+      renderYearTabs();
+      await loadAdvertisements(year);
+    }
+
+    // Create new year
+    async function createNewYear() {
+      const year = prompt('Enter year (e.g., 2026):');
+      if (!year || isNaN(year)) {
+        alert('Please enter a valid year.');
+        return;
+      }
+
+      try {
+        const res = await fetch("{{ url_for('admin_advertisement.create_advertisement_year') }}", {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ year: parseInt(year) })
+        });
+
+        if (res.ok) {
+          alert('Year created successfully!');
+          await loadYears();
+          switchYear(parseInt(year));
+        } else {
+          const error = await res.json().catch(() => ({}));
+          alert('Failed to create year: ' + (error.error || `Status ${res.status}`));
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Error creating year: ' + err.message);
+      }
+    }
+
+    // Load advertisements for selected year
+    async function loadAdvertisements(year) {
+      document.getElementById('addYearField').value = year;
+      document.getElementById('currentYearDisplay').textContent = year;
+
+      try {
+        const res = await fetch(`{{ url_for('admin_advertisement.get_advertisements_by_year', year=0) }}`.replace('/0', `/${year}`));
+        if (!res.ok) {
+          throw new Error(`Failed to load advertisements: ${res.status}`);
+        }
+        const data = await res.json();
+        renderAdvertisements(data.advertisements);
+      } catch (err) {
+        console.error(err);
+        document.getElementById('adsContainer').innerHTML = '<p class="muted">Error loading advertisements</p>';
+        alert('Error loading advertisements: ' + err.message);
+      }
+    }
+
+    // Render advertisements table and mobile cards
+    function renderAdvertisements(ads) {
+      const container = document.getElementById('adsContainer');
+
+      if (ads.length === 0) {
+        container.innerHTML = '<p class="muted">No advertisements for this year.</p>';
+        return;
+      }
+
+      // Desktop table
+      let tableHTML = `
+      <button id="saveOrderBtn" class="btn btn-primary" style="margin-bottom:0.6rem;">Save Order</button>
+      <div class="table-wrapper">
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="width:40px;"></th>
+              <th>Ad No.</th>
+              <th>Description</th>
+              <th>Ad Date</th>
+              <th>End Date</th>
+              <th>Details</th>
+              <th>NEW</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody class="draggable-rows" id="adTbody">
+    `;
+
+      ads.forEach(ad => {
+        const newBadge = ad.is_new ? '<span class="new-badge">NEW</span>' : '';
+        const escapedAdNo = escapeHtml(ad.advertisement_no);
+        const escapedDesc = escapeHtml(ad.description);
+        const escapedFilename = escapeHtml(ad.filename);
+
+        tableHTML += `
+        <tr draggable="true" data-id="${ad.id}">
+          <td><span class="drag-handle">☰</span></td>
+          <td class="ad-no-cell">${escapedAdNo}${newBadge}</td>
+          <td>
+            <div class="view-mode">${escapedDesc}</div>
+            <div class="edit-mode" style="display:none;">
+              <textarea class="inline-textarea edit-description">${escapedDesc}</textarea>
+              <label style="display: flex; align-items: center; gap: 0.5rem;">
+                <input type="checkbox" class="edit-is-new" ${ad.is_new ? 'checked' : ''}>
+                Mark as NEW
+              </label>
+              <div class="edit-expire-days" style="margin-top:0.5rem;">
+                <label>NEW expiry days:</label>
+                <input type="number" class="inline-input edit-new-expire-days" value="7" min="1" step="any">
+              </div>
+            </div>
+          </td>
+          <td class="muted">${formatDateTime(ad.advertisement_date)}</td>
+          <td class="muted">${formatDateTime(ad.advertisement_end_date)}</td>
+          <td>
+            <a href="/assets/files/advertisements/${ad.filename}" target="_blank" class="file-link">${escapedFilename}</a>
+          </td>
+          <td>${ad.is_new ? 'Yes' : 'No'}</td>
+          <td>
+            <div class="actions-row">
+              <button class="btn btn-secondary" onclick="toggleEdit(this)" data-id="${ad.id}">Edit</button>
+              <button class="btn btn-primary" style="display:none;" onclick="saveEdit(this)" data-id="${ad.id}">Save</button>
+              <button class="btn btn-secondary" style="display:none;" onclick="cancelEdit(this)">Cancel</button>
+              <button class="btn btn-danger" onclick="deleteAdvertisement(${ad.id})">Delete</button>
+            </div>
+          </td>
+        </tr>
+      `;
+      });
+
+      tableHTML += `
+          </tbody>
+        </table>
+      </div>
+    `;
+
+      // Mobile cards
+      let mobileHTML = '<div class="mobile-ads-list" id="mobileAdsList">';
+      ads.forEach(ad => {
+        const newBadge = ad.is_new ? '<span class="new-badge">NEW</span>' : '';
+        const escapedAdNo = escapeHtml(ad.advertisement_no);
+        const escapedDesc = escapeHtml(ad.description);
+        const escapedFilename = escapeHtml(ad.filename);
+
+        mobileHTML += `
+        <div class="mobile-ad-card" draggable="true" data-id="${ad.id}">
+          <span class="card-drag-handle">☰</span>
+          <div class="card-ad-no ad-no-cell">${escapedAdNo}${newBadge}</div>
+          
+          <div class="card-section">
+            <label>Description</label>
+            <div class="view-mode">${escapedDesc}</div>
+            <div class="edit-mode" style="display:none;">
+              <textarea class="inline-textarea edit-description">${escapedDesc}</textarea>
+              <label style="display: flex; align-items: center; gap: 0.5rem;">
+                <input type="checkbox" class="edit-is-new" ${ad.is_new ? 'checked' : ''}>
+                Mark as NEW
+              </label>
+              <div class="edit-expire-days" style="margin-top:0.5rem;">
+                <label>NEW expiry days:</label>
+                <input type="number" class="inline-input edit-new-expire-days" value="7" min="1" step="any">
+              </div>
+            </div>
+          </div>
+
+          <div class="card-section">
+            <label>Advertisement Date</label>
+            <span class="muted">${formatDateTime(ad.advertisement_date)}</span>
+          </div>
+
+          <div class="card-section">
+            <label>End Date</label>
+            <span class="muted">${formatDateTime(ad.advertisement_end_date)}</span>
+          </div>
+
+          <div class="card-section">
+            <label>Details</label>
+            <a href="/assets/files/advertisements/${ad.filename}" target="_blank" class="file-link">${escapedFilename}</a>
+          </div>
+
+          <div class="actions-row">
+            <button class="btn btn-secondary" onclick="toggleEdit(this)" data-id="${ad.id}">Edit</button>
+            <button class="btn btn-primary" style="display:none;" onclick="saveEdit(this)" data-id="${ad.id}">Save</button>
+            <button class="btn btn-secondary" style="display:none;" onclick="cancelEdit(this)">Cancel</button>
+            <button class="btn btn-danger" onclick="deleteAdvertisement(${ad.id})">Delete</button>
+          </div>
+        </div>
+      `;
+      });
+      mobileHTML += '</div>';
+
+      container.innerHTML = tableHTML + mobileHTML;
+      setupDragDrop();
+      setupSaveOrder();
+    }
+
+    // Escape HTML
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Format datetime
+    function formatDateTime(dateStr) {
+      if (!dateStr) return '—';
+      const d = new Date(dateStr);
+      return d.toLocaleString('en-IN', {
+        dateStyle: 'medium',
+        timeStyle: 'short',
+        timeZone: 'Asia/Kolkata'
+      });
+    }
+
+    // Edit functions
+    function toggleEdit(btn) {
+      const container = btn.closest('tr') || btn.closest('.mobile-ad-card');
+      container.querySelector('.view-mode').style.display = 'none';
+      container.querySelector('.edit-mode').style.display = 'block';
+      btn.style.display = 'none';
+      container.querySelector('[onclick^="saveEdit"]').style.display = 'inline-flex';
+      container.querySelector('[onclick^="cancelEdit"]').style.display = 'inline-flex';
+    }
+
+    function cancelEdit(btn) {
+      const container = btn.closest('tr') || btn.closest('.mobile-ad-card');
+      container.querySelector('.edit-mode').style.display = 'none';
+      container.querySelector('.view-mode').style.display = 'block';
+      container.querySelector('[onclick^="toggleEdit"]').style.display = 'inline-flex';
+      container.querySelector('[onclick^="saveEdit"]').style.display = 'none';
+      container.querySelector('[onclick^="cancelEdit"]').style.display = 'none';
+    }
+
+    async function saveEdit(btn) {
+      const container = btn.closest('tr') || btn.closest('.mobile-ad-card');
+      const id = btn.dataset.id;
+
+      const description = container.querySelector('.edit-description').value.trim();
+
+      // Validate required fields
+      if (!description) {
+        alert('Description is required.');
+        return;
+      }
+
+      // Get the new_expire_days value (default to 7 if not present)
+      const newExpireDaysInput = container.querySelector('.edit-new-expire-days');
+      const newExpireDays = newExpireDaysInput ? newExpireDaysInput.value : 7;
+
+      const payload = {
+        description: description,
+        is_new: container.querySelector('.edit-is-new').checked,
+        new_expire_days: newExpireDays
+      };
+
+      try {
+        const res = await fetch(`{{ url_for('admin_advertisement.edit_advertisement', item_id=0) }}`.replace('/0', `/${id}`), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          alert('Advertisement updated successfully!');
+          await loadAdvertisements(currentYear);
+        } else {
+          const error = await res.json().catch(() => ({}));
+          alert('Save failed: ' + (error.error || `Status ${res.status}`));
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Error saving: ' + err.message);
+      }
+    }
+
+    // Delete advertisement
+    async function deleteAdvertisement(id) {
+      if (!confirm('Are you sure you want to delete this advertisement permanently? This action cannot be undone.')) {
+        return;
+      }
+
+      try {
+        const res = await fetch(`{{ url_for('admin_advertisement.delete_advertisement', item_id=0) }}`.replace('/0', `/${id}`), {
+          method: 'POST'
+        });
+
+        if (res.ok) {
+          alert('Advertisement deleted successfully!');
+          await loadAdvertisements(currentYear);
+        } else {
+          const error = await res.json().catch(() => ({}));
+          alert('Delete failed: ' + (error.error || `Status ${res.status}`));
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Error deleting: ' + err.message);
+      }
+    }
+
+    // Setup drag and drop
+    function setupDragDrop() {
+      const tbody = document.getElementById('adTbody');
+      const mobileList = document.getElementById('mobileAdsList');
+      let draggingRow = null;
+
+      [tbody, mobileList].forEach(container => {
+        if (!container) return;
+
+        container.addEventListener('dragstart', e => {
+          draggingRow = e.target.closest('tr') || e.target.closest('.mobile-ad-card');
+          if (draggingRow) draggingRow.classList.add('dragging');
+          e.dataTransfer.effectAllowed = 'move';
+        });
+
+        container.addEventListener('dragover', e => {
+          e.preventDefault();
+          const target = e.target.closest('tr') || e.target.closest('.mobile-ad-card');
+          if (!target || target === draggingRow) return;
+
+          const bounding = target.getBoundingClientRect();
+          const offset = e.clientY - bounding.top;
+          const after = offset > (bounding.height / 2);
+
+          if (after) {
+            container.insertBefore(draggingRow, target.nextSibling);
+          } else {
+            container.insertBefore(draggingRow, target);
+          }
+        });
+
+        container.addEventListener('dragend', () => {
+          if (draggingRow) draggingRow.classList.remove('dragging');
+          draggingRow = null;
+        });
+      });
+    }
+
+    // Setup save order button
+    function setupSaveOrder() {
+      document.getElementById('saveOrderBtn')?.addEventListener('click', async () => {
+        const tbody = document.getElementById('adTbody');
+        const mobileList = document.getElementById('mobileAdsList');
+
+        let order = [];
+        if (tbody) {
+          const rows = tbody.querySelectorAll('tr');
+          if (rows.length > 0) order = [...rows].map(tr => tr.dataset.id);
+        }
+
+        if (order.length === 0 && mobileList) {
+          const cards = mobileList.querySelectorAll('.mobile-ad-card');
+          if (cards.length > 0) order = [...cards].map(card => card.dataset.id);
+        }
+
+        if (order.length === 0) {
+          alert('No advertisements to reorder');
+          return;
+        }
+
+        try {
+          const res = await fetch("{{ url_for('admin_advertisement.reorder_advertisements') }}", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ order })
+          });
+
+          if (res.ok) {
+            alert('Order saved successfully!');
+          } else {
+            const error = await res.json().catch(() => ({}));
+            alert('Failed to save order: ' + (error.error || `Status ${res.status}`));
+          }
+        } catch (err) {
+          console.error(err);
+          alert('Error saving order: ' + err.message);
+        }
+      });
+    }
+
+    // Form validation for upload
+    document.getElementById('uploadForm')?.addEventListener('submit', function (e) {
+      const startDate = document.querySelector('input[name="advertisement_date"]').value;
+      const endDate = document.querySelector('input[name="advertisement_end_date"]').value;
+      const fileInput = document.querySelector('input[name="file"]');
+      const adNo = document.querySelector('input[name="advertisement_no"]').value.trim();
+      const description = document.querySelector('textarea[name="description"]').value.trim();
+
+      // Validate required fields
+      if (!adNo) {
+        e.preventDefault();
+        alert('Advertisement No. is required.');
+        return;
+      }
+
+      if (!description) {
+        e.preventDefault();
+        alert('Description is required.');
+        return;
+      }
+
+      // Validate dates
+      const dateValidation = validateDates(startDate, endDate);
+      if (!dateValidation.valid) {
+        e.preventDefault();
+        alert(dateValidation.message);
+        return;
+      }
+
+      // Validate file is selected
+      if (fileInput.files.length === 0) {
+        e.preventDefault();
+        alert('Please select a PDF file to upload.');
+        return;
+      }
+
+      // Validate file is PDF
+      const fileName = fileInput.files[0].name;
+      if (!validatePdfFile(fileInput.files[0])) {
+        e.preventDefault();
+        alert(`Only PDF files are allowed. The file "${fileName}" is not a PDF.`);
+        return;
+      }
+    });
+  </script>
+</body>
+
+</html>

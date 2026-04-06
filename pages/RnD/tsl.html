@@ -1,0 +1,1658 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TSL Laboratory - CPP-IPR</title>
+
+  <style>
+    :root {
+      --lab-bg: #ffffff;
+      --lab-border: #d0d7e2;
+      --lab-text: #111827;
+      --lab-muted: #6b7280;
+      --lab-accent: #2563eb;
+      --lab-radius-lg: 16px;
+      --lab-tab-active: #2563eb;
+      --lab-tab-hover: #e5e7eb;
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      line-height: 1.6;
+    }
+
+    #header-container,
+    #footer-container {
+      flex-shrink: 0;
+    }
+
+    main {
+      flex: 1;
+      padding: 1.5rem 5vw;
+      box-sizing: border-box;
+      background: #f9fafb;
+    }
+
+    /* ---------- PAGE SECTION ---------- */
+    .page-section {
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    /* ---------- BANNER ---------- */
+    .lab-banner {
+      width: 100%;
+      height: auto;
+      max-height: 300px;
+      border-radius: var(--lab-radius-lg);
+      object-fit: cover;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ---------- LAB CONTAINER ---------- */
+    .lab-container {
+      background: var(--lab-bg);
+      border: 1.5px solid var(--lab-border);
+      border-radius: var(--lab-radius-lg);
+      overflow: hidden;
+    }
+
+    /* ---------- LAB HEADER ---------- */
+    .lab-header {
+      padding: 2rem 2rem 1.5rem;
+      text-align: center;
+      border-bottom: 2px solid var(--lab-border);
+    }
+
+    .lab-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--lab-text);
+      margin: 0;
+    }
+
+    /* ---------- TAB NAVIGATION ---------- */
+    .lab-tabs-wrapper {
+      position: relative;
+      border-bottom: 2px solid var(--lab-border);
+      background: #f9fafb;
+    }
+
+    .lab-tabs {
+      display: flex;
+      gap: 0.5rem;
+      padding: 1.5rem 2rem 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: thin;
+      -ms-overflow-style: auto;
+    }
+
+    .lab-tabs::-webkit-scrollbar {
+      height: 4px;
+    }
+
+    .lab-tabs::-webkit-scrollbar-track {
+      background: var(--lab-border);
+      border-radius: 10px;
+    }
+
+    .lab-tabs::-webkit-scrollbar-thumb {
+      background: var(--lab-accent);
+      border-radius: 10px;
+    }
+
+    .lab-tab {
+      padding: 0.75rem 1.5rem;
+      background: transparent;
+      border: none;
+      border-radius: 8px 8px 0 0;
+      color: var(--lab-muted);
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .lab-tab:hover {
+      background: var(--lab-tab-hover);
+      color: var(--lab-text);
+    }
+
+    .lab-tab.active {
+      background: var(--lab-tab-active);
+      color: #ffffff;
+    }
+
+    .lab-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--lab-accent);
+    }
+
+    .scroll-indicator {
+      display: none;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(37, 99, 235, 0.9);
+      color: white;
+      padding: 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      pointer-events: none;
+      z-index: 10;
+      animation: fadeInOut 2s infinite;
+    }
+
+    .scroll-indicator.left {
+      left: 0.5rem;
+    }
+
+    .scroll-indicator.right {
+      right: 0.5rem;
+    }
+
+    @keyframes fadeInOut {
+
+      0%,
+      100% {
+        opacity: 0.7;
+      }
+
+      50% {
+        opacity: 1;
+      }
+    }
+
+    /* ---------- TAB CONTENT ---------- */
+    .lab-content {
+      padding: 2rem 5%;
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ---------- OVERVIEW SECTION ---------- */
+    .overview-section {
+      max-width: 100%;
+    }
+
+    .overview-section h3 {
+      font-size: 1.5rem;
+      color: var(--lab-text);
+      margin: 0 0 1rem;
+      font-weight: 600;
+    }
+
+    .overview-section h4 {
+      font-size: 1.3rem;
+      color: var(--lab-text);
+      margin: 1.5rem 0 1rem;
+      font-weight: 600;
+    }
+
+    .overview-section p {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: var(--lab-text);
+      margin-bottom: 1.2rem;
+      text-align: justify;
+    }
+
+    .overview-section img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 12px;
+      margin: 1.5rem 0;
+      border: 1px solid var(--lab-border);
+    }
+
+    /* ---------- RESEARCH FIGURES GRID ---------- */
+    .research-figures-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin: 1.5rem 0;
+    }
+
+    @media (max-width: 768px) {
+      .research-figures-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ---------- RESEARCH SECTION ---------- */
+    .research-item {
+      margin-bottom: 3rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--lab-border);
+    }
+
+    .research-item:last-child {
+      border-bottom: none;
+    }
+
+    .research-item h3 {
+      font-size: 1.4rem;
+      color: var(--lab-accent);
+      margin: 0 0 1rem;
+      font-weight: 600;
+    }
+
+    .research-item h4 {
+      font-size: 1.2rem;
+      color: var(--lab-text);
+      margin: 1.5rem 0 0.75rem;
+      font-weight: 600;
+    }
+
+    .research-item p {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: var(--lab-text);
+      margin-bottom: 1rem;
+      text-align: justify;
+    }
+
+    .research-figure {
+      margin: 1.5rem 0;
+      text-align: center;
+    }
+
+    .research-figure img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 12px;
+      border: 1px solid var(--lab-border);
+    }
+
+    .research-figure figcaption {
+      font-size: 0.95rem;
+      color: var(--lab-muted);
+      font-style: italic;
+      margin-top: 0.75rem;
+      padding: 0 1rem;
+      text-align: center;
+    }
+
+    /* ---------- PEOPLE SECTION ---------- */
+    .people-categories {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .people-cat-btn {
+      padding: 0.6rem 1.2rem;
+      background: #f3f4f6;
+      border: 1px solid var(--lab-border);
+      border-radius: 8px;
+      color: var(--lab-text);
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .people-cat-btn:hover {
+      background: #e5e7eb;
+    }
+
+    .people-cat-btn.active {
+      background: var(--lab-tab-active);
+      color: #ffffff;
+      border-color: var(--lab-accent);
+    }
+
+    .people-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .person-card {
+      display: none;
+      background: #ffffff;
+      border: 1.5px solid var(--lab-border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      transition: all 0.2s;
+    }
+
+    .person-card.show {
+      display: block;
+    }
+
+    .person-card:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .person-photo {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin: 0 auto 1rem;
+      border: 3px solid var(--lab-border);
+    }
+
+    .person-name {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--lab-text);
+      margin: 0 0 0.5rem;
+    }
+
+    .person-role {
+      font-size: 0.95rem;
+      color: var(--lab-muted);
+      margin: 0 0 1rem;
+      font-style: italic;
+    }
+
+    .person-email {
+      font-size: 0.9rem;
+      word-break: break-all;
+      margin-bottom: 0.75rem;
+    }
+
+    .person-email a {
+      color: var(--lab-accent);
+      text-decoration: none;
+    }
+
+    .person-links {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .person-links a {
+      padding: 0.4rem 0.8rem;
+      background: #f3f4f6;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      color: var(--lab-text);
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .person-links a:hover {
+      background: var(--lab-accent);
+      color: #ffffff;
+    }
+
+    .person-expertise {
+      margin-top: 1rem;
+      text-align: left;
+    }
+
+    .person-expertise h5 {
+      font-size: 0.9rem;
+      color: var(--lab-text);
+      margin: 0 0 0.5rem;
+      font-weight: 600;
+    }
+
+    .person-expertise ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .person-expertise li {
+      font-size: 0.85rem;
+      color: var(--lab-muted);
+      padding: 0.25rem 0;
+      padding-left: 1rem;
+      position: relative;
+    }
+
+    .person-expertise li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: var(--lab-accent);
+    }
+
+    /* ---------- PUBLICATIONS SECTION ---------- */
+    .publications-year {
+      margin-bottom: 2.5rem;
+    }
+
+    .publications-year h3 {
+      font-size: 1.3rem;
+      color: var(--lab-text);
+      margin: 0 0 1rem;
+      font-weight: 600;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--lab-border);
+    }
+
+    .publications-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .publications-list li {
+      padding: 1rem;
+      margin-bottom: 0.75rem;
+      background: #f9fafb;
+      border-radius: 8px;
+      border-left: 3px solid var(--lab-accent);
+      font-size: 0.95rem;
+      line-height: 1.7;
+      text-align: justify;
+    }
+
+    .publications-list li a {
+      color: var(--lab-accent);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .publications-list li a:hover {
+      text-decoration: underline;
+    }
+
+    .new-badge {
+      display: inline-block;
+      background: #ef4444;
+      color: #ffffff;
+      font-size: 0.7rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-weight: 600;
+      vertical-align: middle;
+      margin-right: 0.5rem;
+    }
+
+    /* ---------- FACILITIES SECTION ---------- */
+    .facility-item {
+      margin-bottom: 2.5rem;
+    }
+
+    .facility-item h3 {
+      font-size: 1.3rem;
+      color: var(--lab-text);
+      margin: 0 0 1rem;
+      font-weight: 600;
+    }
+
+    .facility-item h4 {
+      font-size: 1.2rem;
+      color: var(--lab-text);
+      margin: 1.5rem 0 1rem;
+      font-weight: 600;
+    }
+
+    .facility-item ul {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 1rem;
+    }
+
+    .facility-item li {
+      padding: 0.5rem 0 0.5rem 1.5rem;
+      position: relative;
+      font-size: 1rem;
+      line-height: 1.7;
+      text-align: justify;
+    }
+
+    .facility-item li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: #10b981;
+      font-weight: bold;
+    }
+
+    /* ---------- BILINGUAL TEXT STYLES ---------- */
+    .bilingual-title,
+    .bilingual-text {
+      transition: all 0.2s ease;
+    }
+
+    /* ---------- MOBILE ---------- */
+    @media (max-width: 900px) {
+      .lab-title {
+        font-size: 1.5rem;
+      }
+
+      .lab-header {
+        padding: 1.5rem 1.25rem 1rem;
+      }
+
+      .lab-tabs-wrapper {
+        padding: 0;
+      }
+
+      .lab-tabs {
+        padding: 1rem 1rem 0;
+        gap: 0.75rem;
+        -webkit-overflow-scrolling: touch;
+        scroll-behavior: smooth;
+      }
+
+      .lab-tab {
+        font-size: 0.9rem;
+        padding: 0.6rem 1rem;
+      }
+
+      .lab-content {
+        padding: 1.5rem 5%;
+      }
+
+      .people-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .scroll-indicator {
+        display: block;
+      }
+    }
+
+    @media (orientation: portrait) {
+      .lab-tabs {
+        -webkit-overflow-scrolling: touch;
+        scroll-behavior: smooth;
+      }
+    }
+
+    /* MathJax support */
+    .math-inline {
+      font-style: italic;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <div id="header-container"></div>
+
+  <!-- PAGE CONTENT -->
+  <main>
+    <div class="page-section">
+
+      <!-- BANNER IMAGE -->
+      <img src="/assets/images/tsl/ts.jpg" alt="Theory and Simulation Laboratory Banner" class="lab-banner">
+
+      <!-- LAB CONTAINER -->
+      <div class="lab-container">
+
+        <!-- LAB HEADER -->
+        <div class="lab-header">
+          <h1 class="lab-title bilingual-title" data-hi="सिद्धांत एवं सिमुलेशन प्रयोगशाला"
+            data-en="Theory and Simulation Laboratory">
+            Theory and Simulation Laboratory
+          </h1>
+        </div>
+
+        <!-- TAB NAVIGATION -->
+        <div class="lab-tabs-wrapper">
+          <div class="lab-tabs" id="labTabs">
+            <button class="lab-tab active" onclick="switchTab('overview')">
+              <span class="bilingual-text" data-hi="अवलोकन" data-en="Overview">Overview</span>
+            </button>
+            <button class="lab-tab" onclick="switchTab('research')">
+              <span class="bilingual-text" data-hi="अनुसंधान" data-en="Research">Research</span>
+            </button>
+            <button class="lab-tab" onclick="switchTab('facilities')">
+              <span class="bilingual-text" data-hi="सुविधाएं" data-en="Facilities">Facilities</span>
+            </button>
+            <button class="lab-tab" onclick="switchTab('people')">
+              <span class="bilingual-text" data-hi="लोग" data-en="People">People</span>
+            </button>
+            <button class="lab-tab" onclick="switchTab('publications')">
+              <span class="bilingual-text" data-hi="प्रकाशन" data-en="Publications">Publications</span>
+            </button>
+          </div>
+
+          <!-- Scroll indicators -->
+          <div class="scroll-indicator left" id="scrollLeft">◄ Swipe</div>
+          <div class="scroll-indicator right" id="scrollRight">Swipe ►</div>
+        </div>
+
+        <!-- TAB CONTENT -->
+        <div class="lab-content">
+
+          <!-- ========== OVERVIEW TAB ========== -->
+          <div id="overview" class="tab-panel active">
+            <div class="overview-section">
+              <h3 class="bilingual-text" data-hi="सारांश" data-en="Summary">Summary</h3>
+
+              <p class="bilingual-text"
+                data-hi="सीपीपी-आईपीआर की सिद्धांत एवं सिमुलेशन प्रयोगशाला (टीएसएल) मूल प्लाज्मा भौतिकी क्षेत्रों और प्लाज्मा भौतिकी के अनुप्रयुक्त अवधारणाओं दोनों में अनुसंधान करती है। प्रयोगशाला के मुख्य कार्य क्षेत्रों में शामिल हैं:"
+                data-en="Theory and Simulation Laboratory (TSL) of CPP-IPR conducts research in both basic plasma physics areas and applied concepts of plasma physics. The main areas of work of the laboratory includes:">
+                Theory and Simulation Laboratory (TSL) of CPP-IPR conducts research in both basic plasma physics areas
+                and applied concepts of plasma physics. The main areas of work of the laboratory includes:
+              </p>
+
+              <p><b class="bilingual-text" data-hi="एमएचडी सिमुलेशन:" data-en="MHD Simulation:">MHD Simulation:</b>
+                <span class="bilingual-text"
+                  data-hi="टेस्ट ब्लैंकेट मॉड्यूल (टीबीएम) के एमएचडी विश्लेषण का लक्ष्य एमएचडी दबाव ड्रॉप और वेग वितरण का अनुमान लगाना है जब टीबीएम प्रदर्शन क्षेत्र में संचालित होता है। उच्च प्रदर्शन क्षेत्र टीबीएम के सिरेमिक ब्रीडर्स में अधिकतम ऊष्मा जमाव और इसके कुशल निष्कर्षण प्रवाह मापदंडों के लिए आवश्यक Pb-Li की द्रव्यमान प्रवाह दर पर निर्भर करता है। हम विभिन्न प्रवाह स्थितियों के तहत टीबीएम के भीतर ऊष्मा स्थानांतरण विशेषताओं को प्रभावित करने वाले मापदंडों का अध्ययन करते हैं।"
+                  data-en="The goal of the MHD analysis of Test Blanket Modules is to estimate the MHD pressure drop and velocity distribution over the Pb-17Li flow path when the TBM operates in a performance regime. The high performance regime depends on the required mass flow rate of Pb-Li for a maximum heat deposition in the ceramic breeders of the TBM and its efficient extraction flow parameters. We study the parameters affecting the heat transfer characteristics within the TBM under different flow conditions.">
+                  The goal of the MHD analysis of Test Blanket Modules is to estimate the MHD pressure drop and velocity
+                  distribution over the Pb-17Li flow path when the TBM operates in a performance regime. The high
+                  performance regime depends on the required mass flow rate of Pb-Li for a maximum heat deposition in
+                  the ceramic breeders of the TBM and its efficient extraction flow parameters. We study the parameters
+                  affecting the heat transfer characteristics within the TBM under different flow conditions.
+                </span>
+              </p>
+
+              <p><b class="bilingual-text" data-hi="गतिज सिमुलेशन:" data-en="Kinetic Simulation:">Kinetic
+                  Simulation:</b> <span class="bilingual-text"
+                  data-hi="गैर-रेखीय प्लाज्मा गतिकी का संघर्ष-रहित सिमुलेशन प्लाज्मा भौतिकी की उत्कृष्ट समस्याओं में से एक है और साथ ही कम्प्यूटेशनल भौतिकी में एक मजबूत चुनौती है। संघर्ष-रहित प्लाज्मा की भौतिकी व्लासोव और मैक्सवेल समीकरण की एक प्रणाली के स्व-संगत द्वारा अच्छी तरह से वर्णित है। कई महत्वपूर्ण स्थितियों में इसकी गैर-स्थानीयता और गैर-रैखिकता के कारण व्लासोव समीकरण का कोई विश्लेषणात्मक समाधान नहीं पाया जा सकता है। इसलिए संख्यात्मक समाधान और संख्यात्मक सिमुलेशन दृष्टिकोण आवश्यक हैं। वर्तमान व्लासोव कोड समय विभाजन और फ्लक्स संतुलन विधि पर आधारित है। अपने कोड का उपयोग करके हम वितरण फलन के प्रत्यक्ष विकास का अध्ययन करते हैं जैसे कि हम विकास के दौरान किसी भी समय पॉइसन समीकरण और वितरण फलन के पहले क्षण से कण फ्लक्स को हल करके स्व-संगत विद्युत क्षेत्र प्राप्त कर सकते हैं।"
+                  data-en="Collisionless simulation of nonlinear plasma dynamics is one of the outstanding problems of plasma physics as well as a strong challenge in computational physics. The physics of collisionless plasma is well described by a self-consistent of a system of Vlasov and Maxwell equation. Due to its non-locality and non-linearity in many important situations no analytical solutions of the Vlasov equation can be found. Hence numerical solution and numerical simulation approaches are necessary. The present Vlasov code is based on time splitting and flux balance method. Using our code we study the direct evolution of distribution function such that we can have self-consistent electric field by solving Poisson's equation and particle flux from first moment of distribution function at any time during evolution.">
+                  Collisionless simulation of nonlinear plasma dynamics is one of the outstanding problems of plasma
+                  physics as well as a strong challenge in computational physics. The physics of collisionless plasma is
+                  well described by a self-consistent of a system of Vlasov and Maxwell equation. Due to its
+                  non-locality and non-linearity in many important situations no analytical solutions of the Vlasov
+                  equation can be found. Hence numerical solution and numerical simulation approaches are necessary. The
+                  present Vlasov code is based on time splitting and flux balance method. Using our code we study the
+                  direct evolution of distribution function such that we can have self-consistent electric field by
+                  solving Poisson's equation and particle flux from first moment of distribution function at any time
+                  during evolution.
+                </span></p>
+
+              <p><b class="bilingual-text" data-hi="पीआईसी सिमुलेशन:" data-en="PIC Simulation:">PIC Simulation:</b>
+                <span class="bilingual-text"
+                  data-hi="हाल ही में प्लाज्मा में पीआईसी सिमुलेशन की आवश्यकता वाले विभिन्न भौतिक प्रक्रियाओं का अध्ययन करने के लिए कुछ प्रयास किए गए हैं। नकारात्मक आयन स्रोत का निष्कर्षण उनमें से एक है। विकासाधीन कोड कम्प्यूटेशनल क्षेत्र के भीतर विभिन्न संघट्ट प्रक्रियाओं को ध्यान में रखने के लिए मोंटे-कार्लो-कोलिजन शामिल करेगा।"
+                  data-en="Recently some endeavor has been put on to study various physical processes requiring PIC simulation in plasma. Research on extraction of negative ion source is one of them. The code under development will include Monte-Carlo-collisions to take into account various collision processes within the computational region.">
+                  Recently some endeavor has been put on to study various physical processes requiring PIC simulation in
+                  plasma. Research on extraction of negative ion source is one of them. The code under development will
+                  include Monte-Carlo-collisions to take into account various collision processes within the
+                  computational region.
+                </span>
+              </p>
+
+              <p><b class="bilingual-text" data-hi="जटिल प्लाज्मा:" data-en="Complex Plasma:">Complex Plasma:</b> <span
+                  class="bilingual-text"
+                  data-hi="सीपीपी-आईपीआर में जटिल प्लाज्मा पर अनुसंधान करने के लिए उपलब्ध प्रायोगिक सुविधा के अलावा, सिद्धांत और सिमुलेशन समूह विभिन्न जटिल प्लाज्मा प्रक्रियाओं का सैद्धांतिक और संख्यात्मक रूप से अध्ययन करने के लिए भी गहन प्रयास करता है।"
+                  data-en="Beside the presence of experimental facility available in CPP-IPR to do research on complex plasmas, the theory and simulation group also take deep effort to study theoretically and numerically various complex plasma processes.">
+                  Beside the presence of experimental facility available in CPP-IPR to do research on complex plasmas,
+                  the theory and simulation group also take deep effort to study theoretically and numerically various
+                  complex plasma processes.
+                </span></p>
+
+              <p><b class="bilingual-text" data-hi="द्रव सिमुलेशन:" data-en="Fluid Simulation:">Fluid Simulation:</b>
+                <span class="bilingual-text"
+                  data-hi="हॉल थ्रस्टर्स कम थ्रस्ट स्तरों की आवश्यकता वाले कुछ अनुप्रयोगों के लिए एक महत्वपूर्ण विद्युत प्रणोदन तकनीक का गठन करते हैं, जैसे उपग्रह स्टेशन कीपिंग और कक्षा स्थानांतरण। हॉल थ्रस्टर्स में थ्रस्ट एनोड और कैथोड के बीच स्थापित विद्युत क्षेत्र द्वारा एक वलयाकार प्लाज्मा के माध्यम से त्वरित आयनों द्वारा उत्पन्न होता है। यह विद्युत क्षेत्र बाहरी रूप से लागू रेडियल चुंबकीय क्षेत्र से दृढ़ता से युग्मित होता है जो आमतौर पर चैनल निकास के पास विद्युत क्षेत्र को स्थानीयकृत करता है। हमारे प्रस्तावित कार्य में हम स्थिर अवस्था हॉल थ्रस्टर्स का एक 2डी स्थिर अवस्था और क्षणिक द्रव मॉडल विकसित करने की योजना बना रहे हैं।"
+                  data-en="Hall thrusters constitute an important electric propulsion technology for certain applications requiring low thrust levels, e.g. satellite station keeping and orbit transfer. The thrust in Hall thrusters is generated by ions being accelerated through annular plasma by the electric field set up between an anode and a cathode. This electric field is strongly coupled to an externally applied radial magnetic field which typically localizes the electric field near the channel exit. In our proposed work we are planning to develop a 2D steady state and transient fluid model of stationary Hall thrusters.">
+                  Hall thrusters constitute an important electric propulsion technology for certain applications
+                  requiring low thrust levels, e.g. satellite station keeping and orbit transfer. The thrust in Hall
+                  thrusters is generated by ions being accelerated through annular plasma by the electric field set up
+                  between an anode and a cathode. This electric field is strongly coupled to an externally applied
+                  radial magnetic field which typically localizes the electric field near the channel exit. In our
+                  proposed work we are planning to develop a 2D steady state and transient fluid model of stationary
+                  Hall thrusters.
+                </span>
+              </p>
+
+              <p><b class="bilingual-text" data-hi="फ्यूजन न्यूट्रॉनिक्स मॉडलिंग:"
+                  data-en="Fusion Neutronics Modeling:">Fusion Neutronics Modeling:</b> <span class="bilingual-text"
+                  data-hi="प्रयोगशाला फ्यूजन न्यूट्रॉनिक्स के क्षेत्र में भी कंप्यूटर सिमुलेशन करती है।"
+                  data-en="The laboratory also conducts computer simulation in the area of fusion neutronics.">
+                  The laboratory also conducts computer simulation in the area of fusion neutronics.
+                </span></p>
+
+              <h4 class="bilingual-text" data-hi="हालिया अनुसंधान परिणाम" data-en="Recent Research Outcomes">Recent
+                Research Outcomes</h4>
+
+              <div class="research-figures-grid"
+                style="display:flex; flex-wrap:nowrap; gap:1rem; align-items:flex-start;">
+
+                <figure class="research-figure">
+                  <img src="/assets/images/tsl/01.jpg" alt="Computational Region for the PIC simulation">
+                  <figcaption class="bilingual-text" data-hi="चित्र 1: पीआईसी सिमुलेशन के लिए कम्प्यूटेशनल क्षेत्र"
+                    data-en="Figure 1: Computational Region for the PIC simulation">Figure 1: Computational Region for
+                    the PIC simulation</figcaption>
+                </figure>
+
+                <figure class="research-figure">
+                  <img src="/assets/images/tsl/02.jpg" alt="Electro and Ion density distribution respectively">
+                  <figcaption class="bilingual-text" data-hi="चित्र 2: क्रमशः इलेक्ट्रो और आयन घनत्व वितरण"
+                    data-en="Figure 2: Electro and Ion density distribution respectively">Figure 2: Electro and Ion
+                    density distribution respectively</figcaption>
+                </figure>
+
+                <figure class="research-figure">
+                  <img src="/assets/images/tsl/03.jpg"
+                    alt="Variation of electric potential with the sheath width in dusty plasma">
+                  <figcaption class="bilingual-text"
+                    data-hi="चित्र 3: धूलयुक्त प्लाज्मा में आवरण चौड़ाई के साथ विद्युत विभव की भिन्नता"
+                    data-en="Figure 3: Variation of electric potential with the sheath width in dusty plasma">Figure 3:
+                    Variation of electric potential with the sheath width in dusty plasma</figcaption>
+                </figure>
+              </div>
+
+              <div class="research-figures-grid"
+                style="display:flex; flex-wrap:nowrap; gap:1rem; align-items:flex-start;">
+
+                <figure class="research-figure">
+                  <img src="/assets/images/tsl/04.jpg" alt="Hall thruster initial grid generation">
+                  <figcaption class="bilingual-text" data-hi="चित्र 4: हॉल थ्रस्टर प्रारंभिक ग्रिड जनरेशन"
+                    data-en="Figure 4: Hall thruster initial grid generation">Figure 4: Hall thruster initial grid
+                    generation</figcaption>
+                </figure>
+
+                <figure class="research-figure">
+                  <img src="/assets/images/tsl/05.jpg" alt="Plot of electron distribution function in the (x-v) plane">
+                  <figcaption class="bilingual-text" data-hi="चित्र 5: (x-v) तल में इलेक्ट्रॉन वितरण फलन का प्लॉट"
+                    data-en="Figure 5: Plot of electron distribution function in the (x-v) plane">Figure 5: Plot of
+                    electron distribution function in the (x-v) plane</figcaption>
+                </figure>
+
+                <figure class="research-figure">
+                  <img src="/assets/images/tsl/06.jpg"
+                    alt="Modelling of 20 degree toroidal section of IN-DEMO using Solidworks">
+                  <figcaption class="bilingual-text"
+                    data-hi="चित्र 6: सॉलिडवर्क्स का उपयोग करके IN-DEMO के 20 डिग्री टोरॉयडल अनुभाग का मॉडलिंग"
+                    data-en="Figure 6: Modelling of 20 degree toroidal section of IN-DEMO using Solidworks">Figure 6:
+                    Modelling of 20 degree toroidal section of IN-DEMO using Solidworks</figcaption>
+                </figure>
+              </div>
+            </div>
+          </div>
+
+          <!-- ========== RESEARCH TAB ========== -->
+          <div id="research" class="tab-panel">
+
+            <!-- Research Item 1: Ion Dynamics -->
+            <div class="research-item">
+              <h3 class="bilingual-text" data-hi="चुंबकीय स्रोत-संग्राहक आवरण में आयन गतिकी"
+                data-en="Ion Dynamics in a Magnetized Source-Collector Sheath">Ion Dynamics in a Magnetized
+                Source-Collector Sheath</h3>
+
+              <p class="bilingual-text"
+                data-hi="एक बद्ध प्लाज्मा को एक तिरछे चुंबकीय क्षेत्र की उपस्थिति में स्थानिक रूप से उत्पन्न स्रोत के साथ सिम्युलेट किया जाता है। कणों को पूर्ण गतिज रूप से ट्रैक करने के लिए गतिज कण-इन-सेल (पीआईसी) तकनीक का उपयोग किया गया है। प्लाज्मा-सम्मुख सतह को आवेशित कणों के लिए एक अवशोषक माना जाता है। प्लाज्मा प्रवाह को सतह के संबंध में सामान्य माना जाता है और मुख्य रूप से स्व-संगत आंतरिक विद्युत क्षेत्र द्वारा नियंत्रित किया जाता है। आयन संग्राहक आवरण के पास दिलचस्प गतिशील व्यवहार का पालन करते हैं। कम ऊर्जा वाले आयन झुकाव के कुछ कोणों पर वापस आयन स्रोत क्षेत्र में परावर्तित होते हैं। परावर्तन कम झुकाव कोण पर प्रमुख प्रतीत होता है।"
+                data-en="A bounded plasma is simulated with a spatially generated source in the presence of an oblique magnetic field. The kinetic Particle-In-Cell (PIC) technique has been used to track particles full kinetically. The plasma-facing surface is considered an absorbent for the charged particles. The plasma flow is assumed normal with respect to the surface and primarily controlled by the self-consistent internal electric field. The ions are observed to follow interesting dynamical behavior near the collector sheath. The low energetic ions reflect back to the ion source region at certain angles of inclination. The reflection seems to be prominent at a low angle of inclination.">
+                A bounded plasma is simulated with a spatially generated source in the presence of an oblique magnetic
+                field. The kinetic Particle-In-Cell (PIC) technique has been used to track particles full kinetically.
+                The plasma-facing surface is considered an absorbent for the charged particles. The plasma flow is
+                assumed normal with respect to the surface and primarily controlled by the self-consistent internal
+                electric field. The ions are observed to follow interesting dynamical behavior near the collector
+                sheath. The low energetic ions reflect back to the ion source region at certain angles of inclination.
+                The reflection seems to be prominent at a low angle of inclination.
+              </p>
+
+              <figure class="research-figure">
+                <img src="/assets/images/tsl/res_fig_1.jpg" alt="Sheath potential variation">
+                <figcaption class="bilingual-text"
+                  data-hi="चित्र 1: प्रजाति तापमान 5keV के साथ तीन अलग-अलग क्षेत्र कोणों के लिए सामान्यीकृत आवरण विभव (इलेक्ट्रॉन तापमान के साथ सामान्यीकृत) की भिन्नता"
+                  data-en="Figure 1: Variation of normalized sheath potential (normalized with electron temperature) for three different field angle with species temperature 5keV.">
+                  Figure 1: Variation of normalized sheath potential (normalized with electron temperature) for three
+                  different field angle with species temperature 5keV.</figcaption>
+              </figure>
+
+              <p class="bilingual-text"
+                data-hi="कार्य के इस टुकड़े में, बाहरी चुंबकीय क्षेत्र की उपस्थिति में स्रोत आवरण के गठन को देखने और आयन गतिकी पर इसके प्रभाव का विश्लेषण करने का प्रयास है। समस्या के गतिज पीआईसी मॉडलिंग को XOOPIC कोड (Object-Oriented Particle-In-Cell on X-windows developed by the Plasma Theory and Simulation Group (PTSG) at the University of California, Berkeley) के 2D-3V संस्करण का उपयोग करके अपनाया गया है। XOOPIC कार्तीय और बेलनाकार ज्यामिति दोनों में द्वि-आयामी स्थान को संभालने में सक्षम है। इसमें निर्मित इलेक्ट्रोस्टैटिक और विद्युत चुम्बकीय सॉल्वर हैं। XOOPIC द्वारा उत्पादित बड़ी मात्रा के डेटा को शेल स्क्रिप्ट का उपयोग करके पोस्ट-प्रोसेस किया गया है। सिमुलेशन डेटा को देखने के लिए MATLAB में कुछ सबरूटीन भी विकसित किए गए हैं। यह अध्ययन टोकामक लिमिटर/डायवर्टर जैसे वातावरण में प्लाज्मा प्रवाह व्यवहार को मॉडल करने के लिए आयोजित किया गया है और इसी दृष्टि से किए गए कई अन्य कार्यों के अलावा क्षेत्र में महत्वपूर्ण योगदान देने की उम्मीद है।"
+                data-en="In this piece of work, the attempt is to visualize the source sheath formation in the presence of an external magnetic field and to analyze its influence on the ion dynamics. The kinetic PIC modeling of the problem has been adopted using the 2D-3V version of XOOPIC code, (Object-Oriented Particle-In-Cell on X-windows developed by the Plasma Theory and Simulation Group (PTSG) at the University of California, Berkeley). XOOPIC is capable of handling two-dimensional space in Cartesian as well as cylindrical geometries. It has built-in electrostatic and electromagnetic solvers. The large volume data produced by XOOPIC has been post-processed using shell scripts. Few subroutines have also been developed in MATLAB to visualize the simulation data. The study is conducted to model the plasma flow behavior in environments like the tokamak limiter/divertor and is expected to yield a significant contribution to the field beside several other works performed with the same vision.">
+                In this piece of work, the attempt is to visualize the source sheath formation in the presence of an
+                external magnetic field and to analyze its influence on the ion dynamics. The kinetic PIC modeling of
+                the problem has been adopted using the 2D-3V version of XOOPIC code, (Object-Oriented Particle-In-Cell
+                on X-windows developed by the Plasma Theory and Simulation Group (PTSG) at the University of California,
+                Berkeley). XOOPIC is capable of handling two-dimensional space in Cartesian as well as cylindrical
+                geometries. It has built-in electrostatic and electromagnetic solvers. The large volume data produced by
+                XOOPIC has been post-processed using shell scripts. Few subroutines have also been developed in MATLAB
+                to visualize the simulation data. The study is conducted to model the plasma flow behavior in
+                environments like the tokamak limiter/divertor and is expected to yield a significant contribution to
+                the field beside several other works performed with the same vision.
+              </p>
+
+              <figure class="research-figure">
+                <img src="/assets/images/tsl/res_fig_2.jpg" alt="Ion phase-space structure">
+                <figcaption class="bilingual-text"
+                  data-hi="चित्र 2: आयन चरण-स्थान संरचना (Vx−x) पर प्रजाति तापमान का प्रभाव चुंबकीय झुकाव कोण (α=5°) के लिए। प्रजाति तापमान में कमी के साथ संरचना ढहने लगती है।"
+                  data-en="Figure 2: Effect of the species temperature on the ion phase-space structure (Vx−x) for magnetic inclination angle (α=5°). The structure starts to collapse with the decrease of species temperature.">
+                  Figure 2: Effect of the species temperature on the ion phase-space structure (Vx−x) for magnetic
+                  inclination angle (α=5°). The structure starts to collapse with the decrease of species temperature.
+                </figcaption>
+              </figure>
+
+              <p class="bilingual-text"
+                data-hi="वर्तमान कार्य बाहरी चुंबकीय क्षेत्र की उपस्थिति में संग्राहक आवरण से आयन परावर्तन की गतिज घटना को रिपोर्ट करने का प्रयास करता है। स्रोत संग्राहक आवरण से शुरू करते हुए, चित्र 1 से यह अच्छी तरह से समझा जाता है कि विशेष घटनाएं केवल इलेक्ट्रोस्टैटिक मामले तक सीमित नहीं हैं जैसा कि पहले रिपोर्ट किया गया था। स्रोत और संग्राहक आवरण पर विभव पात तापमान और चुंबकीय क्षेत्र कोण (α) के साथ भिन्न होता है। द्रव्यमान (mᵢ/mₑ = 3670.4829652) और तापमान (τ = 1) के विशेष अनुपात के लिए, यह Schwager et al. के कार्य में निष्कर्षों से सहमत है। हालांकि स्रोत इलेक्ट्रॉन तापमान का विभवों पर प्रभाव पहले रिपोर्ट किया गया था, लेकिन चुंबकीय क्षेत्र निर्भरता पर कोई रिपोर्ट नहीं थी। वर्तमान अध्ययन पुष्टि करता है कि चुंबकीय क्षेत्र कोण का विभव संरचना पर मजबूत प्रभाव पड़ता है, भले ही स्रोत इलेक्ट्रॉन तापमान समान हो।"
+                data-en="The present work attempts to report the kinetic phenomenon of ion reflection from the collector sheath in the presence of an external magnetic field. Starting with source collector sheath, from Fig. 1 it is well understood that the particular events are not confined only to the electrostatic case as reported earlier. The potential drops at the source and the collector sheath varies with the temperature and magnetic field angle (α). For the particular ratio of mass (mᵢ/mₑ = 3670.4829652) and temperature (τ = 1), it agrees with findings in the work of Schwager et al. Although the effect of source electron temperature on the potentials was reported earlier, there was no report on the magnetic field dependence. The present study confirms that magnetic field angle has a strong impact on the potential structure even when the source electron temperature is same.">
+                The present work attempts to report the kinetic phenomenon of ion reflection from the collector sheath
+                in the presence of an external magnetic field. Starting with source collector sheath, from Fig. 1 it is
+                well understood that the particular events are not confined only to the electrostatic case as reported
+                earlier. The potential drops at the source and the collector sheath varies with the temperature and
+                magnetic field angle (α). For the particular ratio of mass (mᵢ/mₑ = 3670.4829652) and temperature (τ =
+                1), it agrees with findings in the work of Schwager et al. Although the effect of source electron
+                temperature on the potentials was reported earlier, there was no report on the magnetic field
+                dependence. The present study confirms that magnetic field angle has a strong impact on the potential
+                structure even when the source electron temperature is same.
+              </p>
+            </div>
+
+            <!-- Research Item 2: Electrostatic Surface Wave -->
+            <div class="research-item">
+              <h3 class="bilingual-text" data-hi="इलेक्ट्रोस्टैटिक सतह तरंग का प्रसार"
+                data-en="Propagation of Electrostatic Surface Wave">Propagation of Electrostatic Surface Wave</h3>
+
+              <p class="bilingual-text"
+                data-hi="हमने द्रव सिद्धांत का उपयोग करके एक विश्लेषणात्मक मॉडल विकसित करने का प्रयास किया है जो यह दिखाता है कि दो प्रतीत होने वाली स्वतंत्र अरेखीय संरचनाओं अर्थात धूल रिक्ति और धूल सॉलिटन का क्षय एक अचुंबकीय जटिल प्लाज्मा प्रणाली में प्लाज्मा आयनीकरण पैरामीटर पर दृढ़ता से निर्भर करता है। MATLAB का उपयोग करके मॉडल समीकरणों के संख्यात्मक समाधान से पता चला है कि धूल रिक्तियों का विकास और एक समय सीमा में उनका बाद का क्षय आयनीकरण पैरामीटर से निकटता से संबंधित है। धूल सॉलिटन के मामले में भी ऐसा ही परिणाम मान्य है जहां सॉलिटन की स्थिरता आयनीकरण पैरामीटर पर महत्वपूर्ण रूप से निर्भर पाई जाती है। सबसे महत्वपूर्ण बात यह देखा गया है कि धूल सॉलिटन के ढहने का समय धूल रिक्ति क्षय की शुरुआत के समय से पहले होता है और इसलिए सॉलिटन क्षय दी गई प्रणाली में रिक्ति क्षय होने के लिए एक पूर्वसूचक के रूप में कार्य करता है। यह पाया गया है कि आयनीकरण पैरामीटर (μ) का बढ़ता मान दोनों मामलों में स्थिर संरचना की अवधि को बढ़ाता है। आयनीकरण पैरामीटर के और अधिक बढ़ने पर, सॉलिटन का चिह्न बदल जाता है और विरलन सॉलिटन प्रसारित होते देखे जाते हैं।"
+                data-en="We have tried to develop an analytical model using fluid theory to show that the decay of two seemingly independent nonlinear structures namely the dust void and dust soliton strongly depends on plasma ionization parameter in an unmagnetized complex plasma system. Numerical solution of model equations using MATLAB has shown that the evolution of dust voids and their subsequent decay in a time frame is intimately related with ionization parameter. Similar result also holds good in case of dust solitons where stability of soliton is found to depend critically upon ionization parameter. Most importantly, it is observed that time of collapse of a dust soliton precedes the onset time of a dust void decay and therefore soliton decay acts as a precursor for void decay to occur in the given system. It has been found that the increasing value of ionization parameter (μ) increases the duration of stable structure in both the cases. On further increase of ionization parameter, the sign of the soliton changes and the rarefactive solitons are seen to propagate.">
+                We have tried to develop an analytical model using fluid theory to show that the decay of two seemingly
+                independent nonlinear structures namely the dust void and dust soliton strongly depends on plasma
+                ionization parameter in an unmagnetized complex plasma system. Numerical solution of model equations
+                using MATLAB has shown that the evolution of dust voids and their subsequent decay in a time frame is
+                intimately related with ionization parameter. Similar result also holds good in case of dust solitons
+                where stability of soliton is found to depend critically upon ionization parameter. Most importantly, it
+                is observed that time of collapse of a dust soliton precedes the onset time of a dust void decay and
+                therefore soliton decay acts as a precursor for void decay to occur in the given system. It has been
+                found that the increasing value of ionization parameter (μ) increases the duration of stable structure
+                in both the cases. On further increase of ionization parameter, the sign of the soliton changes and the
+                rarefactive solitons are seen to propagate.
+              </p>
+
+              <div class="research-figures-grid">
+                <figure class="research-figure">
+                  <img src="/assets/images/tsl/res_fig_3.jpg" alt="Dust void evolution">
+                  <figcaption class="bilingual-text"
+                    data-hi="चित्र 3(a): आयनीकरण मान μ = 0.2 के लिए समय (T) के साथ धूल घनत्व (N<sub>d</sub>) का विकास। इनसेट चित्र धूल रिक्ति के विराम बिंदु (T<sub>vb</sub> = 0.0852) पर धूल घनत्व प्रोफाइल को दर्शाता है।"
+                    data-en="Figure 3(a): Evolution of dust density (N<sub>d</sub>) with time (T) for the ionization value, μ = 0.2. Inset figure represents the dust density profile at the breaking point (T<sub>vb</sub> = 0.0852) of dust void.">
+                    Figure 3(a): Evolution of dust density (N<sub>d</sub>) with time (T) for the ionization value, μ =
+                    0.2. Inset figure represents the dust density profile at the breaking point (T<sub>vb</sub> =
+                    0.0852) of dust void.</figcaption>
+                </figure>
+
+                <figure class="research-figure">
+                  <img src="/assets/images/tsl/res_fig_4.jpg" alt="Solitary wave structure">
+                  <figcaption class="bilingual-text"
+                    data-hi="चित्र 3(b): समान आयनीकरण मान (μ) के लिए समान धूलयुक्त प्लाज्मा प्रणाली में एकाकी तरंग संरचना। इनसेट चित्र एकाकी तरंग संरचना के विराम समय (T<sub>sb</sub> = 0.06) और विराम पैटर्न को दर्शाता है।"
+                    data-en="Figure 3(b): Solitary wave structure in the same dusty plasma system for the same ionization value (μ). Inset figure represent the time (T<sub>sb</sub> = 0.06) and breaking pattern of solitary wave structure.">
+                    Figure 3(b): Solitary wave structure in the same dusty plasma system for the same ionization value
+                    (μ). Inset figure represent the time (T<sub>sb</sub> = 0.06) and breaking pattern of solitary wave
+                    structure.</figcaption>
+                </figure>
+              </div>
+            </div>
+
+            <!-- Research Item 3: Dust Ion Acoustic Soliton -->
+            <div class="research-item">
+              <h3 class="bilingual-text" data-hi="अतितापीय इलेक्ट्रॉनों की उपस्थिति में धूल आयन ध्वनिक सॉलिटन का विकास"
+                data-en="Evolution of Dust Ion Acoustic Soliton in the Presence of Superthermal Electrons">Evolution of
+                Dust Ion Acoustic Soliton in the Presence of Superthermal Electrons</h3>
+
+              <p class="bilingual-text"
+                data-hi="धूलयुक्त प्लाज्मा में एकाकी तरंग का प्रसार 90 के दशक की शुरुआत से भौतिकविदों का ध्यान आकर्षित करने लगा। अतितापीय कणों की उपस्थिति ऐसी तरंगों पर बहुत प्रभाव डालती प्रतीत होती है, क्योंकि वे गैर-तापीय प्रणालियों के अस्तित्व का संकेत देते हैं। यह देखा गया है कि अतितापीय जनसंख्या प्लाज्मा तरंगों की प्रकृति को बदलने में सक्षम है। वर्तमान पेपर में, अतितापीय इलेक्ट्रॉन जनसंख्या का धूल आयन ध्वनिक एकाकी तरंग पर प्रभाव का पता लगाया गया है। प्लाज्मा को अचुंबकीय माना गया है और यह सकारात्मक आयनों और नकारात्मक धूल कणों के साथ अतितापीय इलेक्ट्रॉनों (दो अलग-अलग तापमान के) के दो घटकों से बना है। कार्य का एक बड़ा हिस्सा अतितापीय पैरामीटर के प्रभाव पर विचार करते हुए एकाकी संरचनाओं की स्थिरता पर केंद्रित किया गया है। इसके अलावा, धूल आवेश को एक चर माना गया है और उसी पर विस्तृत विश्लेषण प्रदान किया गया है। प्रस्तावित प्लाज्मा मॉडल शनि के मैग्नेटोस्फीयर का विश्लेषण करने के लिए सबसे उपयुक्त है और इसे अतितापीय जनसंख्या वाले किसी भी अंतरिक्ष प्लाज्मा तक बढ़ाया जा सकता है।"
+                data-en="Propagation of solitary wave in dusty plasmas started to draw the attention of the physicists since the early 90s. The presence of superthermal particles seems to have a great impact on such waves, as they indicate the existence of non-thermal systems. It has been observed that the superthermal population is capable of altering the nature of the plasmas waves. In the present paper, the effect of the superthermal electron population on the dust ion acoustic solitary wave has been explored. The plasma is considered un-magnetized and composed of two components of superthermal electrons (of two distinct temperature) along with positive ions, and negative dust particles. A major part of the work has been concentrated on the stability of the solitary structures considering the effect of the superthermal parameter. In addition, the dust charge has been considered as a variable and a detailed analysis has been provided on the same. The proposed plasma model is most suitable for analyzing Saturn magnetosphere and can be extended to any space plasmas with superthermal population.">
+                Propagation of solitary wave in dusty plasmas started to draw the attention of the physicists since the
+                early 90s. The presence of superthermal particles seems to have a great impact on such waves, as they
+                indicate the existence of non-thermal systems. It has been observed that the superthermal population is
+                capable of altering the nature of the plasmas waves. In the present paper, the effect of the
+                superthermal electron population on the dust ion acoustic solitary wave has been explored. The plasma is
+                considered un-magnetized and composed of two components of superthermal electrons (of two distinct
+                temperature) along with positive ions, and negative dust particles. A major part of the work has been
+                concentrated on the stability of the solitary structures considering the effect of the superthermal
+                parameter. In addition, the dust charge has been considered as a variable and a detailed analysis has
+                been provided on the same. The proposed plasma model is most suitable for analyzing Saturn magnetosphere
+                and can be extended to any space plasmas with superthermal population.
+              </p>
+
+              <div class="research-figures-grid">
+                <figure class="research-figure">
+                  <img src="/assets/images/tsl/res_fig_5.jpg" alt="Dust density propagation - Case 1">
+                  <figcaption class="bilingual-text"
+                    data-hi="चित्र 4: κ<sub>c</sub> = 7.0, κ<sub>h</sub> = 10.0, T<sub>ec</sub> = 10 eV, T<sub>eh</sub> = 100 eV, μ<sub>c</sub> = 0.5, μ<sub>h</sub> = 0.493, μ = 0.007, और δ = 0.001 के लिए धूल घनत्व का प्रसार"
+                    data-en="Figure 4: Propagation of the dust density for κ<sub>c</sub> = 7.0, κ<sub>h</sub> = 10.0, T<sub>ec</sub> = 10 eV, T<sub>eh</sub> = 100 eV, μ<sub>c</sub> = 0.5, μ<sub>h</sub> = 0.493, μ = 0.007, and δ = 0.001.">
+                    Figure 4: Propagation of the dust density for κ<sub>c</sub> = 7.0, κ<sub>h</sub> = 10.0,
+                    T<sub>ec</sub> = 10 eV, T<sub>eh</sub> = 100 eV, μ<sub>c</sub> = 0.5, μ<sub>h</sub> = 0.493, μ =
+                    0.007, and δ = 0.001.</figcaption>
+                </figure>
+
+                <figure class="research-figure">
+                  <img src="/assets/images/tsl/res_fig_6.jpg" alt="Dust density propagation - Case 2">
+                  <figcaption class="bilingual-text"
+                    data-hi="चित्र 5: κ<sub>c</sub> = 100.0, κ<sub>h</sub> = 100.0, T<sub>ec</sub> = 10 eV, T<sub>eh</sub> = 100 eV, μ<sub>c</sub> = 0.5, μ<sub>h</sub> = 0.493, μ = 0.007, और δ = 0.001 के लिए धूल घनत्व का प्रसार"
+                    data-en="Figure 5: Propagation of the dust density for κ<sub>c</sub> = 100.0, κ<sub>h</sub> = 100.0, T<sub>ec</sub> = 10 eV, T<sub>eh</sub> = 100 eV, μ<sub>c</sub> = 0.5, μ<sub>h</sub> = 0.493, μ = 0.007, and δ = 0.001.">
+                    Figure 5: Propagation of the dust density for κ<sub>c</sub> = 100.0, κ<sub>h</sub> = 100.0,
+                    T<sub>ec</sub> = 10 eV, T<sub>eh</sub> = 100 eV, μ<sub>c</sub> = 0.5, μ<sub>h</sub> = 0.493, μ =
+                    0.007, and δ = 0.001.</figcaption>
+                </figure>
+              </div>
+
+              <p class="bilingual-text"
+                data-hi="अतितापीय इलेक्ट्रॉनों का धूल आयन ध्वनिक सॉलिटन के प्रसार पर प्रभाव KdV समीकरण को संख्यात्मक रूप से हल करके अध्ययन किया जाता है। KdV समीकरण के स्थिर अवस्था समाधान का उपयोग समय-निर्भर अध्ययन में प्रारंभिक गड़बड़ी के रूप में किया जाता है। यह देखा गया है कि विभव और आयन संख्या घनत्व दोनों प्रारंभिक गड़बड़ी के आकार और आकृति को बनाए रख सकते हैं, जबकि धूल घनत्व अलग व्यवहार करता है।"
+                data-en="The influence of superthermal electrons on the propagation of Dust Ion Acoustic solitons is studied by numerically solving the KdV equation. The steady state solution of the KdV equation is used as an initial perturbation in the time dependent study. It has been observed that both the potential and ion number density can sustain the shape and size of the initial perturbation, while the dust density behaves differently.">
+                The influence of superthermal electrons on the propagation of Dust Ion Acoustic solitons is studied by
+                numerically solving the KdV equation. The steady state solution of the KdV equation is used as an
+                initial perturbation in the time dependent study. It has been observed that both the potential and ion
+                number density can sustain the shape and size of the initial perturbation, while the dust density
+                behaves differently.
+              </p>
+
+              <p class="bilingual-text"
+                data-hi="धूल घनत्व की एकाकी तरंग के प्रसार की जांच अतितापीय मापदंडों के विभिन्न मूल्यों के लिए की जाती है। यह देखा गया है कि अतितापीय इलेक्ट्रॉनों की उपस्थिति तरंग के अवमंदन को तेज करती है। धूल घनत्व प्लाज्मा में ठंडे इलेक्ट्रॉन सांद्रण के प्रति भी संवेदनशील है। ठंडे इलेक्ट्रॉन घटक की संख्या जितनी अधिक होगी, प्रारंभिक गड़बड़ी में उतनी ही अधिक गड़बड़ी होगी। इसके अलावा, यह इलेक्ट्रॉनों के तापमान अनुपात पर भी दृढ़ता से प्रतिक्रिया करता है। समान तापमान वाले अतितापीय इलेक्ट्रॉनों के परिणामस्वरूप काफी शिथिल घनत्व प्रोफाइल होता है। सारांश में, अतितापीय कणों की उपस्थिति धूलयुक्त प्लाज्मा में तरंगों की प्रकृति को महत्वपूर्ण रूप से बदल देती है।"
+                data-en="The propagation of the solitary wave of the dust density is examined for different values of the superthermal parameters. It has been observed that the presence of superthermal electrons accelerates the damping of the wave. The dust density is also sensitive to the cold electron concentration in the plasma. More the number of cold electron component, more is the disturbance in the initial perturbation. Other than that, it also responds strongly to the temperature ratio of the electrons. Superthermal electrons with equal temperature results in a quite relaxed density profile. In summary, the presence of superthermal particles significantly alter the nature of the waves in the dusty plasmas.">
+                The propagation of the solitary wave of the dust density is examined for different values of the
+                superthermal parameters. It has been observed that the presence of superthermal electrons accelerates
+                the damping of the wave. The dust density is also sensitive to the cold electron concentration in the
+                plasma. More the number of cold electron component, more is the disturbance in the initial perturbation.
+                Other than that, it also responds strongly to the temperature ratio of the electrons. Superthermal
+                electrons with equal temperature results in a quite relaxed density profile. In summary, the presence of
+                superthermal particles significantly alter the nature of the waves in the dusty plasmas.
+              </p>
+
+              <div class="research-figures-grid">
+                <figure class="research-figure">
+                  <img src="/assets/images/tsl/res_fig_7.jpg" alt="Dispersion curve">
+                  <figcaption class="bilingual-text"
+                    data-hi="चित्र 6: μ<sub>c</sub> = 0.5, T<sub>ec</sub> = 10 eV, T<sub>eh</sub> = 100 eV, δ = 0.001, μ = 0.007, और (a) κ<sub>c</sub> = 7.0, κ<sub>h</sub> = 10.0 (नीली रेखा), (b) κ<sub>c</sub> = 100.0, κ<sub>h</sub> = 100.0 (लाल रेखा) के साथ डीआईए तरंग की फैलाव वक्र"
+                    data-en="Figure 6: The dispersion curve of the DIA wave with μ<sub>c</sub> = 0.5, T<sub>ec</sub> = 10 eV, T<sub>eh</sub> = 100 eV, δ = 0.001, μ = 0.007, and (a) κ<sub>c</sub> = 7.0, κ<sub>h</sub> = 10.0 (blue line), (b) κ<sub>c</sub> = 100.0, κ<sub>h</sub> = 100.0 (red line).">
+                    Figure 6: The dispersion curve of the DIA wave with μ<sub>c</sub> = 0.5, T<sub>ec</sub> = 10 eV,
+                    T<sub>eh</sub> = 100 eV, δ = 0.001, μ = 0.007, and (a) κ<sub>c</sub> = 7.0, κ<sub>h</sub> = 10.0
+                    (blue line), (b) κ<sub>c</sub> = 100.0, κ<sub>h</sub> = 100.0 (red line).</figcaption>
+                </figure>
+
+                <figure class="research-figure">
+                  <img src="/assets/images/tsl/res_fig_8.jpg" alt="Damping rate dispersion">
+                  <figcaption class="bilingual-text"
+                    data-hi="चित्र 7: μ<sub>c</sub> = 0.5, T<sub>ec</sub> = 10 eV, T<sub>eh</sub> = 100 eV, δ = 0.001, μ = 0.007, और (a) κ<sub>c</sub> = 7.0, κ<sub>h</sub> = 10.0 (नीली रेखा), (b) κ<sub>c</sub> = 100.0, κ<sub>h</sub> = 100.0 (लाल रेखा) के साथ डीआईए तरंग के अवमंदन की तरंग संख्या फैलाव"
+                    data-en="Figure 7: The wave number dispersion of the damping of the DIA wave with μ<sub>c</sub> = 0.5, T<sub>ec</sub> = 10 eV, T<sub>eh</sub> = 100 eV, δ = 0.001, μ = 0.007, and (a) κ<sub>c</sub> = 7.0, κ<sub>h</sub> = 10.0 (blue line), (b) κ<sub>c</sub> = 100.0, κ<sub>h</sub> = 100.0 (red line).">
+                    Figure 7: The wave number dispersion of the damping of the DIA wave with μ<sub>c</sub> = 0.5,
+                    T<sub>ec</sub> = 10 eV, T<sub>eh</sub> = 100 eV, δ = 0.001, μ = 0.007, and (a) κ<sub>c</sub> = 7.0,
+                    κ<sub>h</sub> = 10.0 (blue line), (b) κ<sub>c</sub> = 100.0, κ<sub>h</sub> = 100.0 (red line).
+                  </figcaption>
+                </figure>
+              </div>
+
+              <p class="bilingual-text"
+                data-hi="तरंग संख्या के साथ तरंग आवृत्ति और अवमंदन दर का फैलाव वर्तमान सिद्धांत के लिए एक और परिप्रेक्ष्य लाता प्रतीत होता है। अतितापीय इलेक्ट्रॉनों की उपस्थिति तरंग अवमंदन प्रक्रिया में बड़ी भूमिका निभाती प्रतीत होती है। वर्तमान जांच से प्राप्त परिणाम शनि के मैग्नेटोस्फीयर जैसे अंतरिक्ष धूलयुक्त प्लाज्मा में अरेखीय संरचनाओं को समझने में सहायक होंगे।"
+                data-en="The dispersion of the wave frequency and damping rate with the wave number seems to bring another perspective to the present theory. The presence of superthermal electrons appears to have larger role in the wave damping process. The results obtained from the present investigation would be helpful in understanding the nonlinear structures in space dusty plasma like Saturn magnetosphere.">
+                The dispersion of the wave frequency and damping rate with the wave number seems to bring another
+                perspective to the present theory. The presence of superthermal electrons appears to have larger role in
+                the wave damping process. The results obtained from the present investigation would be helpful in
+                understanding the nonlinear structures in space dusty plasma like Saturn magnetosphere.
+              </p>
+            </div>
+          </div>
+
+          <!-- ========== FACILITIES TAB ========== -->
+          <div id="facilities" class="tab-panel">
+            <div class="facility-item">
+              <h3 class="bilingual-text" data-hi="प्रमुख हार्डवेयर सुविधाएं" data-en="Major Hardware Facilities">Major
+                Hardware Facilities</h3>
+
+              <p class="bilingual-text" data-hi="प्रयोगशाला में दो लिनक्स (फेडोरा कोर) क्लस्टर हैं:"
+                data-en="The laboratory has two Linux (Fedora Core) clusters:">The laboratory has two Linux (Fedora
+                Core) clusters:</p>
+
+              <ul>
+                <li class="bilingual-text"
+                  data-hi="पहले क्लस्टर में 24 नोड हैं जिनमें इंटेल कोर i5 क्वाड-कोर आधारित HP Z200 वर्कस्टेशन हैं, प्रत्येक में 8 जीबी रैम और 250 जीबी एचडीडी है। सर्वर नोड एक एचपी सर्वर है जिसमें 2 हेक्सा-कोर ज़ीऑन W5670 प्रोसेसर, 32 जीबी रैम और 5 टीबी एचडीडी है।"
+                  data-en="The first cluster has 24 nodes with Intel Core i5 quad-core based HP Z200 workstations with 8 GB RAM and 250 GB HDD each. The server node is an HP server with 2 hexa-core Xeon W5670 processors, 32 GB RAM, and 5 TB HDD.">
+                  The first cluster has 24 nodes with Intel Core i5 quad-core based HP Z200 workstations with 8 GB RAM
+                  and 250 GB HDD each. The server node is an HP server with 2 hexa-core Xeon W5670 processors, 32 GB
+                  RAM, and 5 TB HDD.</li>
+                <li class="bilingual-text"
+                  data-hi="दूसरे क्लस्टर में एक दोहरे-प्रोसेसर डेल प्रिसिजन 690 वर्कस्टेशन है जिसमें 1.5 टीबी एचडीडी और 32 जीबी रैम है, और 12 असेंबल नोड हैं, जिनमें से प्रत्येक में हेक्सा-कोर एएमडी फेनोम II X6 1055/1090 T प्रोसेसर हैं जिनमें 8 जीबी रैम और 512 जीबी एचडीडी है।"
+                  data-en="The second cluster has one dual-processor Dell Precision 690 workstation with 1.5 TB HDD and 32 GB RAM, and 12 assembled nodes, each consisting of hexa-core AMD Phenom II X6 1055/1090 T processors with 8 GB RAM and 512 GB HDD each.">
+                  The second cluster has one dual-processor Dell Precision 690 workstation with 1.5 TB HDD and 32 GB
+                  RAM, and 12 assembled nodes, each consisting of hexa-core AMD Phenom II X6 1055/1090 T processors with
+                  8 GB RAM and 512 GB HDD each.</li>
+              </ul>
+
+              <div class="research-figures-grid">
+                <figure class="research-figure">
+                  <img src="/assets/images/tsl/server_1.jpg" alt="HP Z200 cluster">
+                  <figcaption class="bilingual-text" data-hi="एचपी Z200 वर्कस्टेशन-आधारित क्लस्टर"
+                    data-en="HP Z200 workstation-based cluster">HP Z200 workstation-based cluster</figcaption>
+                </figure>
+                <figure class="research-figure">
+                  <img src="/assets/images/tsl/server_2.jpg" alt="Assembled node cluster">
+                  <figcaption class="bilingual-text" data-hi="डेल प्रिसिजन 690 वर्कस्टेशन के साथ असेंबल नोड क्लस्टर"
+                    data-en="Assembled node cluster with Dell Precision 690 workstation">Assembled node cluster with
+                    Dell Precision 690 workstation</figcaption>
+                </figure>
+              </div>
+
+              <ul>
+                <li class="bilingual-text"
+                  data-hi="एक लेनोवो P700 वर्कस्टेशन जिसमें इंटेल ज़ीऑन CPU E5-2650 (2.3 GHz) प्रोसेसर, 16 जीबी रैम, और 2 टीबी एचडीडी है, मूल प्लाज्मा अध्ययन के लिए समर्पित किया गया है। वर्कस्टेशन NVIDIA Quadro K6000 (12 जीबी) से भी सुसज्जित है जिसमें GPU-आधारित कोड संकलित करने के लिए 2880 CUDA समानांतर प्रोसेसर कोर हैं।"
+                  data-en="A Lenovo P700 workstation with Intel Xeon CPU E5-2650 (2.3 GHz) processor, 16 GB RAM, and 2 TB HDD has been dedicated for Basic Plasma Study. The workstation is also equipped with Nvidia Quadro K6000 (12 GB) containing 2880 CUDA Parallel Processor Cores for compiling GPU-based codes.">
+                  A Lenovo P700 workstation with Intel Xeon CPU E5-2650 (2.3 GHz) processor, 16 GB RAM, and 2 TB HDD has
+                  been dedicated for Basic Plasma Study. The workstation is also equipped with Nvidia Quadro K6000 (12
+                  GB) containing 2880 CUDA Parallel Processor Cores for compiling GPU-based codes.</li>
+                <li class="bilingual-text"
+                  data-hi="एक डेल ऑप्टिप्लेक्स 9020 डेस्कटॉप जिसमें इंटेल कोर i7 (3.6 GHz) प्रोसेसर, 8 जीबी रैम, और 1 टीबी एचडीडी है, सीरियल कोड चलाने और अंतर-प्रयोगशाला सहयोग के लिए है।"
+                  data-en="A Dell Optiplex 9020 desktop with Intel Core i7 (3.6 GHz) processor, 8 GB RAM, and 1 TB HDD for running serial codes and inter-laboratory collaborations.">
+                  A Dell Optiplex 9020 desktop with Intel Core i7 (3.6 GHz) processor, 8 GB RAM, and 1 TB HDD for
+                  running serial codes and inter-laboratory collaborations.</li>
+              </ul>
+
+              <div class="research-figures-grid">
+                <figure class="research-figure">
+                  <img src="/assets/images/tsl/work_1.jpg" alt="Lenovo P700 workstation">
+                  <figcaption class="bilingual-text" data-hi="लेनोवो P700 वर्कस्टेशन" data-en="Lenovo P700 workstation">
+                    Lenovo P700 workstation</figcaption>
+                </figure>
+                <figure class="research-figure">
+                  <img src="/assets/images/tsl/work_2.jpg" alt="Dell Optiplex 9020">
+                  <figcaption class="bilingual-text" data-hi="डेल ऑप्टिप्लेक्स 9020 डेस्कटॉप"
+                    data-en="Dell Optiplex 9020 desktop">Dell Optiplex 9020 desktop</figcaption>
+                </figure>
+              </div>
+
+              <h4 class="bilingual-text" data-hi="प्रमुख सॉफ्टवेयर सुविधाएं" data-en="Major Software Facilities">Major
+                Software Facilities</h4>
+
+              <ul>
+                <li class="bilingual-text"
+                  data-hi="लिनक्स के साथ मुफ्त में आने वाले सामान्य सॉफ्टवेयर/कंपाइलर के अलावा, प्रयोगशाला के पास MATLAB 2019a® समानांतर कंप्यूटिंग टूलबॉक्स और MATLAB वातावरण में समानांतर कोड विकास के लिए वितरित कंप्यूटिंग सर्वर तक पहुंच है। इसके अलावा, एक CAD सॉफ्टवेयर, सॉलिडवर्क्स®, और नियतात्मक कण परिवहन कोड ATTILA® भी अधिग्रहित किया गया है।"
+                  data-en="Besides the usual software/compilers coming free with Linux, the lab has access to MATLAB 2019a® with parallel computing toolbox and distributed computing server for parallel code development in MATLAB environment. In addition, a CAD software, namely SolidWorks®, and deterministic particle transport code ATTILA® has also been acquired.">
+                  Besides the usual software/compilers coming free with Linux, the lab has access to MATLAB 2019a® with
+                  parallel computing toolbox and distributed computing server for parallel code development in MATLAB
+                  environment. In addition, a CAD software, namely SolidWorks®, and deterministic particle transport
+                  code ATTILA® has also been acquired.</li>
+                <li class="bilingual-text"
+                  data-hi="प्रयोगशाला के पास कोड विकास के लिए Intel® Parallel Studio XE (क्लस्टर संस्करण) तक भी पहुंच है।"
+                  data-en="The laboratory also has access to Intel® Parallel Studio XE (Cluster Edition) for code development.">
+                  The laboratory also has access to Intel® Parallel Studio XE (Cluster Edition) for code development.
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- ========== PEOPLE TAB ========== -->
+          <div id="people" class="tab-panel">
+
+            <!-- People Category Buttons -->
+            <div class="people-categories">
+              <button class="people-cat-btn active" onclick="filterPeople('all')">
+                <span class="bilingual-text" data-hi="सभी" data-en="All">All</span>
+              </button>
+              <button class="people-cat-btn" onclick="filterPeople('faculty')">
+                <span class="bilingual-text" data-hi="संकाय" data-en="Faculty">Faculty</span>
+              </button>
+              <button class="people-cat-btn" onclick="filterPeople('pdf')">
+                <span class="bilingual-text" data-hi="पोस्ट-डॉक्टरल फेलो" data-en="Post-Doctoral Fellows">Post-Doctoral
+                  Fellows</span>
+              </button>
+              <button class="people-cat-btn" onclick="filterPeople('scholar')">
+                <span class="bilingual-text" data-hi="शोध विद्वार्थी" data-en="Research Scholars">Research
+                  Scholars</span>
+              </button>
+              <button class="people-cat-btn" onclick="filterPeople('associate')">
+                <span class="bilingual-text" data-hi="संबद्ध शोधकर्ता" data-en="Associated Researchers">Associated
+                  Researchers</span>
+              </button>
+              <button class="people-cat-btn" onclick="filterPeople('former')">
+                <span class="bilingual-text" data-hi="पूर्व सदस्य" data-en="Former Members">Former Members</span>
+              </button>
+            </div>
+
+            <!-- People Grid -->
+            <div class="people-grid">
+
+              <!-- Faculty -->
+              <div class="person-card show" data-category="faculty">
+                <img src="/assets/images/tsl/ksg.jpg" alt="Prof. K. S. Goswami" class="person-photo">
+                <h4 class="person-name">Prof. K. S. Goswami</h4>
+                <p class="person-role bilingual-text" data-hi="वरिष्ठ प्रोफेसर (सेवानिवृत्त)"
+                  data-en="Senior Professor (Retd.)">Senior Professor (Retd.)</p>
+                <div class="person-email">
+                  <a href="mailto:ksgoswami@cppipr.res.in">ksgoswami@cppipr.res.in</a>
+                </div>
+                <div class="person-links">
+                  <a href="https://www.researchgate.net/profile/Kalyan_Goswami3" target="_blank">ResearchGate</a>
+                </div>
+              </div>
+
+              <div class="person-card show" data-category="faculty">
+                <img src="/assets/images/tsl/mdey.jpg" alt="Dr. M. Dey" class="person-photo">
+                <h4 class="person-name">Dr. M. Dey</h4>
+                <p class="person-role bilingual-text" data-hi="वैज्ञानिक अधिकारी - एफ (सेवानिवृत्त)"
+                  data-en="Scientific Officer - F (Retd.)">Scientific Officer - F (Retd.)</p>
+                <div class="person-email">
+                  <a href="mailto:dey@cppipr.res.in">dey@cppipr.res.in</a>
+                </div>
+                <div class="person-links">
+                  <a href="https://www.researchgate.net/profile/Monojyoti_Dey" target="_blank">ResearchGate</a>
+                </div>
+              </div>
+
+              <div class="person-card show" data-category="faculty">
+                <img src="/assets/images/tsl/bjs.jpg" alt="Dr. B. J. Saikia" class="person-photo">
+                <h4 class="person-name">Dr. B. J. Saikia</h4>
+                <p class="person-role bilingual-text" data-hi="वैज्ञानिक अधिकारी - एफ" data-en="Scientific Officer - F">
+                  Scientific Officer - F</p>
+                <div class="person-email">
+                  <a href="mailto:bjsaikia@cppipr.res.in">bjsaikia@cppipr.res.in</a>
+                </div>
+                <div class="person-links">
+                  <a href="https://www.researchgate.net/scientific-contributions/72692122_B_J_Saikia"
+                    target="_blank">ResearchGate</a>
+                </div>
+              </div>
+
+              <div class="person-card show" data-category="faculty">
+                <img src="/assets/images/tsl/pjb.jpg" alt="Dr. P. J. Bhuyan" class="person-photo">
+                <h4 class="person-name">Dr. P. J. Bhuyan</h4>
+                <p class="person-role bilingual-text" data-hi="वैज्ञानिक अधिकारी - सी" data-en="Scientific Officer - C">
+                  Scientific Officer - C</p>
+                <div class="person-email">
+                  <a href="mailto:pranjal@cppipr.res.in">pranjal@cppipr.res.in</a>
+                </div>
+                <div class="person-links">
+                  <a href="https://www.researchgate.net/profile/Pranjal_J_Bhuyan" target="_blank">ResearchGate</a>
+                </div>
+              </div>
+
+              <div class="person-card show" data-category="faculty">
+                <img src="/assets/images/tsl/Rakesh.jpg" alt="Dr. Rakesh Moulick" class="person-photo">
+                <h4 class="person-name">Dr. Rakesh Moulick</h4>
+                <p class="person-role bilingual-text" data-hi="वैज्ञानिक अधिकारी - डी" data-en="Scientific Officer - D">
+                  Scientific Officer - D</p>
+                <div class="person-email">
+                  <a href="mailto:rakesh.moulick@cppipr.res.in">rakesh.moulick@cppipr.res.in</a>
+                </div>
+                <div class="person-links">
+                  <a href="https://www.sites.google.com/view/rakeshmoulick" target="_blank">Website</a>
+                </div>
+              </div>
+
+              <!-- PDF - Post Doctoral Fellows -->
+              <div class="person-card show" data-category="pdf">
+                <img src="/assets/images/tsl/sutapa.jpg" alt="Ms. Sutapa Samanta" class="person-photo">
+                <h4 class="person-name">Ms. Sutapa Samanta</h4>
+                <p class="person-role bilingual-text" data-hi="कनिष्ठ शोध फेलो" data-en="Junior Research Fellow">Junior
+                  Research Fellow</p>
+                <div class="person-email">
+                  <a href="mailto:sutapa.samanta@cppipr.res.in">sutapa.samanta@cppipr.res.in</a>
+                </div>
+              </div>
+
+              <!-- Research Scholars -->
+              <div class="person-card show" data-category="scholar">
+                <img src="/assets/images/tsl/dharitree.jpg" alt="Ms. Dharitree Dutta" class="person-photo">
+                <h4 class="person-name">Ms. Dharitree Dutta</h4>
+                <p class="person-role bilingual-text" data-hi="डॉक्टरेट उम्मीदवार (गौहाटी विश्वविद्यालय)"
+                  data-en="Doctoral Candidate (Gauhati University)">Doctoral Candidate (Gauhati University)</p>
+                <div class="person-email">
+                  <a href="mailto:dutta3dharitree@gmail.com">dutta3dharitree@gmail.com</a>
+                </div>
+                <div class="person-links">
+                  <a href="https://www.researchgate.net/profile/Dharitree_Dutta" target="_blank">ResearchGate</a>
+                </div>
+              </div>
+
+              <div class="person-card show" data-category="scholar">
+                <img src="/assets/images/tsl/ananya.jpg" alt="Ms. Ananya Phukan" class="person-photo">
+                <h4 class="person-name">Ms. Ananya Phukan</h4>
+                <p class="person-role bilingual-text" data-hi="डॉक्टरेट उम्मीदवार (गौहाटी विश्वविद्यालय)"
+                  data-en="Doctoral Candidate (Gauhati University)">Doctoral Candidate (Gauhati University)</p>
+                <div class="person-email">
+                  <a href="mailto:ananya.phukan26@gmail.com">ananya.phukan26@gmail.com</a>
+                </div>
+                <div class="person-links">
+                  <a href="https://www.researchgate.net/profile/Ananya_Phukan" target="_blank">ResearchGate</a>
+                </div>
+              </div>
+
+              <!-- Former Members -->
+              <div class="person-card show" data-category="former">
+                <img src="/assets/images/tsl/pkk.jpg" alt="Dr. Pralay Kumar Karmakar" class="person-photo">
+                <h4 class="person-name">Dr. Pralay Kumar Karmakar</h4>
+                <p class="person-role bilingual-text" data-hi="सहायक प्रोफेसर (तेजपुर विश्वविद्यालय)"
+                  data-en="Associate Professor (Tezpur University)">Associate Professor (Tezpur University)</p>
+                <div class="person-email">
+                  <a href="mailto:pkk@tezu.ernet.in">pkk@tezu.ernet.in</a>
+                </div>
+                <div class="person-links">
+                  <a href="https://www.researchgate.net/profile/Dr_P_K_Karmakar" target="_blank">ResearchGate</a>
+                </div>
+              </div>
+
+              <div class="person-card show" data-category="former">
+                <img src="/assets/images/tsl/nilakshi_das.jpg" alt="Prof. Nilakshi Das" class="person-photo">
+                <h4 class="person-name">Prof. Nilakshi Das</h4>
+                <p class="person-role bilingual-text" data-hi="प्रोफेसर (तेजपुर विश्वविद्यालय)"
+                  data-en="Professor (Tezpur University)">Professor (Tezpur University)</p>
+                <div class="person-email">
+                  <a href="mailto:ndas@tezu.ernet.in">ndas@tezu.ernet.in</a>
+                </div>
+                <div class="person-links">
+                  <a href="https://www.researchgate.net/profile/Nilakshi_Das" target="_blank">ResearchGate</a>
+                </div>
+              </div>
+
+              <div class="person-card show" data-category="former">
+                <img src="/assets/images/tsl/KSR.jpg" alt="Dr. Kamal Saharia" class="person-photo">
+                <h4 class="person-name">Dr. Kamal Saharia</h4>
+                <p class="person-role bilingual-text" data-hi="सहायक प्रोफेसर (एनईआरआईएसटी)"
+                  data-en="Assistant Professor (NERIST)">Assistant Professor (NERIST)</p>
+                <div class="person-email">
+                  <a href="mailto:ksr@nerist.ac.in">ksr@nerist.ac.in</a>
+                </div>
+                <div class="person-links">
+                  <a href="https://www.researchgate.net/profile/Kamal-Saharia" target="_blank">ResearchGate</a>
+                </div>
+              </div>
+
+              <div class="person-card show" data-category="former">
+                <img src="/assets/images/tsl/sayan.jpg" alt="Dr. Sayan Adhikari" class="person-photo">
+                <h4 class="person-name">Dr. Sayan Adhikari</h4>
+                <p class="person-role bilingual-text" data-hi="पोस्ट डॉक्टरल फेलो, ओस्लो विश्वविद्यालय, नॉर्वे"
+                  data-en="Post Doctoral Fellow, University of Oslo, Norway">Post Doctoral Fellow, University of Oslo,
+                  Norway</p>
+                <div class="person-links">
+                  <a href="https://www.researchgate.net/profile/Sayan_Adhikari" target="_blank">ResearchGate</a>
+                  <a href="https://www.sayanadhikari.com/" target="_blank">Website</a>
+                </div>
+                <div class="person-expertise">
+                  <h5 class="bilingual-text" data-hi="विशेषज्ञता का क्षेत्र:" data-en="Area of Expertise:">Area of
+                    Expertise:</h5>
+                  <ul>
+                    <li class="bilingual-text" data-hi="चुंबकीय प्लाज्मा" data-en="Magnetized Plasma">Magnetized Plasma
+                    </li>
+                    <li class="bilingual-text" data-hi="प्लाज्मा आवरण" data-en="Plasma Sheath">Plasma Sheath</li>
+                    <li class="bilingual-text" data-hi="आयन गतिकी" data-en="Ion Dynamics">Ion Dynamics</li>
+                    <li class="bilingual-text" data-hi="द्रव और गतिज सिमुलेशन" data-en="Fluid and Kinetic Simulation">
+                      Fluid and Kinetic Simulation</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="person-card show" data-category="former">
+                <img src="/assets/images/tsl/rinku.jpg" alt="Dr. Rinku Mishra" class="person-photo">
+                <h4 class="person-name">Dr. Rinku Mishra</h4>
+                <p class="person-role bilingual-text" data-hi="पोस्ट डॉक्टरल फेलो" data-en="Post Doctoral Fellow">Post
+                  Doctoral Fellow</p>
+                <div class="person-email">
+                  <a href="mailto:arra4723@gmail.com">arra4723@gmail.com</a>
+                </div>
+                <div class="person-links">
+                  <a href="https://www.researchgate.net/profile/Rinku_Mishra2" target="_blank">ResearchGate</a>
+                </div>
+                <div class="person-expertise">
+                  <h5 class="bilingual-text" data-hi="विशेषज्ञता का क्षेत्र:" data-en="Area of Expertise:">Area of
+                    Expertise:</h5>
+                  <ul>
+                    <li class="bilingual-text" data-hi="धूलयुक्त प्लाज्मा" data-en="Dusty Plasma">Dusty Plasma</li>
+                    <li class="bilingual-text" data-hi="प्लाज्मा सतह तरंग" data-en="Plasma Surface Wave">Plasma Surface
+                      Wave</li>
+                    <li class="bilingual-text" data-hi="प्लाज्मा एंटीना" data-en="Plasma Antenna">Plasma Antenna</li>
+                    <li class="bilingual-text" data-hi="द्रव और गतिज सिमुलेशन" data-en="Fluid and Kinetic Simulation">
+                      Fluid and Kinetic Simulation</li>
+                  </ul>
+                </div>
+              </div>
+
+              <!-- Associated Researchers -->
+              <div class="person-card show" data-category="associate">
+                <img src="/assets/images/iecf/e_hotta.jpg" alt="Prof. Eiki Hotta" class="person-photo">
+                <h4 class="person-name">Prof. Eiki Hotta</h4>
+                <p class="person-role bilingual-text" data-hi="प्रोफेसर (सेवानिवृत्त), टोक्यो इंस्टीट्यूट ऑफ टेक्नोलॉजी"
+                  data-en="Professor (Retd.), Tokyo Institute of Technology">Professor (Retd.), Tokyo Institute of
+                  Technology</p>
+                <div class="person-email">
+                  <a href="mailto:ehotta@es.titech.ac.jp">ehotta@es.titech.ac.jp</a>
+                </div>
+                <div class="person-expertise">
+                  <h5 class="bilingual-text" data-hi="विशेषज्ञता का क्षेत्र:" data-en="Area of Expertise:">Area of
+                    Expertise:</h5>
+                  <ul>
+                    <li class="bilingual-text" data-hi="पल्स्ड पावर प्रौद्योगिकी" data-en="Pulsed power technology">
+                      Pulsed power technology</li>
+                    <li class="bilingual-text" data-hi="एक्सट्रीम अल्ट्रावायलेट लाइट स्रोत"
+                      data-en="Extreme ultraviolet light source">Extreme ultraviolet light source</li>
+                    <li class="bilingual-text" data-hi="जड़त्वीय इलेक्ट्रोस्टैटिक कन्फाइनमेंट फ्यूजन"
+                      data-en="Inertial electrostatic confinement fusion">Inertial electrostatic confinement fusion</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="person-card show" data-category="associate">
+                <img src="/assets/images/iecf/h_bailung.jpg" alt="Prof. H. Bailung" class="person-photo">
+                <h4 class="person-name">Prof. H. Bailung</h4>
+                <p class="person-role bilingual-text" data-hi="प्रमुख, भौतिक विज्ञान प्रभाग, आईएएसएसटी, गुवाहाटी"
+                  data-en="Head, Physical Sciences Division, IASST, Guwahati">Head, Physical Sciences Division, IASST,
+                  Guwahati</p>
+                <div class="person-email">
+                  <a href="mailto:hbailung@yahoo.com">hbailung@yahoo.com</a>
+                </div>
+              </div>
+
+              <div class="person-card show" data-category="associate">
+                <img src="/assets/images/iecf/Sudhir_vala.jpg" alt="Mr. Sudhirsinh J. Vala" class="person-photo">
+                <h4 class="person-name">Mr. Sudhirsinh J. Vala</h4>
+                <p class="person-role bilingual-text"
+                  data-hi="वैज्ञानिक अधिकारी-ई, न्यूट्रॉन और आयन विकिरण अनुभाग, आईपीआर, गांधीनगर"
+                  data-en="Scientific Officer-E, Neutron and Ion Irradiation Section, IPR, Gandhinagar">Scientific
+                  Officer-E, Neutron and Ion Irradiation Section, IPR, Gandhinagar</p>
+                <div class="person-email">
+                  <a href="mailto:sudhir@ipr.res.in">sudhir@ipr.res.in</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ========== PUBLICATIONS TAB ========== -->
+          <div id="publications" class="tab-panel">
+
+            <!-- 2019 Publications -->
+            <div class="publications-year">
+              <h3>2019</h3>
+              <ul class="publications-list">
+                <li>
+                  <span class="new-badge">NEW</span>
+                  <a href="https://doi.org/10.1017/S0022377819000424" target="_blank">
+                    <strong>Electron acoustic double layers in a magnetized plasma in the presence of superthermal
+                      particles</strong>, D. Dutta, and K. S. Goswami, <em>J. Plasma Phys.</em>, <strong>85</strong>,
+                    905850308 (2019).
+                  </a>
+                </li>
+                <li>
+                  <a href="https://doi.org/10.1063/1.5090537" target="_blank">
+                    <strong>Sheath formation in collisional, low pressure, and magnetized plasma</strong>, R. Moulick,
+                    S. Adhikari, and K. S. Goswami, <em>Phys. Plasmas</em>, <strong>26</strong>, 043512 (2019).
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <!-- 2018 Publications -->
+            <div class="publications-year">
+              <h3>2018</h3>
+              <ul class="publications-list">
+                <li>
+                  <a href="https://doi.org/10.1063/1.5066427" target="_blank">
+                    <strong>Correlation between two non-linear events in a dusty plasma system</strong>, Rinku Mishra,
+                    S. Adhikari, Rupak Mukherjee, and M. Dey, <em>Phys. Plasmas</em>, <strong>25</strong>, 123703
+                    (2018).
+                  </a>
+                </li>
+                <li>
+                  <a href="https://doi.org/10.1109/TPS.2018.2879499" target="_blank">
+                    <strong>Dust Charging and Propagation of Dust Acoustic Waves in a Multi-Component Thermal Dusty
+                      Plasma System</strong>, Rinku Mishra, and M. Dey, <em>IEEE Transactions on Plasma Science</em>,
+                    <strong>47</strong>, 784-794 (2018).
+                  </a>
+                </li>
+                <li>
+                  <a href="https://doi.org/10.1007/s12648-018-1279-0" target="_blank">
+                    <strong>Dust ion acoustic double layer in the presence of superthermal electrons</strong>, D. Dutta,
+                    and K. S. Goswami, <em>Indian J. Phys.</em>, <strong>93</strong>, 257-265 (2018).
+                  </a>
+                </li>
+                <li>
+                  <a href="https://doi.org/10.1063/1.5045186" target="_blank">
+                    <strong>Ion dynamics in a magnetized source-collector sheath</strong>, S. Adhikari, R. Moulick, and
+                    K.S. Goswami, <em>Phys. Plasmas</em>, <strong>25</strong>, 094504 (2018).
+                  </a>
+                </li>
+                <li>
+                  <a href="https://doi.org/10.1088/1402-4896/aaaa8d" target="_blank">
+                    <strong>Propagation of high frequency electrostatic surface waves along the planar interface between
+                      plasma and dusty plasma</strong>, Rinku Mishra, and M. Dey, <em>Physica Scripta</em>,
+                    <strong>93</strong>, 045601 (2018).
+                  </a>
+                </li>
+                <li>
+                  <a href="https://doi.org/10.1088/1402-4896/aace66" target="_blank">
+                    <strong>Propagation of electrostatic surface wave along the dust void boundary</strong>, Rinku
+                    Mishra, and M. Dey, <em>Physica Scripta</em>, <strong>93</strong>, 085601 (2018).
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <!-- 2017 Publications -->
+            <div class="publications-year">
+              <h3>2017</h3>
+              <ul class="publications-list">
+                <li>
+                  <a href="https://doi.org/10.1063/1.4994261" target="_blank">
+                    <strong>Criterion of sheath formation in magnetized low pressure plasma</strong>, S. Adhikari, R.
+                    Moulick, and K.S. Goswami, <em>Phys. Plasmas</em>, <strong>24</strong>, 114501 (2017).
+                  </a>
+                </li>
+                <li>
+                  <a href="#">
+                    <strong>Estimation of the reduction of sputtering for fusion grade materials after disappearance of
+                      the Debye sheath</strong>, S. Adhikari, R. Moulick, and K.S. Goswami, <em>Indian J. Physics</em>,
+                    <strong>92</strong>, 1-12 (2017).
+                  </a>
+                </li>
+                <li>
+                  <a href="https://doi.org/10.1063/1.4994535" target="_blank">
+                    <strong>A dynamic analysis of the magnetized plasma sheath in a collisionless scenario with ion
+                      sources</strong>, S. Adhikari, R. Moulick, and K.S. Goswami, <em>Phys. Plasmas</em>,
+                    <strong>24</strong>, 083501 (2017).
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Older Publications -->
+            <div class="publications-year">
+              <h3>Older Publications</h3>
+              <ul class="publications-list">
+                <li>
+                  <strong>Effect of Magnetic Field on MHD Pressure Drop Inside a Rectangular Conducting Duct</strong>,
+                  P.J. Bhuyan and K.S. Goswami, <em>IEEE Trans. Plasma Sci.</em>, <strong>36</strong>, 1955 (2008).
+                </li>
+                <li>
+                  <strong>Preliminary studies on MHD Simulation and Heat Transfer analysis for LLCB TBM</strong>, K S
+                  Goswami, B Dey, P J Bhuyan & E. Rajendrakumar, <em>Fusion Engineering and Design</em>,
+                  <strong>85</strong>, 5 (2010).
+                </li>
+                <li>
+                  <strong>Development of a potential based code for MHD analysis of LLCB TBM</strong>, P.J. Bhuyan and
+                  K.S. Goswami, <em>Fusion Engineering and Design</em>, <strong>85(1)</strong>, 8 (2010).
+                </li>
+                <li>
+                  <strong>Numerical investigation of the ion temperature effect in magnetized plasma sheath with two
+                    species of positive ions</strong>, A.K. Shaw, S. Kar, K.S. Goswami and B.J. Saikia, <em>Phys.
+                    Plasmas</em>, <strong>19</strong>, 012120 (2012).
+                </li>
+                <li>
+                  <strong>3D Thermo-fluid MHD simulation of single straight channel flow in LLCB TBM</strong>, R.
+                  Bhattacharyay, A.Patel, R. Srinivasan, E. Rajendrakumar, P. Satyamurthy, P. K. Swain, P. J. Bhuyan and
+                  K. S. Goswami, <em>Fusion Engineering and Design</em>, <strong>87</strong>, 408 (2012).
+                </li>
+                <li>
+                  <strong>The positive ion temperature effect in magnetized electronegative plasma sheath with two
+                    species of positive ions</strong>, A.K. Shaw, S. Kar and K.S. Goswami, <em>Phys. Plasmas</em>,
+                  <strong>19</strong>, 102108 (2012).
+                </li>
+                <li>
+                  <strong>Potential formation in a collisionless plasma produced in an open magnetic field in presence
+                    of volume negative ion source</strong>, Ananya Phukan, K. S. Goswami, P. J. Bhuyan, <em>Phys.
+                    Plasmas</em>, <strong>19</strong>, 113509 (2012).
+                </li>
+                <li>
+                  <strong>Effect of collision parameters in electronegative plasma sheath with two species of positive
+                    ions</strong>, R. Moulick, M. K. Mahanta, K. S. Goswami, <em>Phys. Plasmas</em>,
+                  <strong>20</strong>, 094501 (2013).
+                </li>
+                <li>
+                  <strong>Sheath formation under collisional conditions in presence of dust</strong>, R. Moulick, K. S.
+                  Goswami, <em>Phys. Plasmas</em>, <strong>21</strong>, 083702 (2014).
+                </li>
+                <li>
+                  <strong>Formation of collisional sheath in electronegative plasma with two species of positive
+                    ions</strong>, R. Moulick, K. S. Goswami, <em>Phys. Plasmas</em>, <strong>22</strong>, 033510
+                  (2015).
+                </li>
+                <li>
+                  <strong>Potential around a dust grain in collisional plasma</strong>, R. Moulick, K. S. Goswami,
+                  <em>Phys. Plasmas</em>, <strong>22</strong>, 043701 (2015).
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <div id="footer-container"></div>
+
+  <!-- SCRIPTS -->
+  <script>
+    // Tab Switching Function - Fixed to handle clicks on inner spans
+    function switchTab(tabName) {
+      // Hide all panels
+      document.querySelectorAll('.tab-panel').forEach(panel => {
+        panel.classList.remove('active');
+      });
+
+      // Remove active from all tabs
+      document.querySelectorAll('.lab-tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+
+      // Show selected panel
+      document.getElementById(tabName).classList.add('active');
+
+      // Activate clicked tab - using closest to handle clicks on inner spans
+      let clickedTab = event.target.closest('.lab-tab');
+      if (clickedTab) {
+        clickedTab.classList.add('active');
+      }
+
+      // Scroll active tab into view on mobile
+      if (window.innerWidth <= 900 && clickedTab) {
+        clickedTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
+    }
+
+    // Hide scroll indicators after first interaction
+    let hasInteracted = false;
+    const labTabs = document.getElementById('labTabs');
+    const scrollLeft = document.getElementById('scrollLeft');
+    const scrollRight = document.getElementById('scrollRight');
+
+    if (labTabs) {
+      labTabs.addEventListener('scroll', function () {
+        if (!hasInteracted) {
+          hasInteracted = true;
+          if (scrollLeft) scrollLeft.style.display = 'none';
+          if (scrollRight) scrollRight.style.display = 'none';
+        }
+      }, { once: true });
+
+      labTabs.addEventListener('touchstart', function () {
+        if (!hasInteracted) {
+          hasInteracted = true;
+          if (scrollLeft) scrollLeft.style.display = 'none';
+          if (scrollRight) scrollRight.style.display = 'none';
+        }
+      }, { once: true });
+    }
+
+    // People Filtering Function - Fixed to handle clicks on inner spans
+    function filterPeople(category) {
+      const allCards = document.querySelectorAll('.person-card');
+
+      // Update button states - using closest to handle clicks on inner spans
+      let clickedBtn = event.target.closest('.people-cat-btn');
+      if (clickedBtn) {
+        document.querySelectorAll('.people-cat-btn').forEach(btn => {
+          btn.classList.remove('active');
+        });
+        clickedBtn.classList.add('active');
+      }
+
+      // Show/hide cards
+      allCards.forEach(card => {
+        if (category === 'all') {
+          card.classList.add('show');
+        } else {
+          if (card.dataset.category === category) {
+            card.classList.add('show');
+          } else {
+            card.classList.remove('show');
+          }
+        }
+      });
+    }
+
+    // Fragment Loader
+    function loadFragment(url, containerId) {
+      fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const container = document.getElementById(containerId);
+          container.innerHTML = html;
+
+          container.querySelectorAll('script').forEach(oldScript => {
+            const newScript = document.createElement('script');
+            if (oldScript.src) {
+              newScript.src = oldScript.src;
+            } else {
+              newScript.textContent = oldScript.textContent;
+            }
+            oldScript.replaceWith(newScript);
+          });
+        })
+        .catch(err => console.error('Error loading fragment:', url, err));
+    }
+
+    loadFragment('/UI/header.html', 'header-container');
+    loadFragment('/UI/footer.html', 'footer-container');
+  </script>
+
+  <!-- MathJax for mathematical notation -->
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        processEscapes: true
+      }
+    });
+  </script>
+  <script type="text/javascript"
+    src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+
+</html>

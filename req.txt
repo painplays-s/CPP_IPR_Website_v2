@@ -1,0 +1,16 @@
+# Core dependencies
+Flask
+Werkzeug
+Jinja2
+
+# Production servers
+waitress
+gunicorn
+
+# SSL for development (optional)
+pyOpenSSL
+
+# Utilities
+python-dotenv
+
+requests

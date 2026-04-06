@@ -1,0 +1,1859 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>People Admin - CPP-IPR</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    /* =====================================================
+       GLOBAL RESET & BASE
+       ===================================================== */
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 1.5rem 4vw;
+      background: #0f172a;
+      color: #e5e7eb;
+      line-height: 1.5;
+    }
+
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* =====================================================
+       HEADER
+       ===================================================== */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.4rem;
+      white-space: nowrap;
+    }
+
+    h2 {
+      margin: 0 0 1rem;
+      font-size: 1.1rem;
+    }
+
+    /* =====================================================
+       FLASH MESSAGES
+       ===================================================== */
+    .flash-messages {
+      margin-bottom: 1rem;
+    }
+
+    .flash-message {
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .flash-success {
+      background: #166534;
+      color: #dcfce7;
+      border: 1px solid #22c55e;
+    }
+
+    .flash-error {
+      background: #7f1d1d;
+      color: #fecaca;
+      border: 1px solid #ef4444;
+    }
+
+    /* =====================================================
+       CARDS
+       ===================================================== */
+    .card {
+      background: #020617;
+      border-radius: 14px;
+      padding: 1.25rem;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      margin-bottom: 1.75rem;
+    }
+
+    /* =====================================================
+       FORMS
+       ===================================================== */
+    label {
+      display: block;
+      font-size: 0.9rem;
+      margin-bottom: 0.25rem;
+      color: #cbd5f5;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="file"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 0.5rem 0.6rem;
+      border-radius: 8px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 0.9rem;
+      margin-bottom: 0.75rem;
+      font-family: inherit;
+    }
+
+    input[type="file"] {
+      padding: 0.3rem 0.6rem;
+    }
+
+    select {
+      cursor: pointer;
+    }
+
+    input[type="radio"] {
+      margin-right: 0.5rem;
+      accent-color: #f59e0b;
+      width: 1rem;
+      height: 1rem;
+      cursor: pointer;
+    }
+
+    .radio-group {
+      display: flex;
+      gap: 1.5rem;
+      margin-bottom: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .radio-group label {
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.9rem;
+      margin: 0;
+      cursor: pointer;
+    }
+
+    .inline-input {
+      width: 100%;
+      padding: 0.5rem 0.6rem;
+      border-radius: 8px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .inline-textarea {
+      width: 100%;
+      padding: 0.5rem 0.6rem;
+      border-radius: 8px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+      min-height: 60px;
+      resize: vertical;
+      font-family: inherit;
+    }
+
+    .muted {
+      color: #94a3b8;
+      font-size: 0.85rem;
+    }
+
+    .form-section {
+      display: none;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(148, 163, 184, 0.2);
+    }
+
+    .form-section.active {
+      display: block;
+    }
+
+    .sub-category-section {
+      display: none;
+      margin-top: 0.75rem;
+      padding: 1rem;
+      background: rgba(15, 23, 42, 0.5);
+      border-radius: 8px;
+    }
+
+    .sub-category-section.active {
+      display: block;
+    }
+
+    /* Style for file input */
+    input[type="file"] {
+      padding: 0.5rem;
+      cursor: pointer;
+    }
+
+    input[type="file"]::-webkit-file-upload-button {
+      background: #1e293b;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      border-radius: 6px;
+      color: #e5e7eb;
+      padding: 0.3rem 0.8rem;
+      margin-right: 0.8rem;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .inline-input {
+      width: 100%;
+      padding: 0.5rem 0.6rem;
+      border-radius: 8px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .muted {
+      color: #94a3b8;
+      font-size: 0.85rem;
+      margin-top: -0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .reorder-hint {
+      font-size: 0.9rem;
+      color: #94a3b8;
+      margin-bottom: 0.75rem;
+      padding: 0.5rem;
+      background: rgba(15, 23, 42, 0.6);
+      border-radius: 6px;
+    }
+
+    /* =====================================================
+       BUTTONS
+       ===================================================== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem 1.1rem;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: 0.18s ease;
+      text-decoration: none;
+      color: inherit;
+      min-width: 88px;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(to right, #f59e0b, #ec4899);
+      color: #0b1120;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.9;
+    }
+
+    .btn-danger {
+      background: #ef4444;
+      color: #fee2e2;
+    }
+
+    .btn-danger:hover {
+      background: #dc2626;
+    }
+
+    .btn-secondary {
+      background: #fff8c2;
+      color: #000;
+      border: 1px solid #e6d98a;
+    }
+
+    .btn-secondary:hover {
+      background: #fef08a;
+    }
+
+    .btn-exit {
+      background: transparent;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    .btn-exit:hover {
+      background: rgba(148, 163, 184, 0.1);
+    }
+
+    /* =====================================================
+       TABLE (DESKTOP)
+       ===================================================== */
+    .table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border-radius: 8px;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      min-width: 900px;
+    }
+
+    .table th,
+    .table td {
+      padding: 0.6rem;
+      border-bottom: 1px solid rgba(30, 64, 175, 0.4);
+      vertical-align: top;
+    }
+
+    .table th {
+      color: #93c5fd;
+      background: rgba(15, 23, 42, 0.6);
+      text-align: left;
+    }
+
+    .drag-handle {
+      cursor: grab;
+      font-size: 1.2rem;
+      color: #94a3b8;
+      user-select: none;
+    }
+
+    .drag-handle:active {
+      cursor: grabbing;
+    }
+
+    tbody.draggable-rows tr.dragging {
+      opacity: 0.4;
+    }
+
+    .actions-row {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .person-photo {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+    }
+
+    /* Hidden field for sub_category */
+    .sub_category_hidden {
+      display: none;
+    }
+
+    /* Edit mode styles */
+    .edit-mode {
+      background: rgba(15, 23, 42, 0.6);
+      padding: 0.75rem;
+      border-radius: 8px;
+      margin-top: 0.5rem;
+    }
+
+    .edit-mode label {
+      margin-top: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* =====================================================
+       MOBILE CARD LAYOUT (PORTRAIT)
+       ===================================================== */
+    .mobile-items-list {
+      display: none;
+    }
+
+    .mobile-item-card {
+      background: #071031;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      transition: opacity 0.2s;
+    }
+
+    .mobile-item-card.dragging {
+      opacity: 0.4;
+    }
+
+    .mobile-item-card .card-drag-handle {
+      font-size: 1.5rem;
+      cursor: grab;
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      margin-bottom: 0.5rem;
+      color: #94a3b8;
+      user-select: none;
+    }
+
+    .mobile-item-card .card-drag-handle:active {
+      cursor: grabbing;
+    }
+
+    .mobile-item-card .card-section {
+      margin-bottom: 0.75rem;
+    }
+
+    .mobile-item-card .card-section label {
+      font-size: 0.8rem;
+      color: #93c5fd;
+      margin-bottom: 0.25rem;
+      display: block;
+    }
+
+    .mobile-item-card .card-name {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #60a5fa;
+      margin-bottom: 0.5rem;
+    }
+
+    .mobile-item-card .actions-row {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .mobile-item-card .actions-row .btn {
+      width: 100%;
+    }
+
+    .type-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: rgba(59, 130, 246, 0.2);
+      color: #93c5fd;
+    }
+
+    /* =====================================================
+       RESPONSIVE — PORTRAIT / TABLET
+       ===================================================== */
+    @media (orientation: portrait) {
+      body {
+        padding: 1rem;
+      }
+
+      .header {
+        flex-wrap: wrap;
+      }
+
+      .header h1 {
+        flex: 1 1 100%;
+      }
+
+      /* Hide desktop table, show mobile cards */
+      .table-wrapper {
+        display: none;
+      }
+
+      .mobile-items-list {
+        display: block;
+      }
+    }
+
+    /* =====================================================
+       RESPONSIVE — MOBILE (SMALL PORTRAIT)
+       ===================================================== */
+    @media (max-width: 480px) {
+      .actions-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .actions-row .btn {
+        width: 100%;
+      }
+
+      .radio-group {
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+
+    <div class="header">
+      <h1>People Admin</h1>
+      <a href="{{ url_for('admin_home.admin_home') }}" class="btn btn-exit">Exit</a>
+    </div>
+
+    <!-- FLASH MESSAGES -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-messages">
+      {% for category, message in messages %}
+      <div class="flash-message flash-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <!-- ADD NEW PERSON -->
+    <div class="card">
+      <h2>Add New Person</h2>
+
+      <label>Select Category</label>
+      <select id="categoryType" onchange="toggleCategorySections()">
+        <option value="">-- Choose Category --</option>
+        <option value="director">Center Director</option>
+        <option value="staff">Administrative Staffs</option>
+        <option value="faculty">Faculties/Scientists/Engineers</option>
+        <option value="scholar">PDFs/Research Scholars</option>
+      </select>
+
+      <!-- CENTER DIRECTOR SECTION -->
+      <div id="directorSection" class="form-section">
+        <form method="POST" action="{{ url_for('admin_people.add_director') }}" enctype="multipart/form-data"
+          onsubmit="return validateDirectorForm(this)">
+          <label>Photo (JPEG, JPG, PNG only)</label>
+          <input type="file" name="photo" accept=".jpeg,.jpg,.png" required>
+
+          <label>Name (English)</label>
+          <input type="text" name="name_en" required>
+
+          <label>Name (Hindi)</label>
+          <input type="text" name="name_hi" required>
+
+          <label>Email</label>
+          <input type="email" name="email" required>
+
+          <button class="btn btn-primary" style="margin-top: 0.6rem;">Add Director</button>
+        </form>
+      </div>
+
+      <!-- ADMINISTRATIVE STAFF SECTION -->
+      <div id="staffSection" class="form-section">
+        <label>Select Sub-Category</label>
+        <select id="staffSubCategory" onchange="toggleStaffForm()">
+          <option value="">-- Choose Sub-Category --</option>
+          <option value="admin_head">Administration Head</option>
+          <option value="general_admin">General Administration</option>
+          <option value="finance">Finance and Accounts</option>
+          <option value="purchase">Purchase and Stores</option>
+          <option value="transport">Administration (Transport/Mail/Housekeeping)</option>
+          <option value="library">Library</option>
+        </select>
+
+        <div id="staffForm" class="sub-category-section">
+          <form method="POST" action="{{ url_for('admin_people.add_staff') }}" enctype="multipart/form-data"
+            onsubmit="return validateStaffForm(this)">
+            <input type="hidden" name="sub_category" id="staffSubCategoryValue">
+
+            <label>Photo (JPEG, JPG, PNG only)</label>
+            <input type="file" name="photo" accept=".jpeg,.jpg,.png" required>
+
+            <label>Name (English)</label>
+            <input type="text" name="name_en" required>
+
+            <label>Name (Hindi)</label>
+            <input type="text" name="name_hi" required>
+
+            <label>Designation (English)</label>
+            <input type="text" name="designation_en" required>
+
+            <label>Designation (Hindi)</label>
+            <input type="text" name="designation_hi" required>
+
+            <label>Email</label>
+            <input type="email" name="email" required>
+
+            <label>Extn. No.</label>
+            <input type="text" name="extn_no" required>
+
+            <button class="btn btn-primary" style="margin-top: 0.6rem;">Add Staff Member</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- FACULTY/SCIENTISTS/ENGINEERS SECTION -->
+      <div id="facultySection" class="form-section">
+        <label>Select Sub-Category</label>
+        <select id="facultySubCategory" onchange="toggleFacultyForm()">
+          <option value="">-- Choose Sub-Category --</option>
+          <option value="faculty_officers">Faculties/Scientific Officers</option>
+          <option value="engineering">Engineering Section</option>
+          <option value="scientific_assistants">Scientific Assistants</option>
+          <option value="project_officers">Project Scientific Officers</option>
+          <option value="project_assistants">Project Scientific Assistants</option>
+          <option value="technician">Technician</option>
+          <option value="project_technician">Project Technician</option>
+        </select>
+
+        <div id="facultyForm" class="sub-category-section">
+          <form method="POST" action="{{ url_for('admin_people.add_faculty') }}" enctype="multipart/form-data"
+            onsubmit="return validateFacultyForm(this)">
+            <input type="hidden" name="sub_category" id="facultySubCategoryValue">
+
+            <label>Photo (JPEG, JPG, PNG only)</label>
+            <input type="file" name="photo" accept=".jpeg,.jpg,.png" required>
+
+            <label>Name (English)</label>
+            <input type="text" name="name_en" required>
+
+            <label>Name (Hindi)</label>
+            <input type="text" name="name_hi" required>
+
+            <label>Designation (English)</label>
+            <input type="text" name="designation_en" required>
+
+            <label>Designation (Hindi)</label>
+            <input type="text" name="designation_hi" required>
+
+            <label>Location/Lab (English)</label>
+            <input type="text" name="location_en" required>
+
+            <label>Location/Lab (Hindi)</label>
+            <input type="text" name="location_hi" required>
+
+            <label>Email</label>
+            <input type="email" name="email" required>
+
+            <label>Extn. No.</label>
+            <input type="text" name="extn_no" required>
+
+            <button class="btn btn-primary" style="margin-top: 0.6rem;">Add Faculty Member</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- PDF/RESEARCH SCHOLARS SECTION -->
+      <div id="scholarSection" class="form-section">
+        <form method="POST" action="{{ url_for('admin_people.add_scholar') }}" enctype="multipart/form-data"
+          onsubmit="return validateScholarForm(this)">
+          <label>Photo (JPEG, JPG, PNG only)</label>
+          <input type="file" name="photo" accept=".jpeg,.jpg,.png" required>
+
+          <label>Name (English)</label>
+          <input type="text" name="name_en" required>
+
+          <label>Name (Hindi)</label>
+          <input type="text" name="name_hi" required>
+
+          <label>Position</label>
+          <div class="radio-group">
+            <label>
+              <input type="radio" name="position" value="PDF" required> PDF
+            </label>
+            <label>
+              <input type="radio" name="position" value="SRF" required> SRF
+            </label>
+            <label>
+              <input type="radio" name="position" value="JRF" required> JRF
+            </label>
+          </div>
+
+          <label>Lab (English)</label>
+          <input type="text" name="lab_en" required>
+
+          <label>Lab (Hindi)</label>
+          <input type="text" name="lab_hi" required>
+
+          <label>Email</label>
+          <input type="email" name="email" required>
+
+          <label>Extn. No.</label>
+          <input type="text" name="extn_no" required>
+
+          <button class="btn btn-primary" style="margin-top: 0.6rem;">Add Scholar</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- CENTER DIRECTOR LIST -->
+    <div class="card" id="directorCard" {% if not director %}style="display:none;" {% endif %}>
+      <h2>Center Director</h2>
+
+      {% if director %}
+      <!-- DESKTOP TABLE VIEW -->
+      <div class="table-wrapper">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Photo</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <img src="/assets/images/people/{{ director.photo }}" class="person-photo" alt="{{ director.name_en }}">
+              </td>
+              <td>
+                <div class="view-mode">
+                  <strong>EN:</strong> <span class="name-en-view">{{ director.name_en }}</span><br>
+                  <strong>HI:</strong> <span class="name-hi-view">{{ director.name_hi }}</span>
+                </div>
+                <div class="edit-mode" style="display:none;">
+                  <input class="inline-input name-en" value="{{ director.name_en }}" placeholder="Name (English)">
+                  <input class="inline-input name-hi" value="{{ director.name_hi }}" placeholder="Name (Hindi)">
+                  <input class="inline-input email-input" value="{{ director.email }}" placeholder="Email">
+                </div>
+              </td>
+              <td>
+                <span class="email-view">{{ director.email }}</span>
+              </td>
+              <td>
+                <div class="actions-row">
+                  <button class="btn btn-secondary" onclick="toggleEdit(this, 'director')"
+                    data-id="{{ director.id }}">Edit</button>
+                  <button class="btn btn-primary" style="display:none;" onclick="saveEdit(this, 'director')"
+                    data-id="{{ director.id }}">Save</button>
+                  <button class="btn btn-secondary" style="display:none;" onclick="cancelEdit(this)">Cancel</button>
+                  <button class="btn btn-danger" data-id="{{ director.id }}"
+                    onclick="deleteItem(this.dataset.id, 'director')">Delete</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- MOBILE CARD VIEW -->
+      <div class="mobile-items-list">
+        <div class="mobile-item-card">
+          <div class="card-section">
+            <span class="type-badge">DIRECTOR</span>
+          </div>
+          <div class="card-section">
+            <img src="/assets/images/people/{{ director.photo }}" class="person-photo" alt="{{ director.name_en }}">
+          </div>
+          <div class="card-section">
+            <label>Name</label>
+            <div class="view-mode">
+              <strong>EN:</strong> <span class="name-en-view">{{ director.name_en }}</span><br>
+              <strong>HI:</strong> <span class="name-hi-view">{{ director.name_hi }}</span>
+            </div>
+            <div class="edit-mode" style="display:none;">
+              <input class="inline-input name-en" value="{{ director.name_en }}" placeholder="Name (English)">
+              <input class="inline-input name-hi" value="{{ director.name_hi }}" placeholder="Name (Hindi)">
+              <input class="inline-input email-input" value="{{ director.email }}" placeholder="Email">
+            </div>
+          </div>
+          <div class="card-section">
+            <label>Email</label>
+            <span class="email-view">{{ director.email }}</span>
+          </div>
+          <div class="actions-row">
+            <button class="btn btn-secondary" onclick="toggleEdit(this, 'director')"
+              data-id="{{ director.id }}">Edit</button>
+            <button class="btn btn-primary" style="display:none;" onclick="saveEdit(this, 'director')"
+              data-id="{{ director.id }}">Save</button>
+            <button class="btn btn-secondary" style="display:none;" onclick="cancelEdit(this)">Cancel</button>
+            <button class="btn btn-danger" data-id="{{ director.id }}"
+              onclick="deleteItem(this.dataset.id, 'director')">Delete</button>
+          </div>
+        </div>
+      </div>
+      {% else %}
+      <p class="muted">No director added yet.</p>
+      {% endif %}
+    </div>
+
+    <!-- ADMINISTRATIVE STAFF LIST -->
+    <div class="card" id="staffCard" {% if not staff or staff|length==0 %}style="display:none;" {% endif %}>
+      <h2>Administrative Staffs</h2>
+
+      {% if staff|length > 0 %}
+      <button id="saveStaffOrderBtn" class="btn btn-primary" style="margin-bottom:0.6rem;">Save Order</button>
+
+      <!-- DESKTOP TABLE VIEW -->
+      <div class="table-wrapper">
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="width:40px;"></th>
+              <th>Photo</th>
+              <th>Name</th>
+              <th>Designation</th>
+              <th>Email</th>
+              <th>Extn</th>
+              <th>Category</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody class="draggable-rows" id="staffTbody">
+            {% for s in staff %}
+            <tr draggable="true" data-id="{{ s.id }}">
+              <td><span class="drag-handle">☰</span></td>
+              <td>
+                <img src="/assets/images/people/{{ s.photo }}" class="person-photo" alt="{{ s.name_en }}">
+              </td>
+              <td>
+                <div class="view-mode">
+                  <strong>EN:</strong> <span class="name-en-view">{{ s.name_en }}</span><br>
+                  <strong>HI:</strong> <span class="name-hi-view">{{ s.name_hi }}</span>
+                </div>
+                <div class="edit-mode" style="display:none;">
+                  <input class="inline-input name-en" value="{{ s.name_en }}" placeholder="Name (English)">
+                  <input class="inline-input name-hi" value="{{ s.name_hi }}" placeholder="Name (Hindi)">
+                </div>
+              </td>
+              <td>
+                <div class="view-mode">
+                  <strong>EN:</strong> <span class="designation-en-view">{{ s.designation_en }}</span><br>
+                  <strong>HI:</strong> <span class="designation-hi-view">{{ s.designation_hi }}</span>
+                </div>
+                <div class="edit-mode" style="display:none;">
+                  <input class="inline-input designation-en" value="{{ s.designation_en }}"
+                    placeholder="Designation (English)">
+                  <input class="inline-input designation-hi" value="{{ s.designation_hi }}"
+                    placeholder="Designation (Hindi)">
+                </div>
+              </td>
+              <td>
+                <div class="view-mode">
+                  <span class="email-view">{{ s.email }}</span>
+                </div>
+                <div class="edit-mode" style="display:none;">
+                  <input class="inline-input email-input" value="{{ s.email }}" placeholder="Email">
+                </div>
+              </td>
+              <td>
+                <div class="view-mode">
+                  <span class="extn-view">{{ s.extn_no }}</span>
+                </div>
+                <div class="edit-mode" style="display:none;">
+                  <input class="inline-input extn-input" value="{{ s.extn_no }}" placeholder="Extn">
+                </div>
+              </td>
+              <td class="muted">{{ s.sub_category }}</td>
+              <td>
+                <div class="actions-row">
+                  <button class="btn btn-secondary" onclick="toggleEdit(this, 'staff')"
+                    data-id="{{ s.id }}">Edit</button>
+                  <button class="btn btn-primary" style="display:none;" onclick="saveEdit(this, 'staff')"
+                    data-id="{{ s.id }}">Save</button>
+                  <button class="btn btn-secondary" style="display:none;" onclick="cancelEdit(this)">Cancel</button>
+                  <button class="btn btn-danger" data-id="{{ s.id }}"
+                    onclick="deleteItem(this.dataset.id, 'staff')">Delete</button>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- MOBILE CARD VIEW -->
+      <div class="mobile-items-list" id="mobileStaffList">
+        {% for s in staff %}
+        <div class="mobile-item-card" draggable="true" data-id="{{ s.id }}">
+          <span class="card-drag-handle">☰</span>
+          <div class="card-section">
+            <span class="type-badge">STAFF - {{ s.sub_category }}</span>
+          </div>
+          <div class="card-section">
+            <img src="/assets/images/people/{{ s.photo }}" class="person-photo" alt="{{ s.name_en }}">
+          </div>
+          <div class="card-section">
+            <label>Name</label>
+            <div class="view-mode">
+              <strong>EN:</strong> <span class="name-en-view">{{ s.name_en }}</span><br>
+              <strong>HI:</strong> <span class="name-hi-view">{{ s.name_hi }}</span>
+            </div>
+            <div class="edit-mode" style="display:none;">
+              <input class="inline-input name-en" value="{{ s.name_en }}" placeholder="Name (English)">
+              <input class="inline-input name-hi" value="{{ s.name_hi }}" placeholder="Name (Hindi)">
+            </div>
+          </div>
+          <div class="card-section">
+            <label>Designation</label>
+            <div class="view-mode">
+              <strong>EN:</strong> <span class="designation-en-view">{{ s.designation_en }}</span><br>
+              <strong>HI:</strong> <span class="designation-hi-view">{{ s.designation_hi }}</span>
+            </div>
+            <div class="edit-mode" style="display:none;">
+              <input class="inline-input designation-en" value="{{ s.designation_en }}"
+                placeholder="Designation (English)">
+              <input class="inline-input designation-hi" value="{{ s.designation_hi }}"
+                placeholder="Designation (Hindi)">
+            </div>
+          </div>
+          <div class="card-section">
+            <label>Email</label>
+            <div class="view-mode">
+              <span class="email-view">{{ s.email }}</span>
+            </div>
+            <div class="edit-mode" style="display:none;">
+              <input class="inline-input email-input" value="{{ s.email }}" placeholder="Email">
+            </div>
+          </div>
+          <div class="card-section">
+            <label>Extn</label>
+            <div class="view-mode">
+              <span class="extn-view">{{ s.extn_no }}</span>
+            </div>
+            <div class="edit-mode" style="display:none;">
+              <input class="inline-input extn-input" value="{{ s.extn_no }}" placeholder="Extn">
+            </div>
+          </div>
+          <div class="card-section muted" style="display:none;">
+            <input type="hidden" class="sub_category" value="{{ s.sub_category }}">
+          </div>
+          <div class="actions-row">
+            <button class="btn btn-secondary" onclick="toggleEdit(this, 'staff')" data-id="{{ s.id }}">Edit</button>
+            <button class="btn btn-primary" style="display:none;" onclick="saveEdit(this, 'staff')"
+              data-id="{{ s.id }}">Save</button>
+            <button class="btn btn-secondary" style="display:none;" onclick="cancelEdit(this)">Cancel</button>
+            <button class="btn btn-danger" data-id="{{ s.id }}"
+              onclick="deleteItem(this.dataset.id, 'staff')">Delete</button>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <p class="muted">No staff members added yet.</p>
+      {% endif %}
+    </div>
+
+    <!-- FACULTY/SCIENTISTS/ENGINEERS LIST -->
+    <div class="card" id="facultyCard" {% if not faculty or faculty|length==0 %}style="display:none;" {% endif %}>
+      <h2>Faculties/Scientists/Engineers</h2>
+
+      {% if faculty|length > 0 %}
+      <button id="saveFacultyOrderBtn" class="btn btn-primary" style="margin-bottom:0.6rem;">Save Order</button>
+
+      <!-- DESKTOP TABLE VIEW -->
+      <div class="table-wrapper">
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="width:40px;"></th>
+              <th>Photo</th>
+              <th>Name</th>
+              <th>Designation</th>
+              <th>Location/Lab</th>
+              <th>Email</th>
+              <th>Extn</th>
+              <th>Category</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody class="draggable-rows" id="facultyTbody">
+            {% for f in faculty %}
+            <tr draggable="true" data-id="{{ f.id }}">
+              <td><span class="drag-handle">☰</span></td>
+              <td>
+                <img src="/assets/images/people/{{ f.photo }}" class="person-photo" alt="{{ f.name_en }}">
+              </td>
+              <td>
+                <div class="view-mode">
+                  <strong>EN:</strong> <span class="name-en-view">{{ f.name_en }}</span><br>
+                  <strong>HI:</strong> <span class="name-hi-view">{{ f.name_hi }}</span>
+                </div>
+                <div class="edit-mode" style="display:none;">
+                  <input class="inline-input name-en" value="{{ f.name_en }}" placeholder="Name (English)">
+                  <input class="inline-input name-hi" value="{{ f.name_hi }}" placeholder="Name (Hindi)">
+                </div>
+              </td>
+              <td>
+                <div class="view-mode">
+                  <strong>EN:</strong> <span class="designation-en-view">{{ f.designation_en }}</span><br>
+                  <strong>HI:</strong> <span class="designation-hi-view">{{ f.designation_hi }}</span>
+                </div>
+                <div class="edit-mode" style="display:none;">
+                  <input class="inline-input designation-en" value="{{ f.designation_en }}"
+                    placeholder="Designation (English)">
+                  <input class="inline-input designation-hi" value="{{ f.designation_hi }}"
+                    placeholder="Designation (Hindi)">
+                </div>
+              </td>
+              <td>
+                <div class="view-mode">
+                  <strong>EN:</strong> <span class="location-en-view">{{ f.location_en }}</span><br>
+                  <strong>HI:</strong> <span class="location-hi-view">{{ f.location_hi }}</span>
+                </div>
+                <div class="edit-mode" style="display:none;">
+                  <input class="inline-input location-en" value="{{ f.location_en }}" placeholder="Location (English)">
+                  <input class="inline-input location-hi" value="{{ f.location_hi }}" placeholder="Location (Hindi)">
+                </div>
+              </td>
+              <td>
+                <div class="view-mode">
+                  <span class="email-view">{{ f.email }}</span>
+                </div>
+                <div class="edit-mode" style="display:none;">
+                  <input class="inline-input email-input" value="{{ f.email }}" placeholder="Email">
+                </div>
+              </td>
+              <td>
+                <div class="view-mode">
+                  <span class="extn-view">{{ f.extn_no }}</span>
+                </div>
+                <div class="edit-mode" style="display:none;">
+                  <input class="inline-input extn-input" value="{{ f.extn_no }}" placeholder="Extn">
+                </div>
+              </td>
+              <td>
+                <span class="muted">{{ f.sub_category }}</span>
+                <input type="hidden" class="sub_category" value="{{ f.sub_category }}">
+              </td>
+              <td>
+                <div class="actions-row">
+                  <button class="btn btn-secondary" onclick="toggleEdit(this, 'faculty')"
+                    data-id="{{ f.id }}">Edit</button>
+                  <button class="btn btn-primary" style="display:none;" onclick="saveEdit(this, 'faculty')"
+                    data-id="{{ f.id }}">Save</button>
+                  <button class="btn btn-secondary" style="display:none;" onclick="cancelEdit(this)">Cancel</button>
+                  <button class="btn btn-danger" data-id="{{ f.id }}"
+                    onclick="deleteItem(this.dataset.id, 'faculty')">Delete</button>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- MOBILE CARD VIEW -->
+      <div class="mobile-items-list" id="mobileFacultyList">
+        {% for f in faculty %}
+        <div class="mobile-item-card" draggable="true" data-id="{{ f.id }}">
+          <span class="card-drag-handle">☰</span>
+          <div class="card-section">
+            <span class="type-badge">FACULTY - {{ f.sub_category }}</span>
+          </div>
+          <div class="card-section">
+            <img src="/assets/images/people/{{ f.photo }}" class="person-photo" alt="{{ f.name_en }}">
+          </div>
+          <div class="card-section">
+            <label>Name</label>
+            <div class="view-mode">
+              <strong>EN:</strong> <span class="name-en-view">{{ f.name_en }}</span><br>
+              <strong>HI:</strong> <span class="name-hi-view">{{ f.name_hi }}</span>
+            </div>
+            <div class="edit-mode" style="display:none;">
+              <input class="inline-input name-en" value="{{ f.name_en }}" placeholder="Name (English)">
+              <input class="inline-input name-hi" value="{{ f.name_hi }}" placeholder="Name (Hindi)">
+            </div>
+          </div>
+          <div class="card-section">
+            <label>Designation</label>
+            <div class="view-mode">
+              <strong>EN:</strong> <span class="designation-en-view">{{ f.designation_en }}</span><br>
+              <strong>HI:</strong> <span class="designation-hi-view">{{ f.designation_hi }}</span>
+            </div>
+            <div class="edit-mode" style="display:none;">
+              <input class="inline-input designation-en" value="{{ f.designation_en }}"
+                placeholder="Designation (English)">
+              <input class="inline-input designation-hi" value="{{ f.designation_hi }}"
+                placeholder="Designation (Hindi)">
+            </div>
+          </div>
+          <div class="card-section">
+            <label>Location/Lab</label>
+            <div class="view-mode">
+              <strong>EN:</strong> <span class="location-en-view">{{ f.location_en }}</span><br>
+              <strong>HI:</strong> <span class="location-hi-view">{{ f.location_hi }}</span>
+            </div>
+            <div class="edit-mode" style="display:none;">
+              <input class="inline-input location-en" value="{{ f.location_en }}" placeholder="Location (English)">
+              <input class="inline-input location-hi" value="{{ f.location_hi }}" placeholder="Location (Hindi)">
+            </div>
+          </div>
+          <div class="card-section">
+            <label>Email</label>
+            <div class="view-mode">
+              <span class="email-view">{{ f.email }}</span>
+            </div>
+            <div class="edit-mode" style="display:none;">
+              <input class="inline-input email-input" value="{{ f.email }}" placeholder="Email">
+            </div>
+          </div>
+          <div class="card-section">
+            <label>Extn</label>
+            <div class="view-mode">
+              <span class="extn-view">{{ f.extn_no }}</span>
+            </div>
+            <div class="edit-mode" style="display:none;">
+              <input class="inline-input extn-input" value="{{ f.extn_no }}" placeholder="Extn">
+            </div>
+          </div>
+          <div class="card-section muted" style="display:none;">
+            <input type="hidden" class="sub_category" value="{{ f.sub_category }}">
+          </div>
+          <div class="actions-row">
+            <button class="btn btn-secondary" onclick="toggleEdit(this, 'faculty')" data-id="{{ f.id }}">Edit</button>
+            <button class="btn btn-primary" style="display:none;" onclick="saveEdit(this, 'faculty')"
+              data-id="{{ f.id }}">Save</button>
+            <button class="btn btn-secondary" style="display:none;" onclick="cancelEdit(this)">Cancel</button>
+            <button class="btn btn-danger" data-id="{{ f.id }}"
+              onclick="deleteItem(this.dataset.id, 'faculty')">Delete</button>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <p class="muted">No faculty members added yet.</p>
+      {% endif %}
+    </div>
+
+    <!-- PDFs/RESEARCH SCHOLARS LIST -->
+    <div class="card" id="scholarCard" {% if not scholars or scholars|length==0 %}style="display:none;" {% endif %}>
+      <h2>PDFs/Research Scholars</h2>
+
+      {% if scholars|length > 0 %}
+      <button id="saveScholarOrderBtn" class="btn btn-primary" style="margin-bottom:0.6rem;">Save Order</button>
+
+      <!-- DESKTOP TABLE VIEW -->
+      <div class="table-wrapper">
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="width:40px;"></th>
+              <th>Photo</th>
+              <th>Name</th>
+              <th>Position</th>
+              <th>Lab</th>
+              <th>Email</th>
+              <th>Extn</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody class="draggable-rows" id="scholarTbody">
+            {% for sc in scholars %}
+            <tr draggable="true" data-id="{{ sc.id }}">
+              <td><span class="drag-handle">☰</span></td>
+              <td>
+                <img src="/assets/images/people/{{ sc.photo }}" class="person-photo" alt="{{ sc.name_en }}">
+              </td>
+              <td>
+                <div class="view-mode">
+                  <strong>EN:</strong> <span class="name-en-view">{{ sc.name_en }}</span><br>
+                  <strong>HI:</strong> <span class="name-hi-view">{{ sc.name_hi }}</span>
+                </div>
+                <div class="edit-mode" style="display:none;">
+                  <input class="inline-input name-en" value="{{ sc.name_en }}" placeholder="Name (English)">
+                  <input class="inline-input name-hi" value="{{ sc.name_hi }}" placeholder="Name (Hindi)">
+                </div>
+              </td>
+              <td>
+                <div class="view-mode">
+                  <span class="position-view">{{ sc.position }}</span>
+                </div>
+                <div class="edit-mode" style="display:none;">
+                  <select class="inline-input position-input">
+                    <option value="PDF" {% if sc.position=='PDF' %}selected{% endif %}>PDF</option>
+                    <option value="SRF" {% if sc.position=='SRF' %}selected{% endif %}>SRF</option>
+                    <option value="JRF" {% if sc.position=='JRF' %}selected{% endif %}>JRF</option>
+                  </select>
+                </div>
+              </td>
+              <td>
+                <div class="view-mode">
+                  <strong>EN:</strong> <span class="lab-en-view">{{ sc.lab_en }}</span><br>
+                  <strong>HI:</strong> <span class="lab-hi-view">{{ sc.lab_hi }}</span>
+                </div>
+                <div class="edit-mode" style="display:none;">
+                  <input class="inline-input lab-en" value="{{ sc.lab_en }}" placeholder="Lab (English)">
+                  <input class="inline-input lab-hi" value="{{ sc.lab_hi }}" placeholder="Lab (Hindi)">
+                </div>
+              </td>
+              <td>
+                <div class="view-mode">
+                  <span class="email-view">{{ sc.email }}</span>
+                </div>
+                <div class="edit-mode" style="display:none;">
+                  <input class="inline-input email-input" value="{{ sc.email }}" placeholder="Email">
+                </div>
+              </td>
+              <td>
+                <div class="view-mode">
+                  <span class="extn-view">{{ sc.extn_no }}</span>
+                </div>
+                <div class="edit-mode" style="display:none;">
+                  <input class="inline-input extn-input" value="{{ sc.extn_no }}" placeholder="Extn">
+                </div>
+              </td>
+              <td>
+                <div class="actions-row">
+                  <button class="btn btn-secondary" onclick="toggleEdit(this, 'scholar')"
+                    data-id="{{ sc.id }}">Edit</button>
+                  <button class="btn btn-primary" style="display:none;" onclick="saveEdit(this, 'scholar')"
+                    data-id="{{ sc.id }}">Save</button>
+                  <button class="btn btn-secondary" style="display:none;" onclick="cancelEdit(this)">Cancel</button>
+                  <button class="btn btn-danger" data-id="{{ sc.id }}"
+                    onclick="deleteItem(this.dataset.id, 'scholar')">Delete</button>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- MOBILE CARD VIEW -->
+      <div class="mobile-items-list" id="mobileScholarList">
+        {% for sc in scholars %}
+        <div class="mobile-item-card" draggable="true" data-id="{{ sc.id }}">
+          <span class="card-drag-handle">☰</span>
+          <div class="card-section">
+            <span class="type-badge">{{ sc.position }}</span>
+          </div>
+          <div class="card-section">
+            <img src="/assets/images/people/{{ sc.photo }}" class="person-photo" alt="{{ sc.name_en }}">
+          </div>
+          <div class="card-section">
+            <label>Name</label>
+            <div class="view-mode">
+              <strong>EN:</strong> <span class="name-en-view">{{ sc.name_en }}</span><br>
+              <strong>HI:</strong> <span class="name-hi-view">{{ sc.name_hi }}</span>
+            </div>
+            <div class="edit-mode" style="display:none;">
+              <input class="inline-input name-en" value="{{ sc.name_en }}" placeholder="Name (English)">
+              <input class="inline-input name-hi" value="{{ sc.name_hi }}" placeholder="Name (Hindi)">
+            </div>
+          </div>
+          <div class="card-section">
+            <label>Position</label>
+            <div class="view-mode">
+              <span class="position-view">{{ sc.position }}</span>
+            </div>
+            <div class="edit-mode" style="display:none;">
+              <select class="inline-input position-input">
+                <option value="PDF" {% if sc.position=='PDF' %}selected{% endif %}>PDF</option>
+                <option value="SRF" {% if sc.position=='SRF' %}selected{% endif %}>SRF</option>
+                <option value="JRF" {% if sc.position=='JRF' %}selected{% endif %}>JRF</option>
+              </select>
+            </div>
+          </div>
+          <div class="card-section">
+            <label>Lab</label>
+            <div class="view-mode">
+              <strong>EN:</strong> <span class="lab-en-view">{{ sc.lab_en }}</span><br>
+              <strong>HI:</strong> <span class="lab-hi-view">{{ sc.lab_hi }}</span>
+            </div>
+            <div class="edit-mode" style="display:none;">
+              <input class="inline-input lab-en" value="{{ sc.lab_en }}" placeholder="Lab (English)">
+              <input class="inline-input lab-hi" value="{{ sc.lab_hi }}" placeholder="Lab (Hindi)">
+            </div>
+          </div>
+          <div class="card-section">
+            <label>Email</label>
+            <div class="view-mode">
+              <span class="email-view">{{ sc.email }}</span>
+            </div>
+            <div class="edit-mode" style="display:none;">
+              <input class="inline-input email-input" value="{{ sc.email }}" placeholder="Email">
+            </div>
+          </div>
+          <div class="card-section">
+            <label>Extn</label>
+            <div class="view-mode">
+              <span class="extn-view">{{ sc.extn_no }}</span>
+            </div>
+            <div class="edit-mode" style="display:none;">
+              <input class="inline-input extn-input" value="{{ sc.extn_no }}" placeholder="Extn">
+            </div>
+          </div>
+          <div class="actions-row">
+            <button class="btn btn-secondary" onclick="toggleEdit(this, 'scholar')" data-id="{{ sc.id }}">Edit</button>
+            <button class="btn btn-primary" style="display:none;" onclick="saveEdit(this, 'scholar')"
+              data-id="{{ sc.id }}">Save</button>
+            <button class="btn btn-secondary" style="display:none;" onclick="cancelEdit(this)">Cancel</button>
+            <button class="btn btn-danger" data-id="{{ sc.id }}"
+              onclick="deleteItem(this.dataset.id, 'scholar')">Delete</button>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <p class="muted">No scholars added yet.</p>
+      {% endif %}
+    </div>
+
+  </div>
+
+  <script>
+    /* ------- FILE VALIDATION FUNCTION ------- */
+    function validateImageFile(file) {
+      const allowedExtensions = ['.jpg', '.jpeg', '.png'];
+      const fileName = file.name;
+      const ext = '.' + fileName.split('.').pop().toLowerCase();
+      return allowedExtensions.includes(ext);
+    }
+
+    /* ------- EMAIL VALIDATION FUNCTION ------- */
+    function validateEmail(email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    }
+
+    /* ------- FORM VALIDATION FUNCTIONS ------- */
+    function validateDirectorForm(form) {
+      const fileInput = form.querySelector('input[type="file"]');
+      const nameEn = form.querySelector('input[name="name_en"]').value.trim();
+      const nameHi = form.querySelector('input[name="name_hi"]').value.trim();
+      const email = form.querySelector('input[name="email"]').value.trim();
+
+      if (!nameEn) {
+        alert('Name (English) is required.');
+        return false;
+      }
+
+      if (!email) {
+        alert('Email is required.');
+        return false;
+      }
+
+      if (!validateEmail(email)) {
+        alert('Please enter a valid email address.');
+        return false;
+      }
+
+      if (fileInput.files.length === 0) {
+        alert('Please select a photo to upload.');
+        return false;
+      }
+
+      if (!validateImageFile(fileInput.files[0])) {
+        alert(`Only JPG, JPEG, and PNG files are allowed for photos. The file "${fileInput.files[0].name}" is not supported.`);
+        return false;
+      }
+      return true;
+    }
+
+    function validateStaffForm(form) {
+      const fileInput = form.querySelector('input[type="file"]');
+      const nameEn = form.querySelector('input[name="name_en"]').value.trim();
+      const nameHi = form.querySelector('input[name="name_hi"]').value.trim();
+      const designationEn = form.querySelector('input[name="designation_en"]').value.trim();
+      const email = form.querySelector('input[name="email"]').value.trim();
+      const extnNo = form.querySelector('input[name="extn_no"]').value.trim();
+      const subCategory = document.getElementById('staffSubCategory').value;
+
+      if (!subCategory) {
+        alert('Please select a sub-category.');
+        return false;
+      }
+
+      if (!nameEn) {
+        alert('Name (English) is required.');
+        return false;
+      }
+
+      if (!designationEn) {
+        alert('Designation (English) is required.');
+        return false;
+      }
+
+      if (!email) {
+        alert('Email is required.');
+        return false;
+      }
+
+      if (!validateEmail(email)) {
+        alert('Please enter a valid email address.');
+        return false;
+      }
+
+      if (!extnNo) {
+        alert('Extension number is required.');
+        return false;
+      }
+
+      if (fileInput.files.length === 0) {
+        alert('Please select a photo to upload.');
+        return false;
+      }
+
+      if (!validateImageFile(fileInput.files[0])) {
+        alert(`Only JPG, JPEG, and PNG files are allowed for photos. The file "${fileInput.files[0].name}" is not supported.`);
+        return false;
+      }
+      return true;
+    }
+
+    function validateFacultyForm(form) {
+      const fileInput = form.querySelector('input[type="file"]');
+      const nameEn = form.querySelector('input[name="name_en"]').value.trim();
+      const nameHi = form.querySelector('input[name="name_hi"]').value.trim();
+      const designationEn = form.querySelector('input[name="designation_en"]').value.trim();
+      const locationEn = form.querySelector('input[name="location_en"]').value.trim();
+      const email = form.querySelector('input[name="email"]').value.trim();
+      const extnNo = form.querySelector('input[name="extn_no"]').value.trim();
+      const subCategory = document.getElementById('facultySubCategory').value;
+
+      if (!subCategory) {
+        alert('Please select a sub-category.');
+        return false;
+      }
+
+      if (!nameEn) {
+        alert('Name (English) is required.');
+        return false;
+      }
+
+      if (!designationEn) {
+        alert('Designation (English) is required.');
+        return false;
+      }
+
+      if (!locationEn) {
+        alert('Location/Lab (English) is required.');
+        return false;
+      }
+
+      if (!email) {
+        alert('Email is required.');
+        return false;
+      }
+
+      if (!validateEmail(email)) {
+        alert('Please enter a valid email address.');
+        return false;
+      }
+
+      if (!extnNo) {
+        alert('Extension number is required.');
+        return false;
+      }
+
+      if (fileInput.files.length === 0) {
+        alert('Please select a photo to upload.');
+        return false;
+      }
+
+      if (!validateImageFile(fileInput.files[0])) {
+        alert(`Only JPG, JPEG, and PNG files are allowed for photos. The file "${fileInput.files[0].name}" is not supported.`);
+        return false;
+      }
+      return true;
+    }
+
+    function validateScholarForm(form) {
+      const fileInput = form.querySelector('input[type="file"]');
+      const nameEn = form.querySelector('input[name="name_en"]').value.trim();
+      const nameHi = form.querySelector('input[name="name_hi"]').value.trim();
+      const labEn = form.querySelector('input[name="lab_en"]').value.trim();
+      const email = form.querySelector('input[name="email"]').value.trim();
+      const extnNo = form.querySelector('input[name="extn_no"]').value.trim();
+      const position = form.querySelector('input[name="position"]:checked');
+
+      if (!position) {
+        alert('Please select a position (PDF, SRF, or JRF).');
+        return false;
+      }
+
+      if (!nameEn) {
+        alert('Name (English) is required.');
+        return false;
+      }
+
+      if (!labEn) {
+        alert('Lab (English) is required.');
+        return false;
+      }
+
+      if (!email) {
+        alert('Email is required.');
+        return false;
+      }
+
+      if (!validateEmail(email)) {
+        alert('Please enter a valid email address.');
+        return false;
+      }
+
+      if (!extnNo) {
+        alert('Extension number is required.');
+        return false;
+      }
+
+      if (fileInput.files.length === 0) {
+        alert('Please select a photo to upload.');
+        return false;
+      }
+
+      if (!validateImageFile(fileInput.files[0])) {
+        alert(`Only JPG, JPEG, and PNG files are allowed for photos. The file "${fileInput.files[0].name}" is not supported.`);
+        return false;
+      }
+      return true;
+    }
+
+    /* ------- TOGGLE CATEGORY SECTIONS ------- */
+    function toggleCategorySections() {
+      const category = document.getElementById('categoryType').value;
+
+      // Hide all sections
+      document.getElementById('directorSection').classList.remove('active');
+      document.getElementById('staffSection').classList.remove('active');
+      document.getElementById('facultySection').classList.remove('active');
+      document.getElementById('scholarSection').classList.remove('active');
+
+      // Show selected section
+      if (category === 'director') {
+        document.getElementById('directorSection').classList.add('active');
+      } else if (category === 'staff') {
+        document.getElementById('staffSection').classList.add('active');
+      } else if (category === 'faculty') {
+        document.getElementById('facultySection').classList.add('active');
+      } else if (category === 'scholar') {
+        document.getElementById('scholarSection').classList.add('active');
+      }
+    }
+
+    /* ------- TOGGLE STAFF SUB-CATEGORY FORM ------- */
+    function toggleStaffForm() {
+      const subCategory = document.getElementById('staffSubCategory').value;
+      const form = document.getElementById('staffForm');
+      const hiddenInput = document.getElementById('staffSubCategoryValue');
+
+      if (subCategory) {
+        form.classList.add('active');
+        hiddenInput.value = subCategory;
+      } else {
+        form.classList.remove('active');
+      }
+    }
+
+    /* ------- TOGGLE FACULTY SUB-CATEGORY FORM ------- */
+    function toggleFacultyForm() {
+      const subCategory = document.getElementById('facultySubCategory').value;
+      const form = document.getElementById('facultyForm');
+      const hiddenInput = document.getElementById('facultySubCategoryValue');
+
+      if (subCategory) {
+        form.classList.add('active');
+        hiddenInput.value = subCategory;
+      } else {
+        form.classList.remove('active');
+      }
+    }
+
+    /* ------- INLINE EDITING ------- */
+    function toggleEdit(btn, type) {
+      const container = btn.closest('tr') || btn.closest('.mobile-item-card');
+
+      container.querySelector('.view-mode').style.display = 'none';
+      const editModes = container.querySelectorAll('.edit-mode');
+      editModes.forEach(function (em) { em.style.display = 'block'; });
+
+      btn.style.display = 'none';
+      container.querySelector('[onclick^="saveEdit"]').style.display = 'inline-flex';
+      container.querySelector('[onclick^="cancelEdit"]').style.display = 'inline-flex';
+    }
+
+    function cancelEdit(btn) {
+      const container = btn.closest('tr') || btn.closest('.mobile-item-card');
+
+      const editModes = container.querySelectorAll('.edit-mode');
+      editModes.forEach(function (em) { em.style.display = 'none'; });
+      const viewModes = container.querySelectorAll('.view-mode');
+      viewModes.forEach(function (vm) { vm.style.display = 'block'; });
+
+      container.querySelector('[onclick^="toggleEdit"]').style.display = 'inline-flex';
+      container.querySelector('[onclick^="saveEdit"]').style.display = 'none';
+      container.querySelector('[onclick^="cancelEdit"]').style.display = 'none';
+    }
+
+    async function saveEdit(btn, type) {
+      const container = btn.closest('tr') || btn.closest('.mobile-item-card');
+      const id = btn.dataset.id;
+
+      const nameEn = container.querySelector('.name-en').value.trim();
+      const email = container.querySelector('.email-input').value.trim();
+
+      // Validate required fields
+      if (!nameEn) {
+        alert('Name (English) is required.');
+        return;
+      }
+
+      if (!email) {
+        alert('Email is required.');
+        return;
+      }
+
+      if (!validateEmail(email)) {
+        alert('Please enter a valid email address.');
+        return;
+      }
+
+      const payload = {
+        name_en: nameEn,
+        name_hi: container.querySelector('.name-hi').value.trim(),
+        email: email
+      };
+
+      // Add type-specific fields
+      if (type === 'staff' || type === 'faculty') {
+        const designationEn = container.querySelector('.designation-en').value.trim();
+        const extnNo = container.querySelector('.extn-input').value.trim();
+
+        payload.designation_en = designationEn;
+        payload.designation_hi = container.querySelector('.designation-hi').value.trim();
+        payload.extn_no = extnNo;
+
+        if (!designationEn) {
+          alert('Designation (English) is required.');
+          return;
+        }
+
+        if (!extnNo) {
+          alert('Extension number is required.');
+          return;
+        }
+      }
+
+      if (type === 'faculty') {
+        const locationEn = container.querySelector('.location-en').value.trim();
+
+        payload.location_en = locationEn;
+        payload.location_hi = container.querySelector('.location-hi').value.trim();
+
+        if (!locationEn) {
+          alert('Location (English) is required.');
+          return;
+        }
+
+        const subCategoryElement = container.querySelector('.sub_category');
+        if (subCategoryElement) {
+          payload.sub_category = subCategoryElement.value;
+        }
+      }
+
+      if (type === 'scholar') {
+        const labEn = container.querySelector('.lab-en').value.trim();
+        const extnNo = container.querySelector('.extn-input').value.trim();
+
+        payload.position = container.querySelector('.position-input').value;
+        payload.lab_en = labEn;
+        payload.lab_hi = container.querySelector('.lab-hi').value.trim();
+        payload.extn_no = extnNo;
+
+        if (!labEn) {
+          alert('Lab (English) is required.');
+          return;
+        }
+
+        if (!extnNo) {
+          alert('Extension number is required.');
+          return;
+        }
+      }
+
+      const endpoint = '/admin/people/edit-' + type + '/' + id;
+
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          alert(type.charAt(0).toUpperCase() + type.slice(1) + ' updated successfully!');
+          location.reload();
+        } else {
+          const errorData = await res.json().catch(() => ({}));
+          alert('Save failed: ' + (errorData.error || `Status ${res.status}`));
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Error saving: ' + err.message);
+      }
+    }
+
+    /* ------- DELETE ------- */
+    function deleteItem(id, type) {
+      if (!confirm('Are you sure you want to delete this ' + type + ' permanently? This action cannot be undone.')) {
+        return;
+      }
+
+      const endpoint = '/admin/people/delete-' + type + '/' + id;
+
+      fetch(endpoint, { method: 'POST' })
+        .then(function (res) {
+          if (res.ok) {
+            alert(type.charAt(0).toUpperCase() + type.slice(1) + ' deleted successfully!');
+            location.reload();
+          } else {
+            return res.json().then(data => {
+              throw new Error(data.error || 'Delete failed');
+            });
+          }
+        })
+        .catch(function (err) {
+          console.error(err);
+          alert('Delete error: ' + err.message);
+        });
+    }
+
+    /* ------- DRAG & DROP REORDER ------- */
+    function setupDragDrop(tbody, mobileList) {
+      let draggingRow = null;
+
+      // Desktop table drag handlers
+      if (tbody) {
+        tbody.addEventListener('dragstart', function (e) {
+          draggingRow = e.target.closest('tr');
+          if (draggingRow) draggingRow.classList.add('dragging');
+          e.dataTransfer.effectAllowed = 'move';
+        });
+
+        tbody.addEventListener('dragover', function (e) {
+          e.preventDefault();
+          const target = e.target.closest('tr');
+          if (!target || target === draggingRow) return;
+
+          const bounding = target.getBoundingClientRect();
+          const offset = e.clientY - bounding.top;
+          const after = offset > (bounding.height / 2);
+
+          if (after) {
+            tbody.insertBefore(draggingRow, target.nextSibling);
+          } else {
+            tbody.insertBefore(draggingRow, target);
+          }
+        });
+
+        tbody.addEventListener('dragend', function () {
+          if (draggingRow) draggingRow.classList.remove('dragging');
+          draggingRow = null;
+        });
+      }
+
+      // Mobile cards drag handlers
+      if (mobileList) {
+        mobileList.addEventListener('dragstart', function (e) {
+          draggingRow = e.target.closest('.mobile-item-card');
+          if (draggingRow) draggingRow.classList.add('dragging');
+          e.dataTransfer.effectAllowed = 'move';
+        });
+
+        mobileList.addEventListener('dragover', function (e) {
+          e.preventDefault();
+          const target = e.target.closest('.mobile-item-card');
+          if (!target || target === draggingRow) return;
+
+          const bounding = target.getBoundingClientRect();
+          const offset = e.clientY - bounding.top;
+          const after = offset > (bounding.height / 2);
+
+          if (after) {
+            mobileList.insertBefore(draggingRow, target.nextSibling);
+          } else {
+            mobileList.insertBefore(draggingRow, target);
+          }
+        });
+
+        mobileList.addEventListener('dragend', function () {
+          if (draggingRow) draggingRow.classList.remove('dragging');
+          draggingRow = null;
+        });
+      }
+    }
+
+    // Setup drag & drop for all categories
+    setupDragDrop(document.getElementById('staffTbody'), document.getElementById('mobileStaffList'));
+    setupDragDrop(document.getElementById('facultyTbody'), document.getElementById('mobileFacultyList'));
+    setupDragDrop(document.getElementById('scholarTbody'), document.getElementById('mobileScholarList'));
+
+    /* ------- SAVE ORDER ------- */
+    async function saveOrder(type) {
+      let order = [];
+      let tbody, mobileList;
+
+      if (type === 'staff') {
+        tbody = document.getElementById('staffTbody');
+        mobileList = document.getElementById('mobileStaffList');
+      } else if (type === 'faculty') {
+        tbody = document.getElementById('facultyTbody');
+        mobileList = document.getElementById('mobileFacultyList');
+      } else if (type === 'scholar') {
+        tbody = document.getElementById('scholarTbody');
+        mobileList = document.getElementById('mobileScholarList');
+      }
+
+      // Get order from whichever view is visible
+      if (tbody) {
+        const rows = tbody.querySelectorAll('tr');
+        if (rows.length > 0) {
+          order = Array.from(rows).map(function (tr) { return tr.dataset.id; });
+        }
+      }
+
+      if (order.length === 0 && mobileList) {
+        const cards = mobileList.querySelectorAll('.mobile-item-card');
+        if (cards.length > 0) {
+          order = Array.from(cards).map(function (card) { return card.dataset.id; });
+        }
+      }
+
+      if (order.length === 0) {
+        alert('No ' + type + 's to reorder');
+        return;
+      }
+
+      // Use correct endpoint for scholars (plural)
+      let endpoint;
+      if (type === 'scholar') {
+        endpoint = '/admin/people/reorder-scholars';
+      } else {
+        endpoint = '/admin/people/reorder-' + type;
+      }
+
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ order: order })
+        });
+
+        if (res.ok) {
+          alert(type.charAt(0).toUpperCase() + type.slice(1) + ' order saved successfully!');
+        } else {
+          const errorData = await res.json().catch(() => ({}));
+          alert('Failed to save order: ' + (errorData.error || `Status ${res.status}`));
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Error saving order: ' + err.message);
+      }
+    }
+
+    if (document.getElementById('saveStaffOrderBtn')) {
+      document.getElementById('saveStaffOrderBtn').addEventListener('click', function () { saveOrder('staff'); });
+    }
+    if (document.getElementById('saveFacultyOrderBtn')) {
+      document.getElementById('saveFacultyOrderBtn').addEventListener('click', function () { saveOrder('faculty'); });
+    }
+    if (document.getElementById('saveScholarOrderBtn')) {
+      document.getElementById('saveScholarOrderBtn').addEventListener('click', function () { saveOrder('scholar'); });
+    }
+  </script>
+</body>
+
+</html>

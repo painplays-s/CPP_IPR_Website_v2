@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Conference Archive - CPP-IPR</title>
+
+    <style>
+        :root {
+            --conf-bg: #ffffff;
+            --conf-border: #d0d7e2;
+            --conf-text: #111827;
+            --conf-muted: #6b7280;
+            --conf-accent: #2563eb;
+            --conf-radius-lg: 16px;
+            --conf-tab-active: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            font-family: Arial, sans-serif;
+        }
+
+        #header-container,
+        #footer-container {
+            flex-shrink: 0;
+        }
+
+        main {
+            flex: 1;
+            padding: 1.5rem 5vw;
+            box-sizing: border-box;
+        }
+
+        /* ---------- GLOBAL SECTION WIDTH ---------- */
+        .page-section {
+            max-width: 1600px;
+            margin: 0 auto 2rem auto;
+        }
+
+        /* ---------- CONFERENCE SECTION STYLES ---------- */
+        .conf-section {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            box-sizing: border-box;
+        }
+
+        /* BANNER IMAGE */
+        .conf-banner {
+            width: 100%;
+            height: auto;
+            border-radius: var(--conf-radius-lg);
+            object-fit: cover;
+        }
+
+        /* MAIN BODY */
+        .conf-main {
+            position: relative;
+            width: 100%;
+            background: var(--conf-bg);
+            border: 1.5px solid var(--conf-border);
+            border-radius: var(--conf-radius-lg);
+            overflow: hidden;
+        }
+
+        /* HEADER INSIDE BOX */
+        .conf-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem 1.75rem 1rem 1.75rem;
+            position: relative;
+        }
+
+        /* Horizontal line with custom width */
+        .conf-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            height: 2px;
+            background-color: var(--conf-border);
+        }
+
+        .conf-title {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--conf-text);
+            text-align: center;
+            margin: 0;
+        }
+
+        /* CONTENT AREA */
+        .conf-content {
+            padding: 1.75rem 1.75rem;
+            box-sizing: border-box;
+        }
+
+        /* TAB NAVIGATION */
+        .conf-tabs-wrapper {
+            position: relative;
+            border-bottom: 2px solid var(--conf-border);
+            margin-bottom: 2rem;
+        }
+
+        .conf-tabs {
+            display: flex;
+            gap: 0.5rem;
+            padding: 0 0 0 0;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .conf-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .conf-tab {
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: none;
+            border-radius: 8px 8px 0 0;
+            color: var(--conf-muted);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .conf-tab:hover {
+            background: #f3f4f6;
+            color: var(--conf-text);
+        }
+
+        .conf-tab.active {
+            background: var(--conf-tab-active);
+            color: #ffffff;
+        }
+
+        .conf-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #2563eb;
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* SECTION HEADING */
+        .section-heading {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--conf-text);
+            margin: 1.5rem 0 1.5rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--conf-border);
+        }
+
+        /* CONFERENCE LIST */
+        .conf-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .conf-list li {
+            margin-bottom: 1rem;
+        }
+
+        .conf-list a {
+            display: block;
+            padding: 1.25rem;
+            background: #f9fafb;
+            border-radius: 12px;
+            border-left: 4px solid var(--conf-accent);
+            color: var(--conf-text);
+            text-decoration: none;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            transition: all 0.2s;
+        }
+
+        .conf-list a:hover {
+            background: #e5e7eb;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* ---------- MOBILE ---------- */
+        @media (max-width: 900px) {
+            .conf-title {
+                font-size: 1.35rem;
+            }
+
+            .conf-header {
+                padding: 1.25rem 1.25rem 0.85rem 1.25rem;
+            }
+
+            .conf-header::after {
+                width: 80%;
+            }
+
+            .conf-content {
+                padding: 1.5rem 1.25rem;
+            }
+
+            .conf-tabs {
+                gap: 0.25rem;
+            }
+
+            .conf-tab {
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .conf-list a {
+                padding: 1rem;
+                font-size: 1rem;
+            }
+
+            .section-heading {
+                font-size: 1.3rem;
+                margin: 1rem 0 1.2rem 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <div id="header-container"></div>
+
+    <!-- PAGE CONTENT -->
+    <main>
+        <div class="page-section conf-section">
+
+            <!-- BANNER IMAGE -->
+            <img src="/assets/images/images/misc/conf_banner.jpg" alt="Conference Archive Banner" class="conf-banner">
+
+            <!-- MAIN BODY -->
+            <div class="conf-main">
+
+                <!-- HEADER INSIDE BOX -->
+                <div class="conf-header">
+                    <h1 class="conf-title bilingual-title" data-hi="सम्मेलन पुरालेख" data-en="Conference Archive"></h1>
+                </div>
+
+                <!-- CONTENT -->
+                <div class="conf-content">
+
+                    <!-- TAB NAVIGATION -->
+                    <div class="conf-tabs-wrapper">
+                        <div class="conf-tabs" id="confTabs">
+                            <button class="conf-tab active" onclick="switchTab('tab2019')">2019</button>
+                            <button class="conf-tab" onclick="switchTab('tabOlder')">Older</button>
+                        </div>
+                    </div>
+
+                    <!-- TAB PANELS -->
+
+                    <!-- 2019 Tab -->
+                    <div id="tab2019" class="tab-panel active">
+                        <div class="section-heading bilingual-text" data-hi="2019" data-en="2019"></div>
+
+                        <ul class="conf-list">
+                            <li>
+                                <a href="conf/RTBPR-2019.html" class="bilingual-text"
+                                    data-hi="मूल प्लाज्मा अनुसंधान में हालिया रुझान पर एक दिवसीय संगोष्ठी"
+                                    data-en="One-day symposium on 'Recent trends in Basic Plasma Research'">
+                                    One-day symposium on "Recent trends in Basic Plasma Research"
+                                </a>
+                            </li>
+                            <li>
+                                <a href="nsd/nsd-2019.html" class="bilingual-text"
+                                    data-hi="राष्ट्रीय विज्ञान दिवस समारोह - 2019"
+                                    data-en="National Science Day Celebration - 2019">
+                                    National Science Day Celebration - 2019
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Older Tab -->
+                    <div id="tabOlder" class="tab-panel">
+                        <div class="section-heading bilingual-text" data-hi="सेमिनार / कोलोकीयम"
+                            data-en="Seminar / Colloquium"></div>
+
+                        <ul class="conf-list">
+                            <li>
+                                <a href="#" class="bilingual-text" data-hi="CPP-IPR रजत जयंती संगोष्ठी (2016)"
+                                    data-en="CPP-IPR Silver Jubilee Symposium (2016)">
+                                    CPP-IPR Silver Jubilee Symposium (2016)
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="bilingual-text" data-hi="राष्ट्रीय विज्ञान दिवस समारोह - 2014"
+                                    data-en="National Science Day Celebration - 2014">
+                                    National Science Day Celebration - 2014
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="bilingual-text"
+                                    data-hi="CPP-IPR कार्यशाला: PSI अध्ययन के लिए रैखिक टोकामक डायवर्टर सिमुलेटर (2014)"
+                                    data-en="CPP-IPR Workshop on Linear Tokamak Divertor Simulators for PSI Studies (2014)">
+                                    CPP-IPR Workshop on Linear Tokamak Divertor Simulators for PSI Studies (2014)
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <div id="footer-container"></div>
+
+    <!-- FRAGMENT LOADER -->
+    <script>
+        function loadFragment(url, containerId) {
+            fetch(url)
+                .then(res => res.text())
+                .then(html => {
+                    const container = document.getElementById(containerId);
+                    container.innerHTML = html;
+
+                    container.querySelectorAll('script').forEach(oldScript => {
+                        const newScript = document.createElement('script');
+                        if (oldScript.src) {
+                            newScript.src = oldScript.src;
+                        } else {
+                            newScript.textContent = oldScript.textContent;
+                        }
+                        oldScript.replaceWith(newScript);
+                    });
+                })
+                .catch(err => console.error('Error loading fragment:', url, err));
+        }
+
+        loadFragment('/UI/header.html', 'header-container');
+        loadFragment('/UI/footer.html', 'footer-container');
+    </script>
+
+    <!-- TAB SWITCHING SCRIPT -->
+    <script>
+        function switchTab(tabName) {
+            // Hide all panels
+            document.querySelectorAll('.tab-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+
+            // Remove active from all tabs
+            document.querySelectorAll('.conf-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected panel
+            document.getElementById(tabName).classList.add('active');
+
+            // Activate clicked tab
+            event.target.classList.add('active');
+
+            // Scroll active tab into view on mobile
+            if (window.innerWidth <= 900) {
+                event.target.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+        }
+
+        // Initialize first tab
+        document.addEventListener('DOMContentLoaded', function () {
+            // Any initialization if needed
+        });
+    </script>
+
+</body>
+
+</html>

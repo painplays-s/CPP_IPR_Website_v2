@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login - CPP-IPR</title>
+  <style>
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      font-family: Arial, sans-serif;
+      background-color: #f3f4f6;
+    }
+
+    #header-container {
+      flex-shrink: 0;
+    }
+
+    main {
+      flex: 1;
+      padding: 1.5rem 5vw;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #footer-container {
+      flex-shrink: 0;
+    }
+
+    .login-wrapper {
+      max-width: 420px;
+      width: 100%;
+      background-color: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+      padding: 1.75rem 1.5rem 1.5rem;
+      box-sizing: border-box;
+    }
+
+    .login-title {
+      margin: 0 0 0.25rem;
+      font-size: 1.3rem;
+    }
+
+    .login-subtitle {
+      margin: 0 0 1.5rem;
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.35rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 0.55rem 0.6rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    input[type="text"]:focus,
+    input[type="password"]:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.3);
+    }
+
+    .login-button {
+      width: 100%;
+      padding: 0.65rem 0.6rem;
+      border-radius: 6px;
+      border: none;
+      background-color: #2563eb;
+      color: #ffffff;
+      font-size: 0.98rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.16s ease, transform 0.12s ease;
+    }
+
+    .login-button:hover {
+      background-color: #1d4ed8;
+      transform: translateY(-1px);
+    }
+
+    .login-button:active {
+      transform: translateY(0);
+    }
+
+    .login-button:disabled {
+      background-color: #9ca3af;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .login-button:disabled:hover {
+      background-color: #9ca3af;
+      transform: none;
+    }
+
+    .message-container {
+      margin-top: 1rem;
+    }
+
+    .error-message {
+      padding: 0.75rem;
+      font-size: 0.9rem;
+      color: #b91c1c;
+      background-color: #fee2e2;
+      border: 1px solid #fecaca;
+      border-radius: 6px;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .success-message {
+      padding: 0.75rem;
+      font-size: 0.9rem;
+      color: #166534;
+      background-color: #dcfce7;
+      border: 1px solid #bbf7d0;
+      border-radius: 6px;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .warning-message {
+      padding: 0.75rem;
+      font-size: 0.9rem;
+      color: #854d0e;
+      background-color: #fef9c3;
+      border: 1px solid #fde047;
+      border-radius: 6px;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .lock-message {
+      padding: 1rem;
+      font-size: 0.95rem;
+      color: #7f1d1d;
+      background-color: #fee2e2;
+      border: 1px solid #fecaca;
+      border-radius: 6px;
+      display: block;
+      margin-bottom: 1rem;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    .attempt-counter {
+      margin-top: 0.75rem;
+      font-size: 0.85rem;
+      color: #666;
+      text-align: center;
+      padding: 0.5rem;
+      background-color: #f9fafb;
+      border-radius: 4px;
+    }
+
+    .hint {
+      margin-top: 0.75rem;
+      font-size: 0.8rem;
+      color: #777;
+      text-align: center;
+    }
+
+    .locked-input {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Header Container -->
+  <div id="header-container"></div>
+
+  <!-- Page Content -->
+  <main>
+    <div class="login-wrapper">
+      <h1 class="login-title">Admin Login</h1>
+      <p class="login-subtitle">
+        Please enter your credentials to access the administrator panel.
+      </p>
+
+      <!-- Account Lock Message (appears first if account is locked) -->
+      {% with locked = get_flashed_messages(category_filter=["locked"]) %}
+      {% if locked %}
+      {% for message in locked %}
+      <div class="lock-message" id="lock-message">
+        <strong>🔒 ACCOUNT LOCKED</strong><br>
+        {{ message }}
+      </div>
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
+
+      <!-- Flask flash messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      <div class="message-container" id="flash-messages">
+        {% for category, message in messages %}
+        {% if category == 'success' %}
+        <div class="success-message">{{ message }}</div>
+        {% elif category == 'error' %}
+        <div class="error-message">{{ message }}</div>
+        {% elif category == 'warning' %}
+        <div class="warning-message">{{ message }}</div>
+        {% endif %}
+        {% endfor %}
+      </div>
+      {% endif %}
+      {% endwith %}
+
+      <!-- Remaining attempts message -->
+      {% with attempts = get_flashed_messages(category_filter=["attempts"]) %}
+      {% if attempts %}
+      <div class="attempt-counter" id="attempts-message">
+        ⚠️ {{ attempts[0] }}
+      </div>
+      {% endif %}
+      {% endwith %}
+
+      <!-- Server-side login form -->
+      <form id="admin-login-form" method="POST" action="{{ url_for('admin_auth.admin_login') }}">
+        <div class="form-group">
+          <label for="username">Username / उपयोगकर्ता नाम</label>
+          <input type="text" id="username" name="username" autocomplete="username" required {% if locked %}disabled
+            class="locked-input" {% endif %}>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password / पासवर्ड</label>
+          <input type="password" id="password" name="password" autocomplete="current-password" required {% if locked
+            %}disabled class="locked-input" {% endif %}>
+        </div>
+
+        <button type="submit" class="login-button" {% if locked %}disabled{% endif %}>
+          Login / लॉगिन
+        </button>
+
+      </form>
+    </div>
+  </main>
+
+  <!-- Footer Container -->
+  <div id="footer-container"></div>
+
+  <!-- Load Header & Footer with Script Execution -->
+  <script>
+    // Helper to load an HTML snippet and execute its scripts
+    function loadFragment(url, containerId) {
+      fetch(url)
+        .then(response => response.text())
+        .then(html => {
+          const container = document.getElementById(containerId);
+          container.innerHTML = html;
+
+          const scripts = container.querySelectorAll('script');
+          scripts.forEach(oldScript => {
+            const newScript = document.createElement('script');
+
+            if (oldScript.textContent) {
+              newScript.textContent = oldScript.textContent;
+            }
+            if (oldScript.src) {
+              newScript.src = oldScript.src;
+            }
+
+            oldScript.parentNode.replaceChild(newScript, oldScript);
+          });
+        })
+        .catch(error => console.error('Error loading fragment:', url, error));
+    }
+
+    // Load header and footer
+    loadFragment('/UI/header.html', 'header-container');
+    loadFragment('/UI/footer.html', 'footer-container');
+  </script>
+
+  <!-- Auto-focus on username field and auto-hide messages -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Auto-focus on username field
+      const usernameField = document.getElementById('username');
+      if (usernameField && !usernameField.disabled) {
+        usernameField.focus();
+      }
+
+      // Auto-hide flash messages after 5 seconds (except lock messages)
+      const flashMessages = document.getElementById('flash-messages');
+      const attemptsMessage = document.getElementById('attempts-message');
+      const lockMessage = document.getElementById('lock-message');
+
+      // Hide flash messages (errors, warnings, success) after 5 seconds
+      if (flashMessages) {
+        setTimeout(function () {
+          flashMessages.style.transition = 'opacity 0.5s ease';
+          flashMessages.style.opacity = '0';
+          setTimeout(function () {
+            flashMessages.style.display = 'none';
+          }, 500);
+        }, 5000);
+      }
+
+      // Hide attempts counter after 5 seconds
+      if (attemptsMessage) {
+        setTimeout(function () {
+          attemptsMessage.style.transition = 'opacity 0.5s ease';
+          attemptsMessage.style.opacity = '0';
+          setTimeout(function () {
+            attemptsMessage.style.display = 'none';
+          }, 500);
+        }, 5000);
+      }
+
+      // Lock message stays forever (doesn't auto-hide)
+    });
+  </script>
+
+</body>
+
+</html>

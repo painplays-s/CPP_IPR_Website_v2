@@ -1,0 +1,356 @@
+<footer class="app-footer">
+
+  <div class="footer-inner">
+
+    <!-- COL 1: Quick Links -->
+    <div class="footer-column">
+      <h3 data-i18n="footer.quickLinks">Quick Links</h3>
+      <ul>
+        <li><a href="https://webmail.ipr.res.in/" target="_blank" data-i18n="footer.webmail">Webmail</a></li>
+        <li><a href="/pages/Home/home.html" data-i18n="footer.home">Home</a></li>
+        <li><a href="/pages/Profile/about.html" data-i18n="footer.profile">Profile</a></li>
+        <li><a href="/pages/Tenders/tender.html" data-i18n="footer.tenders">Tenders</a></li>
+        <li><a href="/pages/Advertisement/adv.html" data-i18n="footer.advertisements">Advertisements</a></li>
+        <li><a href="/pages/RTI/rti.html" data-i18n="footer.rti">RTI</a></li>
+      </ul>
+    </div>
+
+    <!-- COL 2: LAN Services -->
+    <div class="footer-column">
+      <h3 data-i18n="footer.lanServices">LAN Services</h3>
+      <ul>
+        <li><a href="https://intra.ipr.res.in/login" target="_blank" data-i18n="footer.intra">INTRA</a></li>
+        <li><a href="http://10.20.1.116/" target="_blank" data-i18n="footer.pasta">PASTA</a></li>
+        <li><a href="http://192.168.1.100/" target="_blank" data-i18n="footer.internalFileServer">Internal File
+            Server</a></li>
+        <li><a href="https://192.168.1.200/" target="_blank" data-i18n="footer.mailStorageServer">Mail Storage
+            Server</a></li>
+        <li><a href="http://192.168.1.3/" target="_blank" data-i18n="footer.canteenBilling">Canteen Billing</a></li>
+      </ul>
+    </div>
+
+    <!-- COL 3: Contact -->
+    <div class="footer-column">
+      <h3 data-i18n="footer.contactAddress">Contact Address</h3>
+
+      <p data-i18n="footer.centerName">
+        Centre of Plasma Physics – IPR (CPP-IPR)
+      </p>
+
+      <p data-i18n="footer.address">
+        Nazirakhat, Tepesia, Sonapur 782 402,<br>Kamrup (M), Assam
+      </p>
+
+      <p data-i18n="footer.phone">
+        +91 0361-280 1500/01/02/03/35
+      </p>
+
+      <p>
+        <a href="mailto:smruti@cppipr.res.in" data-i18n="footer.acdEmail">
+          smruti@cppipr.res.in (CD)
+        </a>
+      </p>
+
+      <p>
+        <a href="mailto:pranab.gogoi@cppipr.res.in" data-i18n="footer.aoiEmail">
+          pranab.gogoi@cppipr.res.in (AO-I)
+        </a>
+      </p>
+
+      <p>
+        <a href="https://maps.app.goo.gl/zyC7MvpoT28jUJ217" target="_blank" data-i18n="footer.googleMap">
+          Google Map Location
+        </a>
+      </p>
+    </div>
+
+    <!-- COL 4: Logos & Identity -->
+    <div class="footer-column footer-right">
+
+      <div class="logo-row">
+        <a href="https://www.ipr.res.in/" target="_blank">
+          <img src="/assets/images/ipr.png" alt="IPR Logo">
+        </a>
+        <a href="https://www.dae.gov.in/" target="_blank">
+          <img src="/assets/images/dae.png" alt="DAE Logo">
+        </a>
+      </div>
+
+      <div class="footer-text">
+        <strong data-i18n="footer.centerShort">Center of Plasma Physics</strong><br>
+        <span data-i18n="footer.centerSub">Institute for Plasma Research</span>
+      </div>
+
+      <a class="footer-link" href="https://www.ipr.res.in/" target="_blank" data-i18n="footer.centerOfIpr">
+        A Center of IPR, India
+      </a>
+
+      <div class="footer-desc" data-i18n="footer.daeLine">
+        An aided institute under the Department of Atomic Energy, Govt of India.
+      </div>
+
+    </div>
+
+  </div>
+
+  <hr>
+
+  <div class="footer-bottom">
+    © <span id="year"></span>
+    <span data-i18n="footer.rights">
+      Centre of Plasma Physics - Institute for Plasma Research (CPP-IPR). All rights reserved.
+    </span>
+  </div>
+
+</footer>
+
+<script>
+  // Dynamic year
+  document.getElementById("year").textContent = new Date().getFullYear();
+
+  // -------- Bilingual dictionary (UNCHANGED) --------
+  window.APP_TRANSLATIONS = window.APP_TRANSLATIONS || {
+    en: {
+      "footer.quickLinks": "Quick Links",
+      "footer.webmail": "Webmail",
+      "footer.home": "Home",
+      "footer.profile": "Profile",
+      "footer.tenders": "Tenders",
+      "footer.advertisements": "Advertisements",
+      "footer.rti": "RTI",
+
+      "footer.lanServices": "LAN Services",
+      "footer.intra": "INTRA",
+      "footer.pasta": "PASTA",
+      "footer.internalFileServer": "Internal File Server",
+      "footer.mailStorageServer": "Mail Storage Server",
+      "footer.canteenBilling": "Canteen Billing",
+
+      "footer.contactAddress": "Contact Address",
+      "footer.centerName": "Centre of Plasma Physics – IPR (CPP-IPR)",
+      "footer.address": "Nazirakhat, Tepesia, Sonapur 782 402, Kamrup (M), Assam",
+      "footer.phone": "+91 0361-280 1500/01/02/03/35",
+      "footer.acdEmail": "smruti@cppipr.res.in (CD)",
+      "footer.aoiEmail": "pranab.gogoi@cppipr.res.in (AO-I)",
+      "footer.googleMap": "Google Map Location",
+
+      "footer.centerShort": "Center of Plasma Physics",
+      "footer.centerSub": "Institute for Plasma Research",
+      "footer.centerOfIpr": "A Center of IPR, India",
+      "footer.daeLine": "An aided institute under the Department of Atomic Energy, Govt of India.",
+      "footer.rights": "Centre of Plasma Physics - Institute for Plasma Research (CPP-IPR) | All rights reserved | Created By Somendra Sarkar (PSO-IT)"
+    },
+    hi: {
+      "footer.quickLinks": "त्वरित लिंक",
+      "footer.webmail": "वेबमेल",
+      "footer.home": "होम",
+      "footer.profile": "प्रोफ़ाइल",
+      "footer.tenders": "निविदाएँ",
+      "footer.advertisements": "विज्ञापन",
+      "footer.rti": "सूचना का अधिकार",
+
+      "footer.lanServices": "LAN सेवाएँ",
+      "footer.intra": "INTRA",
+      "footer.pasta": "PASTA",
+      "footer.internalFileServer": "आंतरिक फ़ाइल सर्वर",
+      "footer.mailStorageServer": "मेल स्टोरेज सर्वर",
+      "footer.canteenBilling": "कैंटीन बिलिंग",
+
+      "footer.contactAddress": "संपर्क पता",
+      "footer.centerName": "प्लाज़्मा भौतिकी केंद्र – आईपीआर (CPP-IPR)",
+      "footer.address": "नाज़िराखात, टेपेसिया, सोनापुर 782 402, कामरूप (मेट्रो), असम",
+      "footer.phone": "+91 0361-280 1500/01/02/03/35",
+      "footer.acdEmail": "smruti@cppipr.res.in (CD)",
+      "footer.aoiEmail": "pranab.gogoi@cppipr.res.in (AO-I)",
+      "footer.googleMap": "गूगल मानचित्र स्थान",
+
+      "footer.centerShort": "प्लाज़्मा भौतिकी केंद्र",
+      "footer.centerSub": "प्लाज़्मा अनुसंधान संस्थान",
+      "footer.centerOfIpr": "आईपीआर, भारत का एक केंद्र",
+      "footer.daeLine": "भारत सरकार के परमाणु ऊर्जा विभाग के अंतर्गत एक सहायताप्राप्त संस्थान।",
+      "footer.rights": "प्लाज़्मा भौतिकी केंद्र - प्लाज़्मा अनुसंधान संस्थान (CPP-IPR) | सर्वाधिकार सुरक्षित | निर्माता: सोमेन्द्र सरकार (पीएसओ-आईटी)"
+    }
+  };
+
+  window.applyTranslations = function (lang) {
+    const dict = window.APP_TRANSLATIONS[lang] || {};
+    document.querySelectorAll("[data-i18n]").forEach(el => {
+      const key = el.getAttribute("data-i18n");
+      if (dict[key]) el.innerHTML = dict[key];
+    });
+  };
+
+  (function initFooterLang() {
+    const lang = localStorage.getItem("preferred-language") || "en";
+    window.applyTranslations(lang);
+  })();
+</script>
+
+<style>
+  /* ---------- FOOTER LAYOUT ---------- */
+  .app-footer {
+    width: 100%;
+    background: #f1f1f1;
+    padding: 3rem 5vw 2rem;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+  }
+
+  .footer-inner {
+    max-width: 1600px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    /* Fixed 4 columns for desktop */
+    gap: 2.5rem;
+  }
+
+  .footer-column {
+    text-align: center;
+    /* Center all text in columns */
+  }
+
+  .footer-column h3 {
+    font-size: 1rem;
+    color: #003366;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  .footer-column ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .footer-column li {
+    margin-bottom: 0.4rem;
+    text-align: center;
+  }
+
+  .footer-column a {
+    color: #003366;
+    font-size: 0.9rem;
+    text-decoration: underline;
+    display: inline-block;
+  }
+
+  .footer-column p {
+    font-size: 0.9rem;
+    margin: 0 0 0.4rem;
+    text-align: center;
+  }
+
+  .footer-right {
+    text-align: center;
+  }
+
+  .logo-row {
+    display: flex;
+    justify-content: center;
+    /* Center the logos */
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .logo-row img {
+    width: 90px;
+    max-height: 60px;
+    object-fit: contain;
+  }
+
+  .footer-text {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 0.4rem;
+    text-align: center;
+  }
+
+  .footer-link {
+    display: inline-block;
+    margin-bottom: 0.4rem;
+    font-size: 0.9rem;
+    color: #003366;
+    text-align: center;
+  }
+
+  .footer-desc {
+    font-size: 0.8rem;
+    opacity: 0.7;
+    line-height: 1.4;
+    text-align: center;
+  }
+
+  hr {
+    margin: 2rem auto;
+    max-width: 1600px;
+    border: none;
+    border-top: 1px solid #ccc;
+  }
+
+  .footer-bottom {
+    text-align: center;
+    font-size: 0.8rem;
+    opacity: 0.7;
+  }
+
+  /* ---------- MOBILE ---------- */
+  @media (max-width: 768px) {
+    .footer-inner {
+      grid-template-columns: 1fr 1fr;
+      /* 2 columns on mobile */
+      gap: 1.5rem;
+    }
+
+    /* Make columns 1 and 2 appear side by side */
+    .footer-column:nth-child(1) {
+      grid-column: 1;
+    }
+
+    .footer-column:nth-child(2) {
+      grid-column: 2;
+    }
+
+    /* Columns 3 and 4 take full width below */
+    .footer-column:nth-child(3) {
+      grid-column: 1 / span 2;
+      margin-top: 1rem;
+    }
+
+    .footer-column:nth-child(4) {
+      grid-column: 1 / span 2;
+      margin-top: 1rem;
+    }
+
+    .logo-row img {
+      width: 80px;
+    }
+
+    .footer-column,
+    .footer-column h3,
+    .footer-column li,
+    .footer-column p,
+    .footer-text,
+    .footer-link,
+    .footer-desc {
+      text-align: center;
+      /* Ensure everything is centered on mobile */
+    }
+  }
+
+  /* Small mobile screens */
+  @media (max-width: 480px) {
+    .footer-inner {
+      gap: 1rem;
+    }
+
+    .logo-row {
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .logo-row img {
+      width: 70px;
+    }
+  }
+</style>

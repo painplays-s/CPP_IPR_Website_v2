@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Advertisements - CPP-IPR</title>
+
+  <style>
+    :root {
+      --adv-bg: #ffffff;
+      --adv-border: #d0d7e2;
+      --adv-text: #111827;
+      --adv-muted: #6b7280;
+      --adv-accent: #2563eb;
+      --adv-radius-lg: 16px;
+      --new-badge-bg: #ef4444;
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      font-family: Arial, sans-serif;
+    }
+
+    #header-container,
+    #footer-container {
+      flex-shrink: 0;
+    }
+
+    main {
+      flex: 1;
+      padding: 1.5rem 5vw;
+      box-sizing: border-box;
+    }
+
+    /* ---------- GLOBAL SECTION WIDTH ---------- */
+    .page-section {
+      max-width: 1600px;
+      margin: 0 auto 2rem auto;
+    }
+
+    /* ---------- ADVERTISEMENT SECTION STYLES ---------- */
+    .adv-section {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      box-sizing: border-box;
+    }
+
+    /* BANNER IMAGE */
+    .adv-banner {
+      width: 100%;
+      height: auto;
+      border-radius: var(--adv-radius-lg);
+      object-fit: cover;
+    }
+
+    /* MAIN BODY */
+    .adv-main {
+      position: relative;
+      width: 100%;
+      background: var(--adv-bg);
+      border: 1.5px solid var(--adv-border);
+      border-radius: var(--adv-radius-lg);
+      overflow: hidden;
+    }
+
+    /* HEADER INSIDE BOX */
+    .adv-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem 1.75rem 1rem 1.75rem;
+      position: relative;
+    }
+
+    .adv-header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      height: 2px;
+      background-color: var(--adv-border);
+    }
+
+    .adv-title {
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: var(--adv-text);
+      text-align: center;
+      margin: 0;
+    }
+
+    /* CONTENT AREA */
+    .adv-content {
+      padding: 1.75rem 1.75rem;
+      box-sizing: border-box;
+    }
+
+    /* YEAR TABS */
+    .year-tabs {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .year-tab {
+      padding: 0.65rem 1.5rem;
+      background: #f3f4f6;
+      border: 1.5px solid var(--adv-border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--adv-text);
+    }
+
+    .year-tab:hover {
+      background: #e5e7eb;
+      border-color: var(--adv-accent);
+    }
+
+    .year-tab.active {
+      background: var(--adv-accent);
+      color: white;
+      border-color: var(--adv-accent);
+    }
+
+    /* CONTROLS BAR */
+    .adv-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .items-per-page {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--adv-text);
+    }
+
+    .items-per-page select {
+      padding: 0.4rem 0.75rem;
+      border: 1.5px solid var(--adv-border);
+      border-radius: 6px;
+      background: white;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+
+    .items-per-page select:focus {
+      outline: none;
+      border-color: var(--adv-accent);
+    }
+
+    .adv-stats {
+      color: var(--adv-muted);
+      font-size: 0.95rem;
+    }
+
+    /* LOADING STATE */
+    .loading {
+      text-align: center;
+      padding: 2rem;
+      color: var(--adv-muted);
+      font-size: 1.1rem;
+    }
+
+    /* EMPTY STATE */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1.5rem;
+      color: var(--adv-muted);
+    }
+
+    .empty-state p {
+      font-size: 1.1rem;
+      margin: 0;
+    }
+
+    /* TABLE CONTAINER */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border-radius: 12px;
+      border: 1.5px solid var(--adv-border);
+    }
+
+    .adv-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 800px;
+    }
+
+    .adv-table thead {
+      background: #f9fafb;
+    }
+
+    .adv-table th {
+      padding: 1rem 1.25rem;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--adv-text);
+      border-bottom: 2px solid var(--adv-border);
+    }
+
+    .adv-table td {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid #e5e7eb;
+      font-size: 0.95rem;
+      color: var(--adv-text);
+      vertical-align: top;
+    }
+
+    .adv-table tbody tr:hover {
+      background: #f9fafb;
+    }
+
+    .adv-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* NEW BADGE */
+    .new-badge {
+      display: inline-block;
+      background: var(--new-badge-bg);
+      color: white;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      margin-left: 0.5rem;
+      animation: blink 1.5s infinite;
+      vertical-align: middle;
+    }
+
+    @keyframes blink {
+
+      0%,
+      50%,
+      100% {
+        opacity: 1;
+      }
+
+      25%,
+      75% {
+        opacity: 0.6;
+      }
+    }
+
+    /* ADVERTISEMENT NUMBER */
+    .adv-no {
+      font-weight: 600;
+      color: var(--adv-accent);
+    }
+
+    /* DATE */
+    .adv-date {
+      color: var(--adv-muted);
+      font-size: 0.9rem;
+    }
+
+    /* DESCRIPTION */
+    .adv-description {
+      line-height: 1.6;
+    }
+
+    /* DOWNLOAD LINK */
+    .download-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--adv-accent);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+
+    .download-link:hover {
+      color: #1d4ed8;
+      text-decoration: underline;
+    }
+
+    .download-link::before {
+      content: '📄';
+      font-size: 1.1rem;
+    }
+
+    /* PAGINATION */
+    .pagination-container {
+      margin-top: 2rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .pagination {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .page-btn {
+      min-width: 40px;
+      height: 40px;
+      padding: 0 0.75rem;
+      border: 1.5px solid var(--adv-border);
+      background: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      color: var(--adv-text);
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .page-btn:hover:not(:disabled):not(.active) {
+      background: #f3f4f6;
+      border-color: var(--adv-accent);
+    }
+
+    .page-btn.active {
+      background: var(--adv-accent);
+      color: white;
+      border-color: var(--adv-accent);
+    }
+
+    .page-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      background: #f3f4f6;
+    }
+
+    .page-btn.dots {
+      border: none;
+      cursor: default;
+      background: transparent;
+    }
+
+    .page-btn.dots:hover {
+      background: transparent;
+      border-color: var(--adv-border);
+    }
+
+    /* ---------- MOBILE ---------- */
+    @media (max-width: 900px) {
+      .adv-title {
+        font-size: 1.35rem;
+      }
+
+      .adv-header {
+        padding: 1.25rem 1.25rem 0.85rem 1.25rem;
+      }
+
+      .adv-header::after {
+        width: 80%;
+      }
+
+      .adv-content {
+        padding: 1.5rem 1.25rem;
+      }
+
+      .year-tabs {
+        gap: 0.5rem;
+      }
+
+      .year-tab {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+      }
+
+      .adv-controls {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .items-per-page {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .adv-stats {
+        width: 100%;
+        text-align: center;
+      }
+
+      /* MOBILE TABLE TO CARDS */
+      .table-container {
+        border: none;
+      }
+
+      .adv-table {
+        min-width: unset;
+      }
+
+      .adv-table thead {
+        display: none;
+      }
+
+      .adv-table tbody,
+      .adv-table tr,
+      .adv-table td {
+        display: block;
+        width: 100%;
+      }
+
+      .adv-table tr {
+        margin-bottom: 1.5rem;
+        border: 1.5px solid var(--adv-border);
+        border-radius: 12px;
+        background: white;
+        overflow: hidden;
+      }
+
+      .adv-table td {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #f3f4f6;
+        position: relative;
+        padding-left: 45%;
+        text-align: right;
+      }
+
+      .adv-table td:last-child {
+        border-bottom: none;
+      }
+
+      .adv-table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 1rem;
+        width: 40%;
+        text-align: left;
+        font-weight: 600;
+        color: var(--adv-text);
+      }
+
+      .adv-table tbody tr:hover {
+        background: white;
+      }
+
+      /* Description in mobile view */
+      .adv-table td[data-label="Description"] {
+        padding-left: 1rem;
+        text-align: left;
+      }
+
+      .adv-table td[data-label="Description"]::before {
+        position: relative;
+        display: block;
+        width: 100%;
+        margin-bottom: 0.5rem;
+      }
+
+      .pagination {
+        gap: 0.25rem;
+      }
+
+      .page-btn {
+        min-width: 36px;
+        height: 36px;
+        padding: 0 0.5rem;
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <div id="header-container"></div>
+
+  <!-- PAGE CONTENT -->
+  <main>
+    <div class="page-section adv-section">
+
+      <!-- BANNER IMAGE -->
+      <img src="/assets/images/about_banner.jpg" alt="CPP-IPR Banner" class="adv-banner">
+
+      <!-- MAIN BODY -->
+      <div class="adv-main">
+
+        <!-- HEADER INSIDE BOX -->
+        <div class="adv-header">
+          <h1 class="adv-title bilingual-title" data-hi="विज्ञापन" data-en="Advertisements">
+            Advertisements
+          </h1>
+        </div>
+
+        <!-- CONTENT -->
+        <div class="adv-content">
+
+          <!-- YEAR TABS -->
+          <div class="year-tabs" id="yearTabs">
+            <!-- Tabs will be populated dynamically -->
+          </div>
+
+          <!-- CONTROLS BAR -->
+          <div class="adv-controls" id="advControls" style="display: none;">
+            <div class="items-per-page">
+              <label for="itemsPerPage" class="bilingual-text" data-hi="प्रति पृष्ठ:" data-en="Items per page:">
+                Items per page:
+              </label>
+              <select id="itemsPerPage" onchange="changeItemsPerPage(this.value)">
+                <option value="10">10</option>
+                <option value="20" selected>20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+              </select>
+            </div>
+            <div class="adv-stats" id="advStats">
+              <!-- Stats will be updated dynamically -->
+            </div>
+          </div>
+
+          <!-- ADVERTISEMENTS TABLE -->
+          <div id="advertisementsContainer">
+            <div class="loading">Loading advertisements...</div>
+          </div>
+
+          <!-- PAGINATION -->
+          <div class="pagination-container" id="paginationContainer" style="display: none;">
+            <div class="pagination" id="pagination"></div>
+          </div>
+
+        </div>
+      </div>
+
+      <div>
+        <p class="bilingual-text" data-hi="*2026 से पहले प्रकाशित विज्ञापनों हेतु, कृपया हमारी पुरानी वेबसाइट देखें।"
+          data-en="*For advertisements published prior to 2026, kindly visit our old website.">
+          *For advertisements published prior to 2026, kindly visit our old website.
+        </p>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <div id="footer-container"></div>
+
+  <!-- FRAGMENT LOADER -->
+  <script>
+    function loadFragment(url, containerId) {
+      fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const container = document.getElementById(containerId);
+          container.innerHTML = html;
+
+          container.querySelectorAll('script').forEach(oldScript => {
+            const newScript = document.createElement('script');
+            if (oldScript.src) {
+              newScript.src = oldScript.src;
+            } else {
+              newScript.textContent = oldScript.textContent;
+            }
+            oldScript.replaceWith(newScript);
+          });
+        })
+        .catch(err => console.error('Error loading fragment:', url, err));
+    }
+
+    loadFragment('/UI/header.html', 'header-container');
+    loadFragment('/UI/footer.html', 'footer-container');
+  </script>
+
+  <!-- ADVERTISEMENTS LOGIC WITH PAGINATION -->
+  <script>
+    // State variables
+    let currentYear = new Date().getFullYear();
+    let allYears = [];
+    let currentPage = 1;
+    let itemsPerPage = 20;
+    let totalItems = 0;
+    let totalPages = 1;
+    let currentAdvertisements = [];
+
+    // Load on page ready
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadYears();
+      await loadAdvertisements(currentYear, currentPage);
+    });
+
+    // Load available years
+    async function loadYears() {
+      try {
+        const res = await fetch('/api/advertisements/years');
+        const data = await res.json();
+        allYears = data.years;
+
+        if (allYears.length === 0) {
+          allYears = [currentYear];
+        }
+
+        renderYearTabs();
+      } catch (err) {
+        console.error('Error loading years:', err);
+        allYears = [currentYear];
+        renderYearTabs();
+      }
+    }
+
+    // Render year tabs
+    function renderYearTabs() {
+      const container = document.getElementById('yearTabs');
+      container.innerHTML = '';
+
+      allYears.forEach(year => {
+        const tab = document.createElement('div');
+        tab.className = 'year-tab';
+        tab.textContent = year;
+        if (year === currentYear) tab.classList.add('active');
+        tab.onclick = () => switchYear(year);
+        container.appendChild(tab);
+      });
+    }
+
+    // Switch year
+    async function switchYear(year) {
+      currentYear = year;
+      currentPage = 1; // Reset to first page
+      renderYearTabs();
+      await loadAdvertisements(year, currentPage);
+    }
+
+    // Change items per page
+    async function changeItemsPerPage(value) {
+      itemsPerPage = parseInt(value);
+      currentPage = 1; // Reset to first page
+      await loadAdvertisements(currentYear, currentPage);
+    }
+
+    // Load advertisements with pagination
+    async function loadAdvertisements(year, page) {
+      const container = document.getElementById('advertisementsContainer');
+      const controls = document.getElementById('advControls');
+      const paginationContainer = document.getElementById('paginationContainer');
+
+      container.innerHTML = '<div class="loading">Loading advertisements...</div>';
+      controls.style.display = 'none';
+      paginationContainer.style.display = 'none';
+
+      try {
+        // In a real implementation, the API should support pagination
+        // For now, we'll fetch all and paginate client-side
+        // Replace this with: const res = await fetch(`/api/advertisements/year/${year}?page=${page}&limit=${itemsPerPage}`);
+        const res = await fetch(`/api/advertisements/year/${year}`);
+        const data = await res.json();
+
+        // Client-side pagination (replace with server-side pagination in production)
+        const allAdvertisements = data.advertisements || [];
+        totalItems = allAdvertisements.length;
+        totalPages = Math.ceil(totalItems / itemsPerPage);
+
+        // Get current page items
+        const start = (page - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        currentAdvertisements = allAdvertisements.slice(start, end);
+
+        renderAdvertisements(currentAdvertisements);
+        updatePagination();
+        updateStats();
+
+        controls.style.display = 'flex';
+        if (totalPages > 1) {
+          paginationContainer.style.display = 'flex';
+        }
+      } catch (err) {
+        console.error('Error loading advertisements:', err);
+        container.innerHTML = '<div class="empty-state"><p>Error loading advertisements. Please try again later.</p></div>';
+      }
+    }
+
+    // Update statistics
+    function updateStats() {
+      const statsElement = document.getElementById('advStats');
+      const start = ((currentPage - 1) * itemsPerPage) + 1;
+      const end = Math.min(currentPage * itemsPerPage, totalItems);
+
+      statsElement.innerHTML = `
+        <span class="bilingual-text" 
+              data-hi="दिखा रहा है ${start}-${end} कुल ${totalItems} विज्ञापनों में से" 
+              data-en="Showing ${start}-${end} of ${totalItems} advertisements">
+          Showing ${start}-${end} of ${totalItems} advertisements
+        </span>
+      `;
+    }
+
+    // Update pagination controls
+    function updatePagination() {
+      const pagination = document.getElementById('pagination');
+      pagination.innerHTML = '';
+
+      if (totalPages <= 1) return;
+
+      // Previous button
+      const prevBtn = createPageButton('Prev', currentPage - 1, currentPage === 1);
+      pagination.appendChild(prevBtn);
+
+      // Page numbers
+      let startPage = Math.max(1, currentPage - 2);
+      let endPage = Math.min(totalPages, currentPage + 2);
+
+      // Always show first page
+      if (startPage > 1) {
+        pagination.appendChild(createPageButton('1', 1));
+        if (startPage > 2) {
+          pagination.appendChild(createDots());
+        }
+      }
+
+      // Page numbers
+      for (let i = startPage; i <= endPage; i++) {
+        pagination.appendChild(createPageButton(i.toString(), i, false, i === currentPage));
+      }
+
+      // Always show last page
+      if (endPage < totalPages) {
+        if (endPage < totalPages - 1) {
+          pagination.appendChild(createDots());
+        }
+        pagination.appendChild(createPageButton(totalPages.toString(), totalPages));
+      }
+
+      // Next button
+      const nextBtn = createPageButton('Next', currentPage + 1, currentPage === totalPages);
+      pagination.appendChild(nextBtn);
+    }
+
+    // Create page button
+    function createPageButton(text, page, disabled = false, active = false) {
+      const btn = document.createElement('button');
+      btn.className = `page-btn ${active ? 'active' : ''}`;
+      btn.textContent = text;
+      btn.disabled = disabled;
+      if (!disabled) {
+        btn.onclick = () => changePage(page);
+      }
+      return btn;
+    }
+
+    // Create dots
+    function createDots() {
+      const dots = document.createElement('span');
+      dots.className = 'page-btn dots';
+      dots.textContent = '...';
+      return dots;
+    }
+
+    // Change page
+    async function changePage(newPage) {
+      if (newPage >= 1 && newPage <= totalPages && newPage !== currentPage) {
+        currentPage = newPage;
+        await loadAdvertisements(currentYear, currentPage);
+
+        // Scroll to top of table smoothly
+        document.querySelector('.table-container')?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    }
+
+    // Render advertisements table
+    function renderAdvertisements(advertisements) {
+      const container = document.getElementById('advertisementsContainer');
+
+      if (advertisements.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <p class="bilingual-text" 
+               data-hi="इस वर्ष के लिए कोई विज्ञापन उपलब्ध नहीं है।" 
+               data-en="No advertisements available for this year.">
+              No advertisements available for this year.
+            </p>
+          </div>
+        `;
+        return;
+      }
+
+      let html = `
+        <div class="table-container">
+          <table class="adv-table">
+            <thead>
+              <tr>
+                <th class="bilingual-text" data-hi="विज्ञापन संख्या" data-en="Advertisement No.">Advertisement No.</th>
+                <th class="bilingual-text" data-hi="विवरण" data-en="Description">Description</th>
+                <th class="bilingual-text" data-hi="विज्ञापन तिथि" data-en="Advertisement Date">Advertisement Date</th>
+                <th class="bilingual-text" data-hi="अंतिम तिथि" data-en="End Date">End Date</th>
+                <th class="bilingual-text" data-hi="विवरण" data-en="Details">Details</th>
+              </tr>
+            </thead>
+            <tbody>
+      `;
+
+      advertisements.forEach(ad => {
+        const newBadge = ad.is_new ? '<span class="new-badge">NEW</span>' : '';
+        html += `
+          <tr>
+            <td data-label="Advertisement No.">
+              <span class="adv-no">${escapeHtml(ad.advertisement_no)}</span>${newBadge}
+            </td>
+            <td data-label="Description">
+              <div class="adv-description">${escapeHtml(ad.description)}</div>
+            </td>
+            <td data-label="Advertisement Date">
+              <span class="adv-date">${formatDate(ad.advertisement_date)}</span>
+            </td>
+            <td data-label="End Date">
+              <span class="adv-date">${formatDate(ad.advertisement_end_date)}</span>
+            </td>
+            <td data-label="Details">
+              <a href="/assets/files/advertisements/${ad.filename}" 
+                 target="_blank" 
+                 class="download-link bilingual-text"
+                 data-hi="डाउनलोड करें"
+                 data-en="Download">
+                Download
+              </a>
+            </td>
+          </tr>
+        `;
+      });
+
+      html += `
+            </tbody>
+          </table>
+        </div>
+      `;
+
+      container.innerHTML = html;
+    }
+
+    // Format date
+    function formatDate(dateStr) {
+      if (!dateStr) return '—';
+      const d = new Date(dateStr);
+      return d.toLocaleDateString('en-IN', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+      });
+    }
+
+    // Escape HTML
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+  </script>
+
+  <!-- INCLUDE BILINGUAL LOGIC -->
+  <script src="/UI/bilingual.js"></script>
+
+</body>
+
+</html>

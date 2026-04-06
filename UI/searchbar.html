@@ -1,0 +1,816 @@
+<!-- UI/searchbar.html -->
+
+<style>
+    :root {
+        --search-bg: #ffffff;
+        --search-border: #d8dee9;
+        --search-text: #1f2937;
+        --search-muted: #6b7280;
+        --search-accent: #FF6B35;
+        --search-radius-lg: 16px;
+    }
+
+    /* OUTER WRAPPER */
+    .search-wrapper {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        box-sizing: border-box;
+        position: relative;
+    }
+
+    /* HEADER */
+    .search-header {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 0.75rem;
+        padding: 0 0.4rem;
+        flex-wrap: wrap;
+    }
+
+    .search-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+        color: var(--search-text);
+    }
+
+    .search-subtitle {
+        font-size: 0.85rem;
+        color: var(--search-muted);
+    }
+
+    /* MAIN CARD */
+    .search-main {
+        position: relative;
+        width: 100%;
+        background: var(--search-bg);
+        border: 1.5px solid var(--search-border);
+        border-radius: var(--search-radius-lg);
+        overflow: visible;
+    }
+
+    /* SEARCH INPUT AREA - Compact */
+    .search-input-area {
+        padding: 0.8rem 1.2rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* SEARCH GROUP - Shorter */
+    .search-group {
+        display: flex;
+        align-items: center;
+        background: #f9fafb;
+        border-radius: 10px;
+        border: 1px solid var(--search-border);
+        transition: all 0.2s ease;
+    }
+
+    .search-group:focus-within {
+        border-color: var(--search-accent);
+        box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+        background: #ffffff;
+    }
+
+    /* Input field - Compact */
+    .search-input {
+        flex: 1;
+        padding: 8px 12px;
+        font-size: 0.9rem;
+        border: none;
+        outline: none;
+        background: transparent;
+        color: var(--search-text);
+        min-width: 0;
+        /* Prevents overflow on mobile */
+    }
+
+    .search-input::placeholder {
+        color: var(--search-muted);
+        font-size: 0.85rem;
+    }
+
+    /* Clear button */
+    .search-clear {
+        background: none;
+        border: none;
+        font-size: 16px;
+        cursor: pointer;
+        padding: 0 6px;
+        color: var(--search-muted);
+        display: none;
+        align-items: center;
+        transition: color 0.2s;
+        flex-shrink: 0;
+    }
+
+    .search-clear:hover {
+        color: var(--search-accent);
+    }
+
+    /* Search button - Compact */
+    .search-btn {
+        background: transparent;
+        border: none;
+        border-left: 1px solid var(--search-border);
+        padding: 8px 14px;
+        cursor: pointer;
+        color: var(--search-muted);
+        font-size: 16px;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        border-radius: 0 10px 10px 0;
+        flex-shrink: 0;
+        white-space: nowrap;
+    }
+
+    .search-btn:hover {
+        color: var(--search-accent);
+        background-color: rgba(255, 107, 53, 0.05);
+    }
+
+    /* FLOATING RESULTS DROPDOWN - HIGH Z-INDEX */
+    .search-results-dropdown {
+        position: absolute;
+        top: calc(100% - 8px);
+        left: 1.2rem;
+        right: 1.2rem;
+        background: var(--search-bg);
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        max-height: 380px;
+        overflow-y: auto;
+        z-index: 10000;
+        display: none;
+        border: 1px solid var(--search-border);
+    }
+
+    .search-results-dropdown.show {
+        display: block;
+    }
+
+    .search-results-dropdown::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .search-results-dropdown::-webkit-scrollbar-thumb {
+        background: rgba(31, 41, 55, 0.3);
+        border-radius: 999px;
+    }
+
+    /* RESULTS HEADER */
+    .search-results-header {
+        padding: 0.6rem 1rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        background: #fafafa;
+        position: sticky;
+        top: 0;
+        z-index: 10001;
+    }
+
+    .search-results-count {
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: var(--search-muted);
+    }
+
+    /* RESULTS LIST */
+    .search-results-list {
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Result items - clickable card */
+    .search-result-item {
+        padding: 0.9rem 1rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        display: block;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+
+    .search-result-item:last-child {
+        border-bottom: none;
+    }
+
+    .search-result-item:hover {
+        background: #fef5e8;
+    }
+
+    .search-result-item:hover .search-result-title {
+        color: var(--search-accent);
+    }
+
+    /* Title */
+    .search-result-title {
+        font-size: 0.9rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: var(--search-text);
+        text-decoration: none;
+        transition: color 0.2s ease;
+        margin-bottom: 0.4rem;
+        word-break: break-word;
+    }
+
+    /* Description */
+    .search-result-desc {
+        font-size: 0.8rem;
+        line-height: 1.4;
+        color: var(--search-muted);
+        margin-bottom: 0.4rem;
+        word-break: break-word;
+    }
+
+    /* Meta info */
+    .search-result-meta {
+        font-size: 0.7rem;
+        color: var(--search-muted);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .search-result-category {
+        display: inline-block;
+        font-weight: 500;
+        background-color: rgba(255, 107, 53, 0.08);
+        color: var(--search-accent);
+        padding: 0.15rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    /* Highlight matching text */
+    .search-match-highlight {
+        background: #ffdec2;
+        font-weight: 600;
+        color: #c2410c;
+        border-radius: 2px;
+        padding: 0 2px;
+    }
+
+    /* No results message */
+    .search-no-results {
+        padding: 2rem 1rem;
+        text-align: center;
+        color: var(--search-muted);
+        font-size: 0.85rem;
+    }
+
+    /* Autocomplete dropdown - Floating */
+    .search-autocomplete {
+        position: absolute;
+        top: calc(100% - 4px);
+        left: 1.2rem;
+        right: 1.2rem;
+        background: var(--search-bg);
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        max-height: 320px;
+        overflow-y: auto;
+        z-index: 10000;
+        display: none;
+        border: 1px solid var(--search-border);
+    }
+
+    .search-autocomplete.show {
+        display: block;
+    }
+
+    .search-suggestion {
+        padding: 10px 14px;
+        cursor: pointer;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        transition: background 0.15s;
+    }
+
+    .search-suggestion:last-child {
+        border-bottom: none;
+    }
+
+    .search-suggestion:hover {
+        background: rgba(255, 107, 53, 0.05);
+    }
+
+    .search-suggestion-title {
+        font-weight: 500;
+        color: var(--search-text);
+        font-size: 0.85rem;
+        margin-bottom: 2px;
+        word-break: break-word;
+    }
+
+    .search-suggestion-category {
+        font-size: 0.7rem;
+        color: var(--search-muted);
+    }
+
+    /* ---------- MOBILE FRIENDLY RESPONSIVE ---------- */
+    @media (max-width: 768px) {
+        .search-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.25rem;
+        }
+
+        .search-title {
+            font-size: 1.1rem;
+        }
+
+        .search-subtitle {
+            font-size: 0.75rem;
+        }
+
+        .search-input-area {
+            padding: 0.6rem 1rem;
+        }
+
+        .search-input {
+            padding: 8px 8px;
+            font-size: 0.85rem;
+        }
+
+        .search-input::placeholder {
+            font-size: 0.8rem;
+        }
+
+        .search-btn {
+            padding: 8px 12px;
+            font-size: 14px;
+        }
+
+        .search-results-dropdown,
+        .search-autocomplete {
+            left: 0.8rem;
+            right: 0.8rem;
+            max-height: 300px;
+        }
+
+        .search-result-item {
+            padding: 0.75rem;
+        }
+
+        .search-result-title {
+            font-size: 0.85rem;
+        }
+
+        .search-result-desc {
+            font-size: 0.75rem;
+        }
+
+        .search-result-category {
+            font-size: 0.6rem;
+            padding: 0.12rem 0.4rem;
+        }
+
+        .search-results-header {
+            padding: 0.5rem 0.75rem;
+        }
+
+        .search-results-count {
+            font-size: 0.7rem;
+        }
+
+        .search-suggestion {
+            padding: 8px 12px;
+        }
+
+        .search-suggestion-title {
+            font-size: 0.8rem;
+        }
+
+        .search-suggestion-category {
+            font-size: 0.65rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .search-input-area {
+            padding: 0.5rem 0.8rem;
+        }
+
+        .search-group {
+            border-radius: 8px;
+        }
+
+        .search-input {
+            padding: 6px 8px;
+            font-size: 0.8rem;
+        }
+
+        .search-btn {
+            padding: 6px 10px;
+            font-size: 13px;
+        }
+
+        .search-btn {
+            font-size: 13px;
+        }
+
+        .search-clear {
+            font-size: 14px;
+            padding: 0 4px;
+        }
+
+        .search-results-dropdown,
+        .search-autocomplete {
+            left: 0.6rem;
+            right: 0.6rem;
+            max-height: 280px;
+        }
+
+        .search-result-item {
+            padding: 0.6rem 0.75rem;
+        }
+
+        .search-result-title {
+            font-size: 0.8rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .search-result-desc {
+            font-size: 0.7rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .search-result-meta {
+            gap: 0.3rem;
+        }
+
+        .search-result-category {
+            font-size: 0.55rem;
+            padding: 0.1rem 0.35rem;
+        }
+
+        .search-no-results {
+            padding: 1.5rem 0.75rem;
+            font-size: 0.75rem;
+        }
+
+        .search-suggestion {
+            padding: 6px 10px;
+        }
+
+        .search-suggestion-title {
+            font-size: 0.75rem;
+        }
+
+        .search-suggestion-category {
+            font-size: 0.6rem;
+        }
+    }
+
+    /* Touch-friendly improvements for mobile */
+    @media (hover: none) and (pointer: coarse) {
+        .search-result-item {
+            padding: 0.85rem 0.75rem;
+        }
+
+        .search-suggestion {
+            padding: 10px 12px;
+        }
+
+        .search-btn {
+            min-height: 36px;
+        }
+
+        .search-clear {
+            min-height: 36px;
+        }
+    }
+</style>
+
+<div class="search-wrapper" id="search-wrapper">
+
+    <div class="search-header">
+        <div class="search-title bilingual-title" data-en="Search" data-hi="खोजें">Search</div>
+        <div class="search-subtitle bilingual-subtitle" data-en="Find people, labs, publications, and resources"
+            data-hi="लोग, प्रयोगशालाएं, प्रकाशन और संसाधन खोजें">Find people, labs, publications, and resources</div>
+    </div>
+
+    <div class="search-main">
+        <div class="search-input-area">
+            <div class="search-group">
+                <input type="text" class="search-input" id="searchInput" placeholder="Type to search..."
+                    autocomplete="off">
+                <button class="search-clear" id="searchClear" aria-label="Clear">✕</button>
+                <button class="search-btn" id="searchBtn">🔍︎</button>
+            </div>
+            <div id="searchAutocomplete" class="search-autocomplete"></div>
+            <div id="searchResultsDropdown" class="search-results-dropdown">
+                <div id="searchResultsHeader" class="search-results-header">
+                    <span class="search-results-count" id="searchResultsCount"></span>
+                </div>
+                <div id="searchResultsList" class="search-results-list"></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    (function () {
+        'use strict';
+
+        // ============================================
+        // SEARCH INDEX - CPP-IPR Content
+        // ============================================
+        const SEARCH_DATA = [
+            // People
+            { title_en: "Centre Director", title_hi: "केंद्र निदेशक", description_en: "Director's profile, vision, and leadership at CPP-IPR", description_hi: "सीपीपी-आईपीआर में निदेशक की प्रोफ़ाइल, दृष्टिकोण और नेतृत्व", category_en: "People", category_hi: "जन शक्ति", url: "/pages/People/center_director.html", keywords: ["director", "head", "leadership", "निदेशक"] },
+            { title_en: "Administrative Staff", title_hi: "प्रशासनिक कर्मचारी", description_en: "Office staff, administration, and support team", description_hi: "कार्यालय कर्मचारी, प्रशासन और सहायता टीम", category_en: "People", category_hi: "जन शक्ति", url: "/pages/People/admin.html", keywords: ["admin", "staff", "office", "प्रशासन"] },
+            { title_en: "Faculties / Scientists / Engineers", title_hi: "संकाय / वैज्ञानिक / अभियंता", description_en: "Research faculty, scientists, and engineering staff", description_hi: "शोध संकाय, वैज्ञानिक और इंजीनियरिंग कर्मचारी", category_en: "People", category_hi: "जन शक्ति", url: "/pages/People/faculty.html", keywords: ["faculty", "scientist", "engineer", "संकाय"] },
+            { title_en: "PDFs & Research Scholars", title_hi: "पीडीएफ और शोध छात्र", description_en: "Postdoctoral fellows and PhD research scholars", description_hi: "पोस्टडॉक्टरल फेलो और पीएचडी शोध छात्र", category_en: "People", category_hi: "जन शक्ति", url: "/pages/People/pdfs.html", keywords: ["pdf", "phd", "scholar", "शोध"] },
+
+            // R&D Labs
+            { title_en: "CIMPLE-PSI Laboratory", title_hi: "सिम्पल-पीएसआई प्रयोगशाला", description_en: "Linear plasma device for plasma-surface interaction studies", description_hi: "प्लाज्मा-सतह अंतःक्रिया अध्ययन के लिए रैखिक प्लाज्मा उपकरण", category_en: "Research Labs", category_hi: "अनुसंधान प्रयोगशालाएं", url: "/pages/RnD/cimple_psi.html", keywords: ["cimple", "psi", "plasma"] },
+            { title_en: "TSL Laboratory", title_hi: "टीएसएल प्रयोगशाला", description_en: "Theory & Simulation Lab with HPC capabilities", description_hi: "एचपीसी क्षमताओं के साथ सिद्धांत और सिमुलेशन प्रयोगशाला", category_en: "Research Labs", category_hi: "अनुसंधान प्रयोगशालाएं", url: "/pages/RnD/tsl.html", keywords: ["theory", "simulation", "hpc"] },
+            { title_en: "Helicon Laboratory", title_hi: "हेलिकॉन प्रयोगशाला", description_en: "Helicon discharge plasma source research", description_hi: "हेलिकॉन डिस्चार्ज प्लाज्मा स्रोत अनुसंधान", category_en: "Research Labs", category_hi: "अनुसंधान प्रयोगशालाएं", url: "/pages/RnD/helicon.html", keywords: ["helicon", "plasma"] },
+
+            // Staff Resources
+            { title_en: "Library Resources", title_hi: "पुस्तकालय संसाधन", description_en: "Digital library, journals, and thesis collection", description_hi: "डिजिटल पुस्तकालय, पत्रिकाएं और थीसिस संग्रह", category_en: "Staff Resources", category_hi: "स्टाफ संसाधन", url: "/pages/Library/library.html", keywords: ["library", "journals", "books", "पुस्तकालय"] },
+
+            // Seminars
+            { title_en: "Student Seminar Series", title_hi: "छात्र संगोष्ठी श्रृंखला", description_en: "Monthly seminars by research scholars", description_hi: "शोध छात्रों द्वारा मासिक संगोष्ठी", category_en: "Seminars", category_hi: "संगोष्ठी", url: "/pages/Seminars_Colloquiums/student_seminar.html", keywords: ["student", "seminar", "छात्र"] },
+            { title_en: "Colloquiums", title_hi: "कोलोक्वियम", description_en: "Invited talks by eminent scientists", description_hi: "प्रतिष्ठित वैज्ञानिकों द्वारा आमंत्रित व्याख्यान", category_en: "Seminars", category_hi: "संगोष्ठी", url: "/pages/Seminars_Colloquiums/collo.html", keywords: ["colloquium", "talk"] },
+
+            // IPR Pages
+            { title_en: "IPR Website", title_hi: "आईपीआर वेबसाइट", description_en: "Institute for Plasma Research main portal", description_hi: "प्लाज्मा अनुसंधान संस्थान मुख्य पोर्टल", category_en: "IPR Resources", category_hi: "आईपीआर संसाधन", url: "https://www.ipr.res.in/", keywords: ["ipr", "institute"] },
+            { title_en: "Hindi Cell", title_hi: "हिंदी सेल", description_en: "Hindi promotion and official language resources", description_hi: "हिंदी प्रोत्साहन और राजभाषा संसाधन", category_en: "IPR Resources", category_hi: "आईपीआर संसाधन", url: "https://www.ipr.res.in/hindicell/", keywords: ["hindi", "language"] },
+            { title_en: "Jobs & Career", title_hi: "नौकरियां और करियर", description_en: "Recruitment notifications and career opportunities", description_hi: "भर्ती अधिसूचनाएं और करियर के अवसर", category_en: "IPR Resources", category_hi: "आईपीआर संसाधन", url: "https://www.ipr.res.in/jobs/", keywords: ["jobs", "recruitment", "career"] },
+
+            // Footer Links
+            { title_en: "Webmail", title_hi: "वेबमेल", description_en: "IPR webmail access", description_hi: "आईपीआर वेबमेल पहुंच", category_en: "Quick Links", category_hi: "त्वरित लिंक", url: "https://webmail.ipr.res.in/", keywords: ["webmail", "email"] },
+            { title_en: "Tenders", title_hi: "निविदाएं", description_en: "Latest tenders and procurement notices", description_hi: "नवीनतम निविदाएं और खरीद सूचनाएं", category_en: "Quick Links", category_hi: "त्वरित लिंक", url: "/pages/Tenders/tender.html", keywords: ["tender", "procurement"] },
+            { title_en: "RTI", title_hi: "सूचना का अधिकार", description_en: "Right to Information submissions and disclosure", description_hi: "सूचना का अधिकार प्रस्तुतियां और प्रकटीकरण", category_en: "Quick Links", category_hi: "त्वरित लिंक", url: "/pages/RTI/rti.html", keywords: ["rti", "information"] }
+        ];
+
+        function getCurrentLang() {
+            return localStorage.getItem('preferred-language') || 'en';
+        }
+
+        function getLocalizedText(item, field, lang) {
+            const key = field + '_' + lang;
+            if (item[key]) return item[key];
+            return item[field + '_en'] || '';
+        }
+
+        function getRelevanceScore(item, query, lang) {
+            if (!query) return 0;
+            const q = query.toLowerCase().trim();
+            let score = 0;
+
+            const title = getLocalizedText(item, 'title', lang).toLowerCase();
+            const description = getLocalizedText(item, 'description', lang).toLowerCase();
+            const category = getLocalizedText(item, 'category', lang).toLowerCase();
+
+            if (title.includes(q)) {
+                score += 100;
+                if (title === q) score += 50;
+            }
+            if (description.includes(q)) score += 40;
+            if (category.includes(q)) score += 30;
+
+            item.keywords.forEach(kw => {
+                if (kw.toLowerCase().includes(q)) score += 35;
+            });
+
+            return score;
+        }
+
+        function searchContent(query, lang) {
+            if (!query || query.trim() === "") return [];
+            const q = query.trim();
+            const results = SEARCH_DATA.map(item => ({
+                ...item,
+                score: getRelevanceScore(item, q, lang),
+                title: getLocalizedText(item, 'title', lang),
+                description: getLocalizedText(item, 'description', lang),
+                category: getLocalizedText(item, 'category', lang)
+            })).filter(item => item.score > 0);
+
+            results.sort((a, b) => b.score - a.score);
+            return results.slice(0, 12);
+        }
+
+        function getAutocompleteSuggestions(query, lang) {
+            if (!query || query.length < 2) return [];
+            const q = query.toLowerCase().trim();
+            const suggestions = SEARCH_DATA.map(item => {
+                let score = 0;
+                const title = getLocalizedText(item, 'title', lang).toLowerCase();
+                const category = getLocalizedText(item, 'category', lang).toLowerCase();
+
+                if (title.includes(q)) score += 60;
+                if (category.includes(q)) score += 20;
+                if (item.keywords.some(kw => kw.toLowerCase().includes(q))) score += 30;
+
+                return {
+                    title: getLocalizedText(item, 'title', lang),
+                    category: getLocalizedText(item, 'category', lang),
+                    url: item.url,
+                    score: score
+                };
+            }).filter(s => s.score > 0).sort((a, b) => b.score - a.score).slice(0, 5);
+
+            return suggestions;
+        }
+
+        function highlightMatch(text, query) {
+            if (!query || !text) return text;
+            const q = query.toLowerCase().trim();
+            const lowerText = text.toLowerCase();
+            if (lowerText.includes(q)) {
+                const start = lowerText.indexOf(q);
+                const end = start + q.length;
+                return text.substring(0, start) +
+                    '<span class="search-match-highlight">' +
+                    text.substring(start, end) +
+                    '</span>' +
+                    text.substring(end);
+            }
+            return text;
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function (m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const clearBtn = document.getElementById('searchClear');
+        const autocompleteDiv = document.getElementById('searchAutocomplete');
+        const resultsDropdown = document.getElementById('searchResultsDropdown');
+        const resultsList = document.getElementById('searchResultsList');
+        const resultsCountSpan = document.getElementById('searchResultsCount');
+        const resultsHeader = document.getElementById('searchResultsHeader');
+
+        function renderResults(query) {
+            const lang = getCurrentLang();
+
+            if (!query || query.trim() === "") {
+                resultsDropdown.classList.remove('show');
+                return;
+            }
+
+            const results = searchContent(query, lang);
+
+            if (results.length === 0) {
+                resultsList.innerHTML = `<div class="search-no-results">No results found for "${escapeHtml(query)}"</div>`;
+                resultsCountSpan.textContent = `0 results`;
+                resultsDropdown.classList.add('show');
+                return;
+            }
+
+            resultsCountSpan.textContent = `${results.length} result${results.length !== 1 ? 's' : ''}`;
+
+            const resultsHtml = results.map(result => `
+        <a href="${result.url}" class="search-result-item">
+          <div class="search-result-title">${highlightMatch(escapeHtml(result.title), query)}</div>
+          <div class="search-result-desc">${highlightMatch(escapeHtml(result.description), query)}</div>
+          <div class="search-result-meta">
+            <span class="search-result-category">${escapeHtml(result.category)}</span>
+          </div>
+        </a>
+      `).join('');
+
+            resultsList.innerHTML = resultsHtml;
+            resultsDropdown.classList.add('show');
+        }
+
+        function updateAutocomplete() {
+            const query = searchInput.value;
+            const lang = getCurrentLang();
+
+            if (!query || query.length < 2) {
+                autocompleteDiv.classList.remove('show');
+                return;
+            }
+
+            const suggestions = getAutocompleteSuggestions(query, lang);
+
+            if (suggestions.length === 0) {
+                autocompleteDiv.classList.remove('show');
+                return;
+            }
+
+            const suggHtml = suggestions.map(sugg => `
+        <div class="search-suggestion" data-title="${escapeHtml(sugg.title)}" data-url="${sugg.url}">
+          <div class="search-suggestion-title">${highlightMatch(escapeHtml(sugg.title), query)}</div>
+          <div class="search-suggestion-category">${escapeHtml(sugg.category)}</div>
+        </div>
+      `).join('');
+
+            autocompleteDiv.innerHTML = suggHtml;
+            autocompleteDiv.classList.add('show');
+
+            document.querySelectorAll('.search-suggestion').forEach(el => {
+                el.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    const title = this.getAttribute('data-title');
+                    if (title) {
+                        searchInput.value = title;
+                        autocompleteDiv.classList.remove('show');
+                        renderResults(title);
+                    }
+                });
+            });
+        }
+
+        function closeAllDropdowns() {
+            autocompleteDiv.classList.remove('show');
+            resultsDropdown.classList.remove('show');
+        }
+
+        function updatePlaceholder() {
+            const lang = getCurrentLang();
+            searchInput.placeholder = lang === 'hi' ? 'खोजें...' : 'Type to search...';
+        }
+
+        searchBtn.addEventListener('click', () => {
+            renderResults(searchInput.value);
+            autocompleteDiv.classList.remove('show');
+        });
+
+        searchInput.addEventListener('input', (e) => {
+            updateAutocomplete();
+            if (searchInput.value.trim() === "") {
+                clearBtn.style.display = "none";
+                resultsDropdown.classList.remove('show');
+            } else {
+                clearBtn.style.display = "flex";
+                renderResults(searchInput.value);
+            }
+        });
+
+        clearBtn.addEventListener('click', () => {
+            searchInput.value = "";
+            clearBtn.style.display = "none";
+            closeAllDropdowns();
+            searchInput.focus();
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!searchInput.contains(e.target) && !autocompleteDiv.contains(e.target) && !resultsDropdown.contains(e.target)) {
+                closeAllDropdowns();
+            }
+        });
+
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                renderResults(searchInput.value);
+                autocompleteDiv.classList.remove('show');
+            }
+        });
+
+        // Initialize
+        clearBtn.style.display = "none";
+        updatePlaceholder();
+
+        // Listen for language changes from bilingual.js
+        const originalApplyClassBasedBilingual = window.applyClassBasedBilingual;
+        if (typeof originalApplyClassBasedBilingual === 'function') {
+            window.applyClassBasedBilingual = function (lang) {
+                originalApplyClassBasedBilingual(lang);
+                updatePlaceholder();
+                if (searchInput.value.trim()) {
+                    renderResults(searchInput.value);
+                }
+            };
+        }
+
+        // Also listen for storage events
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'preferred-language') {
+                updatePlaceholder();
+                if (searchInput.value.trim()) {
+                    renderResults(searchInput.value);
+                }
+            }
+        });
+
+        // Expose for manual updates
+        window.updateSearchLanguage = function () {
+            updatePlaceholder();
+            if (searchInput.value.trim()) {
+                renderResults(searchInput.value);
+            }
+        };
+
+    })();
+</script>

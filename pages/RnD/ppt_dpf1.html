@@ -1,0 +1,1654 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pulsed Power Technology Laboratory - CPP-IPR</title>
+
+    <style>
+        :root {
+            --lab-bg: #ffffff;
+            --lab-border: #d0d7e2;
+            --lab-text: #111827;
+            --lab-muted: #6b7280;
+            --lab-accent: #2563eb;
+            --lab-radius-lg: 16px;
+            --lab-tab-active: #2563eb;
+            --lab-tab-hover: #e5e7eb;
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+        }
+
+        #header-container,
+        #footer-container {
+            flex-shrink: 0;
+        }
+
+        main {
+            flex: 1;
+            padding: 1.5rem 5vw;
+            box-sizing: border-box;
+            background: #f9fafb;
+        }
+
+        .page-section {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .lab-banner {
+            width: 100%;
+            height: auto;
+            max-height: 300px;
+            border-radius: var(--lab-radius-lg);
+            object-fit: cover;
+            margin-bottom: 1.5rem;
+        }
+
+        .lab-container {
+            background: var(--lab-bg);
+            border: 1.5px solid var(--lab-border);
+            border-radius: var(--lab-radius-lg);
+            overflow: hidden;
+        }
+
+        .lab-header {
+            padding: 2rem 2rem 1.5rem;
+            text-align: center;
+            border-bottom: 2px solid var(--lab-border);
+        }
+
+        .lab-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--lab-text);
+            margin: 0;
+        }
+
+        .lab-tabs-wrapper {
+            position: relative;
+            border-bottom: 2px solid var(--lab-border);
+            background: #f9fafb;
+        }
+
+        .lab-tabs {
+            display: flex;
+            gap: 0.5rem;
+            padding: 1.5rem 2rem 0;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scrollbar-width: thin;
+            -ms-overflow-style: auto;
+        }
+
+        .lab-tabs::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .lab-tabs::-webkit-scrollbar-track {
+            background: var(--lab-border);
+            border-radius: 10px;
+        }
+
+        .lab-tabs::-webkit-scrollbar-thumb {
+            background: var(--lab-accent);
+            border-radius: 10px;
+        }
+
+        .lab-tab {
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: none;
+            border-radius: 8px 8px 0 0;
+            color: var(--lab-muted);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .lab-tab:hover {
+            background: var(--lab-tab-hover);
+            color: var(--lab-text);
+        }
+
+        .lab-tab.active {
+            background: var(--lab-tab-active);
+            color: #ffffff;
+        }
+
+        .lab-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--lab-accent);
+        }
+
+        .scroll-indicator {
+            display: none;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(37, 99, 235, 0.9);
+            color: white;
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            pointer-events: none;
+            z-index: 10;
+            animation: fadeInOut 2s infinite;
+        }
+
+        .scroll-indicator.left {
+            left: 0.5rem;
+        }
+
+        .scroll-indicator.right {
+            right: 0.5rem;
+        }
+
+        @keyframes fadeInOut {
+
+            0%,
+            100% {
+                opacity: 0.7;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        .lab-content {
+            padding: 2rem 5%;
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .overview-section {
+            max-width: 100%;
+        }
+
+        .overview-section h3 {
+            font-size: 1.5rem;
+            color: var(--lab-text);
+            margin: 0 0 1rem;
+            font-weight: 600;
+        }
+
+        .overview-section p {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: var(--lab-text);
+            margin-bottom: 1.2rem;
+            text-align: justify;
+        }
+
+        .research-figures-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 1.5rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .research-figures-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .research-item {
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--lab-border);
+        }
+
+        .research-item:last-child {
+            border-bottom: none;
+        }
+
+        .research-item h3 {
+            font-size: 1.4rem;
+            color: var(--lab-accent);
+            margin: 0 0 1rem;
+            font-weight: 600;
+        }
+
+        .research-item h4 {
+            font-size: 1.2rem;
+            color: var(--lab-text);
+            margin: 1.5rem 0 0.75rem;
+            font-weight: 600;
+        }
+
+        .research-item p {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: var(--lab-text);
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+
+        .research-figure {
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+
+        .research-figure img {
+            max-width: 50%;
+            height: auto;
+            max-height: 250px;
+            border-radius: 12px;
+            border: 1px solid var(--lab-border);
+            margin: 0 auto;
+            display: block;
+            transition: transform 0.2s ease;
+        }
+
+        .research-figure img:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .research-figure figcaption {
+            font-size: 0.95rem;
+            color: var(--lab-muted);
+            font-style: italic;
+            margin-top: 0.75rem;
+            padding: 0.5rem;
+            text-align: center;
+            background-color: #f3f4f6;
+            border-radius: 4px;
+        }
+
+        .float-right {
+            float: right;
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+            max-width: 150px;
+            border-radius: 8px;
+            border: 1px solid var(--lab-border);
+        }
+
+        .clearfix::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+
+        .people-categories {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .people-cat-btn {
+            padding: 0.6rem 1.2rem;
+            background: #f3f4f6;
+            border: 1px solid var(--lab-border);
+            border-radius: 8px;
+            color: var(--lab-text);
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .people-cat-btn:hover {
+            background: #e5e7eb;
+        }
+
+        .people-cat-btn.active {
+            background: var(--lab-tab-active);
+            color: #ffffff;
+            border-color: var(--lab-accent);
+        }
+
+        .people-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .person-card {
+            display: none;
+            background: #ffffff;
+            border: 1.5px solid var(--lab-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .person-card.show {
+            display: block;
+        }
+
+        .person-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .person-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 1rem;
+            border: 3px solid var(--lab-border);
+        }
+
+        .person-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--lab-text);
+            margin: 0 0 0.5rem;
+        }
+
+        .person-role {
+            font-size: 0.95rem;
+            color: var(--lab-muted);
+            margin: 0 0 0.5rem;
+            font-style: italic;
+        }
+
+        .person-email {
+            font-size: 0.9rem;
+            word-break: break-all;
+            margin-bottom: 0.5rem;
+        }
+
+        .person-email a {
+            color: var(--lab-accent);
+            text-decoration: none;
+        }
+
+        .person-email a:hover {
+            text-decoration: underline;
+        }
+
+        .person-phone {
+            font-size: 0.9rem;
+            color: var(--lab-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .person-bio {
+            text-align: left;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--lab-border);
+        }
+
+        .publications-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .publications-list li {
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            background: #f9fafb;
+            border-radius: 8px;
+            border-left: 3px solid var(--lab-accent);
+            font-size: 0.95rem;
+            line-height: 1.7;
+            text-align: justify;
+        }
+
+        .conference-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .conference-list li {
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            background: #f9fafb;
+            border-radius: 8px;
+            border-left: 3px solid #8b5cf6;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            text-align: justify;
+        }
+
+        .invited-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .invited-list li {
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            background: #f9fafb;
+            border-radius: 8px;
+            border-left: 3px solid #10b981;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            text-align: justify;
+        }
+
+        .achievement-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .achievement-list li {
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            background: #f9fafb;
+            border-radius: 8px;
+            border-left: 3px solid #f59e0b;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            text-align: justify;
+        }
+
+        .new-badge {
+            display: inline-block;
+            background: #ef4444;
+            color: #ffffff;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+            vertical-align: middle;
+            margin-right: 0.5rem;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            color: var(--lab-text);
+            margin: 2rem 0 1rem;
+            font-weight: 600;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--lab-border);
+        }
+
+        .subsection-title {
+            font-size: 1.1rem;
+            color: var(--lab-text);
+            margin: 1.5rem 0 1rem;
+            font-weight: 600;
+        }
+
+        .research-list {
+            list-style-type: disc;
+            padding-left: 2rem;
+            margin: 1rem 0;
+        }
+
+        .research-list li {
+            margin-bottom: 0.75rem;
+            text-align: justify;
+        }
+
+        .image-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 1.5rem 0;
+        }
+
+        .image-grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 1.5rem 0;
+        }
+
+        @media (max-width: 768px) {
+
+            .image-grid-2,
+            .image-grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .image-card {
+            text-align: center;
+        }
+
+        .image-card img {
+            max-width: 90%;
+            width: auto;
+            max-height: 200px;
+            border-radius: 12px;
+            border: 1px solid var(--lab-border);
+            transition: transform 0.2s ease;
+            margin: 0 auto;
+            display: block;
+        }
+
+        .image-card img:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .image-card p {
+            font-size: 0.9rem;
+            color: var(--lab-muted);
+            font-style: italic;
+            margin-top: 0.5rem;
+        }
+
+        .project-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            background: #f9fafb;
+            border-radius: 8px;
+            border-left: 3px solid var(--lab-accent);
+        }
+
+        .project-bullet {
+            color: var(--lab-accent);
+            font-size: 1.2rem;
+            line-height: 1;
+        }
+
+        @media (min-width: 1200px) {
+            .image-grid-2 {
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+            }
+
+            .image-grid-3 {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 20px;
+            }
+
+            .research-figure img {
+                max-width: 45%;
+            }
+
+            .float-right {
+                max-width: 180px;
+            }
+        }
+
+        @media (min-width: 1600px) {
+
+            .image-grid-2,
+            .image-grid-3 {
+                gap: 25px;
+            }
+
+            .research-figure img {
+                max-width: 40%;
+            }
+
+            .float-right {
+                max-width: 200px;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .lab-title {
+                font-size: 1.5rem;
+            }
+
+            .lab-header {
+                padding: 1.5rem 1.25rem 1rem;
+            }
+
+            .lab-tabs-wrapper {
+                padding: 0;
+            }
+
+            .lab-tabs {
+                padding: 1rem 1rem 0;
+                gap: 0.75rem;
+                -webkit-overflow-scrolling: touch;
+                scroll-behavior: smooth;
+            }
+
+            .lab-tab {
+                font-size: 0.9rem;
+                padding: 0.6rem 1rem;
+            }
+
+            .lab-content {
+                padding: 1.5rem 5%;
+            }
+
+            .people-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .scroll-indicator {
+                display: block;
+            }
+
+            .float-right {
+                float: none;
+                margin: 1rem auto;
+                display: block;
+                max-width: 70%;
+            }
+
+            .research-figure img {
+                max-width: 80%;
+            }
+
+            .image-card img {
+                max-width: 80%;
+            }
+        }
+
+        @media (orientation: portrait) {
+            .lab-tabs {
+                -webkit-overflow-scrolling: touch;
+                scroll-behavior: smooth;
+            }
+        }
+
+        /* ---------- BILINGUAL TEXT STYLES ---------- */
+        .bilingual-title,
+        .bilingual-text {
+            transition: all 0.2s ease;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="header-container"></div>
+
+    <main>
+        <div class="page-section">
+
+            <img src="/assets/images/img/fls.jpg" alt="Pulsed Power Technology Laboratory Banner" class="lab-banner">
+
+            <div class="lab-container">
+
+                <div class="lab-header">
+                    <h1 class="lab-title bilingual-title" data-hi="पल्स्ड पावर प्रौद्योगिकी प्रयोगशाला"
+                        data-en="Pulsed Power Technology Laboratory">
+                        Pulsed Power Technology Laboratory
+                    </h1>
+                    <p class="bilingual-text" style="color: var(--lab-muted); margin-top: 0.5rem;"
+                        data-hi="सघन प्लाज्मा फोकस प्रयोगशाला - I" data-en="Dense Plasma Focus Laboratory - I">Dense
+                        Plasma Focus Laboratory - I</p>
+                </div>
+
+                <div class="lab-tabs-wrapper">
+                    <div class="lab-tabs" id="labTabs">
+                        <button class="lab-tab active" onclick="switchTab('overview')">
+                            <span class="bilingual-text" data-hi="अवलोकन" data-en="Overview">Overview</span>
+                        </button>
+                        <button class="lab-tab" onclick="switchTab('research')">
+                            <span class="bilingual-text" data-hi="अनुसंधान" data-en="Research">Research</span>
+                        </button>
+                        <button class="lab-tab" onclick="switchTab('people')">
+                            <span class="bilingual-text" data-hi="लोग" data-en="People">People</span>
+                        </button>
+                        <button class="lab-tab" onclick="switchTab('publications')">
+                            <span class="bilingual-text" data-hi="प्रकाशन" data-en="Publications">Publications</span>
+                        </button>
+                        <button class="lab-tab" onclick="switchTab('conferences')">
+                            <span class="bilingual-text" data-hi="सम्मेलन" data-en="Conferences">Conferences</span>
+                        </button>
+                        <button class="lab-tab" onclick="switchTab('invited')">
+                            <span class="bilingual-text" data-hi="आमंत्रित वार्ताएं" data-en="Invited Talks">Invited
+                                Talks</span>
+                        </button>
+                        <button class="lab-tab" onclick="switchTab('achievements')">
+                            <span class="bilingual-text" data-hi="उपलब्धियां" data-en="Achievements">Achievements</span>
+                        </button>
+                    </div>
+
+                    <div class="scroll-indicator left" id="scrollLeft">◄ Swipe</div>
+                    <div class="scroll-indicator right" id="scrollRight">Swipe ►</div>
+                </div>
+
+                <div class="lab-content">
+
+                    <!-- Overview Tab -->
+                    <div id="overview" class="tab-panel active">
+                        <div class="overview-section">
+                            <h3 class="bilingual-text" data-hi="अवलोकन" data-en="Overview">Overview</h3>
+
+                            <p class="bilingual-text"
+                                data-hi="पल्स्ड पावर प्रौद्योगिकी आधारित अनुसंधान एवं विकास (आर एंड डी) गतिविधियाँ इस केंद्र में 1997 से प्लाज्मा फोकस (पीएफ) सुविधा की शुरुआत के साथ की जा रही हैं। पीएफ मुख्य रूप से एक क्षणिक प्लाज्मा उत्पादक उपकरण है जो प्लाज्मा को बहुत उच्च घनत्व और उच्च तापमान तक पिंच करने के लिए स्व-उत्पन्न चुंबकीय क्षेत्र का उपयोग करता है। यह विभिन्न विद्युत चुम्बकीय विकिरणों, आवेशित कणों और न्यूट्रॉन का समृद्ध स्रोत है। इसके अलावा, इस उपकरण में धारा फिलामेंटेशन, अस्थिरताएं, हॉट स्पॉट, शॉक गति आदि जैसी कई दिलचस्प भौतिक घटनाएं देखी जाती हैं। आमतौर पर कम ऊर्जा वाले उपकरण विभिन्न औद्योगिक अनुप्रयोगों के लिए बहुत सुविधाजनक साबित हुए हैं। इसलिए, यह उपकरण न केवल प्लाज्मा भौतिकी के शिक्षण के लिए बल्कि अनुसंधान एवं विकास गतिविधियों के लिए भी एक आशाजनक उपकरण है।"
+                                data-en="The pulsed power technology based research and development (R&D) activities are being carried out at this centre since 1997 with the initiation of the plasma focus (PF) facility. The PF is mainly a transient plasma producing device that makes use of self-generated magnetic field to pinch the plasma to a very high dense and high temperature. It is a rich source of various electromagnetic radiations, charged particles and neutrons. In addition, many interesting physical phenomena such as current filamentation, instabilities, hot spots, shock motion etc are being marked in this device. Typically low energy devices have been proven to be very convenient for the different industrial applications. Hence, this device is a promising tool not only for teaching of plasma physics but also for R&D activities.">
+                                The pulsed power technology based research and development (R&D) activities are being
+                                carried out at this centre since 1997 with the initiation of the plasma focus (PF)
+                                facility. The PF is mainly a transient plasma producing device that makes use of
+                                self-generated magnetic field to pinch the plasma to a very high dense and high
+                                temperature. It is a rich source of various electromagnetic radiations, charged
+                                particles and neutrons. In addition, many interesting physical phenomena such as current
+                                filamentation, instabilities, hot spots, shock motion etc are being marked in this
+                                device. Typically low energy devices have been proven to be very convenient for the
+                                different industrial applications. Hence, this device is a promising tool not only for
+                                teaching of plasma physics but also for R&D activities.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Research Tab -->
+                    <div id="research" class="tab-panel">
+
+                        <h3 class="section-title bilingual-text" data-hi="अनुसंधान" data-en="Research">Research</h3>
+
+                        <h4 class="subsection-title bilingual-text"
+                            data-hi="पिछले एक दशक में इस पीएफ उपकरण का उपयोग करके निम्नलिखित अध्ययन किए गए हैं:"
+                            data-en="Following studies have been made during last one decade using this PF device:">
+                            Following studies have been made during last one decade using this PF device:</h4>
+
+                        <ul class="research-list">
+                            <li class="bilingual-text"
+                                data-hi="एकाधिक चुंबकीय प्रोब व्यवस्थाओं का उपयोग करके पीएफ के धारा आवरण की गतिशीलता का अध्ययन किया गया।"
+                                data-en="Studied the dynamics of current sheath of PF using multiple magnetic probe arrangements.">
+                                Studied the dynamics of current sheath of PF using multiple magnetic probe arrangements.
+                            </li>
+                            <li class="bilingual-text"
+                                data-hi="डायोड एक्स-रे स्पेक्ट्रोमीटर और एक्स-रे पिनहोल कैमरा का उपयोग करके पीएफ के एक्स-रे उत्सर्जन की जांच की गई।"
+                                data-en="Investigated X-ray emission of PF using diode X-ray spectrometer and X-ray pinhole camera.">
+                                Investigated X-ray emission of PF using diode X-ray spectrometer and X-ray pinhole
+                                camera.</li>
+                            <li class="bilingual-text"
+                                data-hi="रेडियोग्राफी उद्देश्य के लिए एक्स-रे उत्सर्जन का उपयोग किया गया।"
+                                data-en="Used X-ray emission for the radiography purpose.">Used X-ray emission for the
+                                radiography purpose.</li>
+                            <li class="bilingual-text"
+                                data-hi="एकल और एकाधिक फैराडे कप व्यवस्था और एसएसएनटीडी का उपयोग करके पीएफ के आयन गतिकी का अवलोकन किया गया।"
+                                data-en="Observed ion dynamics of PF using single and multiple Faraday cup arrangement and SSNTD.">
+                                Observed ion dynamics of PF using single and multiple Faraday cup arrangement and SSNTD.
+                            </li>
+                            <li class="bilingual-text"
+                                data-hi="इलेक्ट्रॉन कलेक्टर और रोगोवस्की कॉइल का उपयोग करके पीएफ के इलेक्ट्रॉन बीम धारा का अध्ययन किया गया।"
+                                data-en="Studied the electron beam current of PF using electron collector and Rogowski coil.">
+                                Studied the electron beam current of PF using electron collector and Rogowski coil.</li>
+                            <li class="bilingual-text"
+                                data-hi="स्टील के सख्तीकरण के लिए इसका उपयोग करके पीएफ उपकरण को नाइट्राइडिंग रिएक्टर के उपयुक्त विकल्प के रूप में चित्रित किया गया।"
+                                data-en="Portrayed PF device as a suitable alternate of nitriding reactor by using it for hardening of steel.">
+                                Portrayed PF device as a suitable alternate of nitriding reactor by using it for
+                                hardening of steel.</li>
+                            <li class="bilingual-text"
+                                data-hi="पीएफ उपकरण के नाइट्रोजन आयनों का उपयोग करके ग्रेफाइट सब्सट्रेट पर सैद्धांतिक रूप से अनुमानित सामग्री कार्बोनाइट्राइड (हीरे से कठोर) तैयार करने में सफलता प्राप्त की गई।"
+                                data-en="Succeeded to prepare theoretically predicted material CARBONITRIDE (harder than diamond) on graphite substrate by using nitrogen ions of PF device.">
+                                Succeeded to prepare theoretically predicted material CARBONITRIDE (harder than diamond)
+                                on graphite substrate by using nitrogen ions of PF device.</li>
+                            <li class="bilingual-text"
+                                data-hi="अमेरिकन डायमंड में रंग केंद्र बनाने के लिए पीएफ उपकरण के ऊर्जावान आयनों का उपयोग किया गया।"
+                                data-en="Used energetic ions of PF for creation of colour centres in American Diamond.">
+                                Used energetic ions of PF for creation of colour centres in American Diamond.</li>
+                            <li class="bilingual-text"
+                                data-hi="कमरे के तापमान पर पॉलीएनिलिन के नैनोवायर उगाने के लिए पीएफ उपकरण के इलेक्ट्रॉन बीम का उपयोग किया गया।"
+                                data-en="Used electron beam of PF device to grow NANOWIRE of polyaniline at room temperature.">
+                                Used electron beam of PF device to grow NANOWIRE of polyaniline at room temperature.
+                            </li>
+                            <li class="bilingual-text"
+                                data-hi="टोकामक रिएक्टर में रुचि की सामग्रियों पर प्रोटॉन और उत्कृष्ट गैस आयनों के विकिरण का अध्ययन किया जा रहा है।"
+                                data-en="Studying protons and noble gas ions irradiation on materials that are of interest in tokamak reactor.">
+                                Studying protons and noble gas ions irradiation on materials that are of interest in
+                                tokamak reactor.</li>
+                        </ul>
+
+                        <div class="image-grid-2" style="margin: 2rem 0;">
+                            <div class="image-card">
+                                <img src="/assets/images/images/pic1.jpg" alt="Research image 1"
+                                    onerror="this.style.display='none'">
+                            </div>
+                            <div class="image-card">
+                                <img src="/assets/images/images/pic4.jpg" alt="Research image 4"
+                                    onerror="this.style.display='none'">
+                            </div>
+                            <div class="image-card">
+                                <img src="/assets/images/images/pic2.jpg" alt="Research image 2"
+                                    onerror="this.style.display='none'">
+                            </div>
+                            <div class="image-card">
+                                <img src="/assets/images/images/pic3.jpg" alt="Research image 3"
+                                    onerror="this.style.display='none'">
+                            </div>
+                        </div>
+
+                        <h4 class="subsection-title bilingual-text" data-hi="चल रहे कार्य" data-en="Ongoing Works">
+                            Ongoing Works</h4>
+
+                        <p class="bilingual-text"
+                            data-hi="हमारे पीएफ उपकरण से उत्सर्जित अल्फा कणों को इलेक्ट्रोड ग्रेड ग्रेफाइट और टंगस्टन नमूनों पर विकिरणित किया गया ताकि विकिरण के कारण उनमें होने वाले आकृति विज्ञान और संरचनात्मक परिवर्तनों का अध्ययन किया जा सके।"
+                            data-en="Alpha particles emanated from our PF device were bombarded on electrode grade graphite as well as tungsten samples in order to study the morphological and structural changes occurring on them due to irradiation.">
+                            Alpha particles emanated from our PF device were bombarded on electrode grade graphite as
+                            well as tungsten samples in order to study the morphological and structural changes
+                            occurring on them due to irradiation.
+                        </p>
+
+                        <p class="bilingual-text"
+                            data-hi="ग्रेफाइट नमूनों की सतह आकृति विज्ञान संबंधी अध्ययन पहले ही एचआरटीईएम, एफईएसईएम और एएफएम का उपयोग करके किए जा चुके हैं। संदर्भ नमूने स्तरित प्रकार की संरचना प्रदर्शित करते हैं जबकि विकिरणित नमूने गोलाकार संरचना प्रदर्शित करते हैं जैसा कि टीईएम माइक्रोग्राफ (चित्र I) में दिखाया गया है।"
+                            data-en="Surface morphological studies of graphite samples have already carried out using HRTEM, FESEM and AFM. The reference samples exhibit layered type of structure where as the irradiated samples exhibit rounded structure as shown in TEM micrographs (Fig. I).">
+                            Surface morphological studies of graphite samples have already carried out using HRTEM,
+                            FESEM and AFM. The reference samples exhibit layered type of structure where as the
+                            irradiated samples exhibit rounded structure as shown in TEM micrographs (Fig. I).
+                        </p>
+
+                        <!-- Figure I -->
+                        <div class="image-grid-2">
+                            <figure class="research-figure">
+                                <img src="/assets/images/images/dpf-1.jpg" alt="TEM micrograph reference"
+                                    onerror="this.style.display='none'">
+                                <figcaption class="bilingual-text" data-hi="चित्र I (a): संदर्भ नमूना"
+                                    data-en="Fig. I (a): Reference sample">Fig. I (a): Reference sample</figcaption>
+                            </figure>
+                            <figure class="research-figure">
+                                <img src="/assets/images/images/dpf-2.jpg" alt="TEM micrograph irradiated"
+                                    onerror="this.style.display='none'">
+                                <figcaption class="bilingual-text" data-hi="चित्र I (b): आयन विकिरणित नमूना"
+                                    data-en="Fig. I (b): Ion irradiated sample">Fig. I (b): Ion irradiated sample
+                                </figcaption>
+                            </figure>
+                        </div>
+
+                        <p class="bilingual-text"
+                            data-hi="एफईएसईएम माइक्रोग्राफ शानदार गोलाकार आकार में कार्बन नैनोडॉट्स के समूह को दर्शाता है (चित्र II)। ये नैनोडॉट्स 10 एनएम के आयाम के हैं। एएफएम के तहत विकिरणित नमूने की सतह स्थलाकृति आगे गोलाकार संरचनाओं की पुष्टि करती है जैसा कि चित्र IIIa में दिखाया गया है जबकि संदर्भ नमूना चिकनी सतह दर्शाता है (चित्र IIIb)।"
+                            data-en="FESEM micrograph illustrates clusters of carbon nanodots in the shape magnificent spheroid (Fig. II). These nanodots are of the dimension of 10 nm. Surface topography of irradiated sample under AFM further substantiates the spheroid structures as shown in Fig. IIIa whereas reference sample depicts smooth surface (Fig. IIIb).">
+                            FESEM micrograph illustrates clusters of carbon nanodots in the shape magnificent spheroid
+                            (Fig. II). These nanodots are of the dimension of 10 nm. Surface topography of irradiated
+                            sample under AFM further substantiates the spheroid structures as shown in Fig. IIIa whereas
+                            reference sample depicts smooth surface (Fig. IIIb).
+                        </p>
+
+                        <!-- Figure II -->
+                        <figure class="research-figure">
+                            <img src="/assets/images/images/dpf-3.jpg" alt="FESEM micrograph" style="max-width: 600px;"
+                                onerror="this.style.display='none'">
+                            <figcaption class="bilingual-text"
+                                data-hi="चित्र II: नैनोडॉट्स के समूह को दर्शाने वाले एफईएसईएम माइक्रोग्राफ"
+                                data-en="Fig. II: FESEM micrographs depicting ensemble of nanodots">Fig. II: FESEM
+                                micrographs depicting ensemble of nanodots</figcaption>
+                        </figure>
+
+                        <!-- Figure III a and b -->
+                        <div class="image-grid-2">
+                            <figure class="research-figure">
+                                <img src="/assets/images/images/dpf-4.jpg" alt="AFM micrograph reference"
+                                    onerror="this.style.display='none'">
+                                <figcaption class="bilingual-text"
+                                    data-hi="चित्र IIIa: संदर्भ नमूने का एएफएम माइक्रोग्राफ"
+                                    data-en="Fig. IIIa: AFM micrograph of reference sample">Fig. IIIa: AFM micrograph of
+                                    reference sample</figcaption>
+                            </figure>
+                            <figure class="research-figure">
+                                <img src="/assets/images/images/dpf-5.jpg" alt="AFM micrograph irradiated"
+                                    onerror="this.style.display='none'">
+                                <figcaption class="bilingual-text"
+                                    data-hi="चित्र IIIb: आयन विकिरणित नमूने का एएफएम माइक्रोग्राफ"
+                                    data-en="Fig. IIIb: AFM micrograph of ion irradiated sample">Fig. IIIb: AFM
+                                    micrograph of ion irradiated sample</figcaption>
+                            </figure>
+                        </div>
+
+                        <!-- Figure IV with text -->
+                        <div style="display: flex; gap: 2rem; align-items: center; margin: 2rem 0; flex-wrap: wrap;">
+                            <div style="flex: 1; min-width: 300px; text-align: center;">
+                                <img src="/assets/images/images/dpf-6.jpg" alt="XRD pattern"
+                                    style="max-width: 100%; border-radius: 12px; border: 1px solid var(--lab-border); display: block; margin: 0 auto;"
+                                    onerror="this.style.display='none'">
+                                <p style="text-align: center; font-style: italic; color: var(--lab-muted); margin-top: 0.5rem; width: 100%;"
+                                    class="bilingual-text"
+                                    data-hi="चित्र IV: संदर्भ और आयन विकिरणित नमूनों का एक्सआरडी पैटर्न"
+                                    data-en="Fig. IV: XRD pattern of reference and ion irradiated samples">Fig. IV: XRD
+                                    pattern of reference and ion irradiated samples</p>
+                            </div>
+                            <div style="flex: 1;">
+                                <p class="bilingual-text"
+                                    data-hi="उजागर ग्रेफाइट का एक्सआरडी पैटर्न इंगित करता है कि कई नए तल विकसित हुए हैं (अनचिह्नित शिखर) जैसा कि चित्र IV में दिखाया गया है। उजागर नमूने का एसएईडी पैटर्न भी नमूने पर जमा थर्मल लोड के कारण नए तलों के विकास का संकेत देता है।"
+                                    data-en="XRD pattern of exposed graphite indicates that many new planes have been developed (unmarked peaks) as shown in Fig. IV. SAED pattern of the exposed sample is also indicative of development of new planes due to the thermal load deposited onto the sample.">
+                                    XRD pattern of exposed graphite indicates that many new planes have been developed
+                                    (unmarked peaks) as shown in Fig. IV. SAED pattern of the exposed sample is also
+                                    indicative of development of new planes due to the thermal load deposited onto the
+                                    sample.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Figure V and VI -->
+                        <div class="image-grid-3">
+                            <figure class="research-figure">
+                                <img src="/assets/images/images/dpf-7.jpg" alt="OM micrograph"
+                                    onerror="this.style.display='none'">
+                                <figcaption class="bilingual-text"
+                                    data-hi="चित्र V: आयन विकिरणित नमूने का ओएम माइक्रोग्राफ"
+                                    data-en="Fig. V: OM micrograph of ion irradiated sample">Fig. V: OM micrograph of
+                                    ion irradiated sample</figcaption>
+                            </figure>
+                            <figure class="research-figure">
+                                <img src="/assets/images/images/dpf-8.jpg" alt="FESEM crystal defects"
+                                    onerror="this.style.display='none'">
+                                <figcaption class="bilingual-text"
+                                    data-hi="चित्र VIa: क्रिस्टल दोषों को दर्शाने वाला एफईएसईएम माइक्रोग्राफ"
+                                    data-en="Fig. VIa: FESEM micrograph indicating crystal defects">Fig. VIa: FESEM
+                                    micrograph indicating crystal defects</figcaption>
+                            </figure>
+                            <figure class="research-figure">
+                                <img src="/assets/images/images/dpf-9.jpg" alt="FESEM nano-globules"
+                                    onerror="this.style.display='none'">
+                                <figcaption class="bilingual-text"
+                                    data-hi="चित्र VIb: नैनो-ग्लोब्यूल्स और फ्लेक्स दिखाने वाला एफईएसईएम माइक्रोग्राफ"
+                                    data-en="Fig. VIb: FESEM micrograph showing nano-globules and flakes">Fig. VIb:
+                                    FESEM micrograph showing nano-globules and flakes</figcaption>
+                            </figure>
+                        </div>
+
+                        <h4 class="subsection-title bilingual-text" data-hi="अनुसंधान परियोजनाएं"
+                            data-en="Research Projects">Research Projects</h4>
+
+                        <div class="project-item">
+                            <span class="project-bullet">•</span>
+                            <span class="bilingual-text"
+                                data-hi="'सघन प्लाज्मा फोकस पर अध्ययन', बीआरएनएस, डीएई, भारत परियोजना 1997-1999"
+                                data-en="'Studies on Dense Plasma Focus', a BRNS, DAE, India project 1997-1999">"Studies
+                                on Dense Plasma Focus", a BRNS, DAE, India project 1997-1999</span>
+                        </div>
+                        <div class="project-item">
+                            <span class="project-bullet">•</span>
+                            <span class="bilingual-text"
+                                data-hi="'सीपीपी प्लाज्मा फोकस सुविधा से एक्स-रे और आयन उत्सर्जन का प्रायोगिक अध्ययन', बीआरएनएस, डीएई भारत परियोजना 1999-2002"
+                                data-en="'Experimental Studies of X-ray and ion emission from CPP Plasma Focus facility', a BRNS, DAE India project 1999-2002.">"Experimental
+                                Studies of X-ray and ion emission from CPP Plasma Focus facility", a BRNS, DAE India
+                                project 1999-2002.</span>
+                        </div>
+                        <div class="project-item">
+                            <span class="project-bullet">•</span>
+                            <span class="bilingual-text"
+                                data-hi="'टोकामक रिएक्टर में रुचि की सामग्रियों पर हाइड्रोजन और उत्कृष्ट गैस आयन आरोपण पर अध्ययन' सीपीपी-आईपीआर सहयोग परियोजना 2007-2010"
+                                data-en="'Studies on hydrogen and noble gas ion implantation on materials of interest in tokamak reactor' CPP-IPR collaboration project 2007-2010.">"Studies
+                                on hydrogen and noble gas ion implantation on materials of interest in tokamak reactor"
+                                CPP-IPR collaboration project 2007-2010.</span>
+                        </div>
+                    </div>
+
+                    <!-- People Tab -->
+                    <div id="people" class="tab-panel">
+
+                        <h3 class="section-title bilingual-text" data-hi="लोग" data-en="People">People</h3>
+
+                        <div class="people-categories">
+                            <button class="people-cat-btn active" onclick="filterPeople('all')">
+                                <span class="bilingual-text" data-hi="सभी" data-en="All">All</span>
+                            </button>
+                            <button class="people-cat-btn" onclick="filterPeople('faculty')">
+                                <span class="bilingual-text" data-hi="संकाय" data-en="Faculty">Faculty</span>
+                            </button>
+                            <button class="people-cat-btn" onclick="filterPeople('researcher')">
+                                <span class="bilingual-text" data-hi="शोधकर्ता" data-en="Researchers">Researchers</span>
+                            </button>
+                            <button class="people-cat-btn" onclick="filterPeople('technical')">
+                                <span class="bilingual-text" data-hi="तकनीकी कर्मचारी"
+                                    data-en="Technical Staff">Technical Staff</span>
+                            </button>
+                        </div>
+
+                        <div class="people-grid">
+
+                            <!-- Dr. Smruti Ranjan Mohanty -->
+                            <div class="person-card show" data-category="faculty">
+                                <img src="/assets/images/iecf/srm.jpg" alt="Dr. Smruti Ranjan Mohanty"
+                                    class="person-photo"
+                                    onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'120\' height=\'120\' viewBox=\'0 0 120 120\'><rect width=\'120\' height=\'120\' fill=\'%23e5e7eb\'/><text x=\'50%\' y=\'50%\' font-size=\'14\' text-anchor=\'middle\' dy=\'.3em\' fill=\'%236b7280\'>Photo</text></svg>'">
+                                <h4 class="person-name">Dr. Smruti Ranjan Mohanty</h4>
+                                <p class="person-role bilingual-text" data-hi="प्रोफेसर-जी" data-en="Professor-G">
+                                    Professor-G</p>
+                                <div class="person-email">
+                                    <a href="mailto:smruti@cppipr.res.in">smruti@cppipr.res.in</a>
+                                </div>
+                                <div class="person-phone">Cell: +91-9435464759</div>
+                                <div class="person-bio bilingual-text"
+                                    data-hi="डॉ. मोहंती 1998 में सहायक प्रोफेसर के रूप में सीपीपी-आईपीआर में शामिल हुए और 2000 में फेलो, 2008 में सहायक प्रोफेसर-ई, 2014 में सहायक प्रोफेसर-एफ और 2021 में प्रोफेसर-जी के पद पर पदोन्नत हुए। उन्होंने 1998 में दिल्ली विश्वविद्यालय से भौतिकी में पीएच.डी. प्राप्त की। उन्हें बॉयस्कास्ट फेलोशिप (2000), फ्रेंच रिसर्च मिनिस्ट्री फेलोशिप (2000-01), और जेएसपीएस फेलोशिप (2004-06) प्राप्त हुई। वह टोयामा विश्वविद्यालय, जापान (2009) में विजिटिंग प्रोफेसर रहे। उनके शोध रुचियों में पिंच प्लाज्मा उपकरण, प्लाज्मा निदान, प्लाज्मा विकिरण स्रोत और प्लाज्मा प्रसंस्करण शामिल हैं। उन्होंने एपीएल, जेएपी, पीएसएसटी, पीओपी जैसी पत्रिकाओं में 50 से अधिक शोध पत्र लिखे हैं। उनके पर्यवेक्षण में पांच छात्रों ने पीएच.डी. प्राप्त की है।"
+                                    data-en="Dr. Mohanty joined CPP-IPR in 1998 as an Assistant Professor and was promoted to Fellow in 2000, Associate Professor-E in 2008, Associate Professor-F in 2014, and Professor-G in 2021. He received Ph.D. in Physics from University of Delhi in 1998. He received BOYSCAST fellowship (2000), French Research Ministry Fellowship (2000-01), and JSPS fellowship (2004-06). He was a Visiting Professor at University of Toyama, Japan (2009). His research interests include pinch plasma devices, plasma diagnostics, plasma radiation sources and plasma processing. He has authored more than 50 research papers in journals like APL, JAP, PSST, POP. Five students earned Ph.D. under his supervision.">
+                                    Dr. Mohanty joined CPP-IPR in 1998 as an Assistant Professor and was promoted to
+                                    Fellow in 2000, Associate Professor-E in 2008, Associate Professor-F in 2014, and
+                                    Professor-G in 2021. He received Ph.D. in Physics from University of Delhi in 1998.
+                                    He received BOYSCAST fellowship (2000), French Research Ministry Fellowship
+                                    (2000-01), and JSPS fellowship (2004-06). He was a Visiting Professor at University
+                                    of Toyama, Japan (2009). His research interests include pinch plasma devices, plasma
+                                    diagnostics, plasma radiation sources and plasma processing. He has authored more
+                                    than 50 research papers in journals like APL, JAP, PSST, POP. Five students earned
+                                    Ph.D. under his supervision.
+                                </div>
+                            </div>
+
+                            <!-- Manoj Kumar Deva Sarma -->
+                            <div class="person-card show" data-category="technical">
+                                <img src="/assets/images/iecf/manoj.jpg" alt="Manoj Kumar Deva Sarma"
+                                    class="person-photo"
+                                    onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'120\' height=\'120\' viewBox=\'0 0 120 120\'><rect width=\'120\' height=\'120\' fill=\'%23e5e7eb\'/><text x=\'50%\' y=\'50%\' font-size=\'14\' text-anchor=\'middle\' dy=\'.3em\' fill=\'%236b7280\'>Photo</text></svg>'">
+                                <h4 class="person-name">Manoj Kumar Deva Sarma</h4>
+                                <p class="person-role bilingual-text" data-hi="ट्रेड्समैन-बी" data-en="Tradesman-B">
+                                    Tradesman-B</p>
+                                <div class="person-email">
+                                    <a href="mailto:manoj.sarma@cppipr.res.in">manoj.sarma@cppipr.res.in</a>
+                                </div>
+                                <div class="person-phone">Cell: +91-9706766730</div>
+                                <div class="person-bio bilingual-text"
+                                    data-hi="श्री मनोज कुमार देव शर्मा 1 अक्टूबर 2002 को सीपीपी के सघन प्लाज्मा फोकस (डीपीएफ) प्रयोगशाला में प्रयोगशाला अटेंडेंट-ए के रूप में शामिल हुए। 1 अक्टूबर 2010 को उन्हें ट्रेड्समैन-बी के रूप में पदोन्नत किया गया। वर्तमान में वह डीपीएफ और फ्यूजन अध्ययन प्रयोगशाला दोनों में कार्यरत हैं। उन्हें विभिन्न मशीनों के साथ-साथ इलेक्ट्रॉनिक्स गैजेट्स को संभालने में पर्याप्त विशेषज्ञता है।"
+                                    data-en="Mr. Manoj Kumar Deva Sarma joined the Dense Plasma Focus (DPF) laboratory, CPP on 1st October 2002 as Lab Attendant-A. On 1st October 2010, he was promoted as Tradesman-B. Currently he is working in both DPF as well as Fusion Studies Laboratory. He has ample expertise in handling of various Machines as well as in Electronics Gadgets.">
+                                    Mr. Manoj Kumar Deva Sarma joined the Dense Plasma Focus (DPF) laboratory, CPP on
+                                    1st October 2002 as Lab Attendant-A. On 1st October 2010, he was promoted as
+                                    Tradesman-B. Currently he is working in both DPF as well as Fusion Studies
+                                    Laboratory. He has ample expertise in handling of various Machines as well as in
+                                    Electronics Gadgets.
+                                </div>
+                            </div>
+
+                            <!-- Neelanjan Buzarbaruah -->
+                            <div class="person-card show" data-category="researcher">
+                                <img src="/assets/images/iecf/neel.jpg" alt="Neelanjan Buzarbaruah" class="person-photo"
+                                    onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'120\' height=\'120\' viewBox=\'0 0 120 120\'><rect width=\'120\' height=\'120\' fill=\'%23e5e7eb\'/><text x=\'50%\' y=\'50%\' font-size=\'14\' text-anchor=\'middle\' dy=\'.3em\' fill=\'%236b7280\'>Photo</text></svg>'">
+                                <h4 class="person-name">Neelanjan Buzarbaruah</h4>
+                                <p class="person-role bilingual-text" data-hi="कनिष्ठ शोध फेलो"
+                                    data-en="Junior Research Fellow">Junior Research Fellow</p>
+                                <div class="person-email">
+                                    <a href="mailto:neelanjan@cppipr.res.in">neelanjan@cppipr.res.in</a>
+                                </div>
+                                <div class="person-phone">Cell: +91-9706673290</div>
+                                <div class="person-bio bilingual-text"
+                                    data-hi="श्री नीलांजन बुजरबरुआ ने गौहाटी विश्वविद्यालय से इलेक्ट्रॉनिक्स और परमाणु भौतिकी में विशेषज्ञता के साथ एम.एससी. किया और वैकल्पिक पेपर के रूप में वायुमंडलीय भौतिकी, रोबोटिक्स और नैनो विज्ञान लिया। एम.एससी. के दौरान उन्होंने 'सिम्युलेटेड वर्षा वातावरण में वर्षा बूंद आकार वितरण की प्रोफाइलिंग' शीर्षक से एक परियोजना पूरी की। वर्तमान में वह फ्यूजन अध्ययन प्रयोगशाला में कनिष्ठ शोध फेलो के रूप में कार्यरत हैं।"
+                                    data-en="Mr. Neelanjan Buzarbaruah did his M.Sc. from Gauhati University with specialization in Electronics & Nuclear Physics and taking Atmospheric Physics, Robotics and Nano science as elective paper. During M.Sc. he completed a project entitled 'Profiling of Rain Size Drop distribution in simulated rain environment'. Currently he is working as a Junior Research Fellow at Fusion Studies Laboratory.">
+                                    Mr. Neelanjan Buzarbaruah did his M.Sc. from Gauhati University with specialization
+                                    in Electronics & Nuclear Physics and taking Atmospheric Physics, Robotics and Nano
+                                    science as elective paper. During M.Sc. he completed a project entitled "Profiling
+                                    of Rain Size Drop distribution in simulated rain environment". Currently he is
+                                    working as a Junior Research Fellow at Fusion Studies Laboratory.
+                                </div>
+                            </div>
+
+                            <!-- Nilam Jyoti Dutta -->
+                            <div class="person-card show" data-category="researcher">
+                                <img src="/assets/images/images/nilam.jpg" alt="Nilam Jyoti Dutta" class="person-photo"
+                                    onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'120\' height=\'120\' viewBox=\'0 0 120 120\'><rect width=\'120\' height=\'120\' fill=\'%23e5e7eb\'/><text x=\'50%\' y=\'50%\' font-size=\'14\' text-anchor=\'middle\' dy=\'.3em\' fill=\'%236b7280\'>Photo</text></svg>'">
+                                <h4 class="person-name">Nilam Jyoti Dutta</h4>
+                                <p class="person-role bilingual-text" data-hi="कनिष्ठ शोध फेलो"
+                                    data-en="Junior Research Fellow">Junior Research Fellow</p>
+                                <div class="person-email">
+                                    <a href="mailto:nilamjadu889@gmail.com">nilamjadu889@gmail.com</a>
+                                </div>
+                                <div class="person-phone">Cell: +91-9957766969</div>
+                                <div class="person-bio bilingual-text"
+                                    data-hi="श्री नीलम ज्योति दत्ता ने गौहाटी विश्वविद्यालय से इलेक्ट्रॉनिक्स और परमाणु भौतिकी में विशेषज्ञता के साथ एम.एससी. किया और वैकल्पिक पेपर के रूप में रोबोटिक्स, वायुमंडलीय भौतिकी और नैनो विज्ञान लिया। एम.एससी. के दौरान उन्होंने 'इसके उपरिकेंद्र की खोज में भूकंप वातावरण का अनुकरण करके एक माइक्रोप्रोसेसर नियंत्रित रिमोट सेंसिंग सिस्टम का डिजाइन और विकास' शीर्षक से एक परियोजना पूरी की। वर्तमान में वह फ्यूजन अध्ययन प्रयोगशाला में कनिष्ठ शोध फेलो के रूप में कार्यरत हैं।"
+                                    data-en="Mr. Nilam Jyoti Dutta did his M.Sc. from Gauhati University with specialization in Electronics & Nuclear Physics and taking Robotics, Atmospheric Physics and Nano science as elective paper. During M.Sc. he completed a project entitled 'Design and Development of a Microprocessor Controlled Remote Sensing System by Simulating Earthquake Environment in Search of its Epicentre'. Currently he is working as a Junior Research Fellow at Fusion Studies Laboratory.">
+                                    Mr. Nilam Jyoti Dutta did his M.Sc. from Gauhati University with specialization in
+                                    Electronics & Nuclear Physics and taking Robotics, Atmospheric Physics and Nano
+                                    science as elective paper. During M.Sc. he completed a project entitled "Design and
+                                    Development of a Microprocessor Controlled Remote Sensing System by Simulating
+                                    Earthquake Environment in Search of its Epicentre". Currently he is working as a
+                                    Junior Research Fellow at Fusion Studies Laboratory.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Publications Tab (International Journal) -->
+                    <div id="publications" class="tab-panel">
+
+                        <h3 class="section-title bilingual-text" data-hi="अंतर्राष्ट्रीय पत्रिका प्रकाशन"
+                            data-en="International Journal Publications">International Journal Publications</h3>
+
+                        <ul class="publications-list">
+                            <li><span class="new-badge">NEW</span> Surface and structural analyses of helium ion
+                                irradiated beryllium, N.J. Dutta, S.R. Mohanty, K.P. Sooraj, M. Ranjan, Vacuum, Vol.
+                                170, 108962 (2019).</li>
+                            <li>Self-organized Nanostructure Formation on the Graphite Surface Induced by Helium Ion
+                                Irradiation, N.J. Dutta, S.R. Mohanty, N. Buzarbaruah, M. Ranjan, R.S. Rawat, Physics
+                                Letters A, Vol. 382, 1601-1608 (2018).</li>
+                            <li>Modification on graphite due to helium ion irradiation, N.J. Dutta, S.R. Mohanty, N.
+                                Buzarbaruah, Physics Letters A, Vol. 380, 2525-2530 (2016).</li>
+                            <li>Damage studies on tungsten due to helium ion irradiation, N.J. Dutta, N. Buzarbaruah and
+                                S.R. Mohanty, Journal of Nuclear Materials 452, 51–56 (2014).</li>
+                            <li>Plasma focus assisted damage studies on tungsten, M. Bhuyan, S.R. Mohanty, C.V.S. Rao,
+                                P.A. Rayjada, P.M. Raole, Applied Surface Science, vol. 264, 674 (2013).</li>
+                            <li>Experimental evaluation of protons emission from a plasma focus device, M. Bhuyan and
+                                S.R. Mohanty, Journal of Plasma Physics, Vol.78, 507 (2012).</li>
+                            <li>Temporal and spatial study of neon ion emission from a plasma focus device, M. Bhuyan,
+                                N.K. Neog, S.R. Mohanty, C.V.S. Rao, P.M. Raole, Physics of Plasma, vol.18, 033101
+                                (2011).</li>
+                            <li>Studies on ion emission from the plasma focus device by using ion collector and track
+                                detector, M. Bhuyan, N.K. Neog, S.R. Mohanty, C.V.S. Rao, P.M. Raole, Journal of Fusion
+                                Energy, vol. 29, 177 (2010).</li>
+                            <li>EUV diagnostics of pulsed plasma systems, S.R. Mohanty and E. Hotta, J. Physics C.S,
+                                208, 012138 (2010).</li>
+                            <li>Characterization of neon ion beam emitted from plasma focus device, M. Bhuyan, N.K.
+                                Neog, S.R. Mohanty, C.V.S. Rao, P.M. Raole, J. Physics C.S 208, 012126 (2010).</li>
+                            <li>Self-organized transformation to polyaniline nanowires by pulsed energetic electron
+                                irradiation in a plasma focus device, S.R. Mohanty, N.K. Neog, R.S. Rawat, P. Lee, B.B.
+                                Nayak and B.S. Acharay, Physics Letters A, vol. 373, 1962 (2009).</li>
+                            <li>Time resolved studies on X-ray and charged particle emission from a plasma focus device,
+                                N.K. Neog, S.R. Mohanty and T.K. Borthakur, Physics Letters A, vol. 372, 2294 (2008).
+                            </li>
+                            <li>Effect of anode design on ion emission characteristics of a plasma focus device, S.R.
+                                Mohanty, N.K. Neog, H. Bhuyan, R.K. Rout, R.S. Rawat and P. Lee, Japanese Journal of
+                                Applied Physics, vol. 46, 3039 (2007).</li>
+                            <li>Study on electron beam emission from a low energy plasma focus device, N. K. Neog, S.R.
+                                Mohanty, Physics Letters A, vol. 361, 377 (2007).</li>
+                            <li>Compression and neutron and ion beams emission mechanisms within a plasma focus, H.R.
+                                Yousefi, S.R. Mohanty, Y. Nakada, H. Ito and K. Masugata, Physics of Plasma, vol.13,
+                                114506 (2006).</li>
+                            <li>Influence of electrode separation and gas curtain on EUV emission of a gas jet z-pinch
+                                source, S.R. Mohanty, T. Sakamoto, Y. Kobayashi, N. Izuka, N. Kishi, I. Song, M.
+                                Watanabe, T. Kawamura, A. Okino, K. Hoioka and E. Hotta, Applied Physics Letters, vol.
+                                89, 041502 (2006).</li>
+                            <li>Pinching Evidences in a miniature plasma focus with fast pseudospark switch, S.M.
+                                Hassan, T. Zhang, A. Patran, R.S. Rawat, S.V. Springham, T.L. Tan, D. Wong, W. Wang, S.
+                                Lee, V.A. Gribkov, S.R. Mohanty and P. Lee, Plasma Sources Science & Technology, vol.
+                                15, 614 (2006).</li>
+                            <li>A miniature hybrid plasma focus extreme ultraviolet source driven by ten kilo-ampere
+                                fast current pulse, S.R. Mohanty, T. Sakamoto, Y. Kobayashi, I. Song, M. Watanabe, T.
+                                Kawamura, A. Okino, K. Hoioka and E. Hotta, Review of Scientific Instruments, vol.77,
+                                043506 (2006).</li>
+                            <li>Comparative study on performance of a xenon capillary Z-pinch EUV lithography light
+                                source using a pinhole camera, I. Song, K. Iwata, Y. Honma, S.R. Mohanty, M. Watanabe,
+                                T. Kawamura, A. Okino, K. Yasuoka, K. Hoioka and E. Hotta, Plasma Sources Science &
+                                Technology, vol. 15, 322 (2006).</li>
+                            <li>Performance of gas jet type Z-pinch light source for EUV lithography, I. Song, Y.
+                                Kobayashi, T. Sakamoto, S.R. Mohanty, M. Watanabe, A. Okino, T. Kawamura, K. Yasuoka, K.
+                                Horioka and E. Hotta, Microelectronic Engineering, vol.83, 710 (2006).</li>
+                            <li>Anode length optimization in a modified plasma focus for optimal x-ray yield, N.K. Neog
+                                and S.R. Mohanty, E. Hotta, Journal of Applied Physics, vol. 99. 013302 (2006).</li>
+                            <li>Effect of deposition parameters on morphology and size of FeCo nanoparticles synthesized
+                                by pulsed laser ablation deposition, Happy, S.R. Mohanty, P. Lee, T.L. Tan, S.V.
+                                Springham, A. Patran, R.V. Ramanujan, and R.S. Rawat, Applied Surface Science, vol. 252,
+                                2806 (2006).</li>
+                            <li>Time resolved emission spectroscopy investigations of pulsed laser ablated plasmas of
+                                ZrO2 and Al2O3, A.D. Handokoa, P. S. Lee, P. Lee, S. R. Mohanty and R.S. Rawat, Journal
+                                of Physics: Conference Series, vol. 28, pp100-4 (2006).</li>
+                            <li>Energetic ion irradiation of American diamond in a plasma focus device and
+                                characterization of irradiated material, S.R. Mohanty, N.K. Neog, B.B. Nayak, B.S.
+                                Acharya, P. Lee, T.L. Tan and R.S. Rawat, Nuclear Instruments and Methods in Physics
+                                Research B, vol.113, 113 (2006).</li>
+                            <li>Characteristics of xenon capillary Z-pinch extreme ultraviolet lithography source driven
+                                by different dI/dt discharge current pulses, I. Song, K. Iwata, Y. Honma, S.R. Mohanty,
+                                M. Watanabe, T. Kawamura, A. Okino, K. Yasuoka, K. Hoioka and E. Hotta, Japanese Journal
+                                of Applied Physics, vol. 44, no.12, 8640 (2005).</li>
+                            <li>Development of a gas jet type Z-pinch EUV source for next generation lithography, I.
+                                Song, S.R. Mohanty, M. Watanabe, T. Kawamura, A. Okino, K. Yasuoka, K. Hoioka and E.
+                                Hotta, Journal of Plasma and Fusion Research, vol. 81, no. 9, 647 (2005).</li>
+                            <li>Development of multi Faraday cup assembly for ion yield measurements from a low energy
+                                plasma focus device, S.R. Mohanty, H. Bhuyan, N.K. Neog, R.K. Rout and E. Hotta,
+                                Japanese Journal of Applied Physics, vol. 44, 5199 (2005).</li>
+                            <li>Comparative study of soft x-ray emission characteristics in a low energy dense plasma
+                                focus device, H. Bhuyan, S.R. Mohanty, N.K. Neog, S. Bujarbarua and R. K. Rout, Journal
+                                of Applied Physics, vol. 95, 2975 (2004).</li>
+                            <li>Discharge-based sources of XUV-X radiations: development and applications, J.M.
+                                Pouvesle, E. Robert, T. Gonthiez, R. Viladrosa, J. Pons, O. Sarroukh, M. Idrissi, B.
+                                Metay, S.R. Mohanty, C. Fleurier and C. Cachoncinlle, Plasma Sources Science &
+                                Technology, vol.12, S43 (2003).</li>
+                            <li>Magnetic probe measurements of current sheet dynamics in a coaxial plasma accelerator,
+                                H. Bhuyan, S.R. Mohanty, N.K. Neog, S. Bujarbarua and R. K. Rout, Measurement Science
+                                and Technology, vol.14, 1769 (2003).</li>
+                            <li>A novel fast capillary discharge system emitting intense EUV radiation- possible source
+                                for EUV lithography, S.R. Mohanty, E. Robert, R. Dussart, R. Viladrosa, J.M. Pouvesle,
+                                C. Fleurier and C. Cachoncinlle, Microelectronic Engineering, vol. 65, 47 (2003).</li>
+                            <li>Capillary discharge sources of hard UV radiation, C. Cachoncinlle, R. Dussart, E.Robert,
+                                S. Gotez, J. Pons, S.R. Mohanty, R. Viladrosa, C. Fleurier and J.M. Pouvesle, Plasma
+                                Sources Science & Technology, vol.11, A64 (2002).</li>
+                            <li>Recent progresses of EUV source development work at GREMI, S.R. Mohanty, C.
+                                Cachoncinlle, C. Fleurier, E. Robert, J.M.Pouvesle, R. Viladrosa and R. Dussart,
+                                Microelectronic Engineering, vol. 61-62C, 179 (2002).</li>
+                            <li>Surface nitriding of graphite substrate by plasma focus device towards synthesis of
+                                carbon nitride coating, B.B. Nayak, B.S. Acharya, S.R. Mohanty, T.K. Borthakur and H.
+                                Bhuyan, Surface and Coating Technology, vol. 145, 8 (2001).</li>
+                            <li>Analysis of nitrogen ion beams produced in a Dense Plasma Focus device using Faraday
+                                Cup, H. Bhuyan, S.R. Mohanty, T.K. Borthakur and R.S.Rawat, Indian Journal of Pure and
+                                Applied Physics, vol. 39, 698 (2001).</li>
+                            <li>Analysis of soft X-ray emission from a low energy plasma focus device using vacuum
+                                photodiode, T.K. Borthakur, S.R. Mohanty, H. Bhuyan and V.N. Rai, Indian Journal of
+                                Physics, vol. 75B (5), 449 (2001).</li>
+                            <li>Current sheath dynamics and x-ray emission studies from sequential dense plasma focus
+                                device, Ruby Gupta, S.R. Mohanty, R.S. Rawat, M.P. Srivastava, IEEE Trans. on Plasma
+                                Science, vol. 28, no. 4, 1263 (2000).</li>
+                            <li>X-ray emissions from Dense Plasma Sequential Focus Device, S.R. Mohanty, R.S. Rawat,
+                                M.P. Srivastava, Journal of Plasma and Fusion Research, vol.2, 320 (1999).</li>
+                            <li>Surface hardening of high carbon steel samples using ions of dense plasma focus, T.K.
+                                Borthakur, A. Sahu, S.R. Mohanty, B.B. Nayak and B.S. Acharya, Surface Engineering,
+                                vol.15, no. 1, 55 (1999).</li>
+                            <li>Study of X-ray emission of dense plasma focus device in presence of external axial
+                                magnetic field, S.R. Mohanty, M.P. Srivastava and R.S. Rawat, Phys. Lett. A, vol. 234,
+                                472 (1997).</li>
+                            <li>Diode like behaviour of an ion irradiated polyaniline film, M.P. Srivastava, S.R.
+                                Mohanty, S.Annapoorni and R.S. Rawat, Phys. Lett. A, vol. 215, 63 (1996).</li>
+                            <li>Study of current sheath dynamics in dense plasma focus in the presence of axial magnetic
+                                field using laser shadowgraphy technique, R.S. Rawat, M.P. Srivastava and S.R. Mohanty,
+                                IEEE Trans. on Plasma Science, vol. 22, no.5, 967 (1994).</li>
+                        </ul>
+                    </div>
+
+                    <!-- Conferences Tab (International + National) -->
+                    <div id="conferences" class="tab-panel">
+
+                        <h3 class="section-title bilingual-text" data-hi="सम्मेलन प्रस्तुतियाँ"
+                            data-en="Conference Presentations">Conference Presentations</h3>
+
+                        <h4 class="subsection-title bilingual-text" data-hi="अंतर्राष्ट्रीय सम्मेलन"
+                            data-en="International Conferences">International Conferences</h4>
+                        <ul class="conference-list">
+                            <li>Irradiation effects in graphite induced by helium ions: surface, structural, and
+                                chemical analyses, S.R. Mohanty, N.J. Dutta, N. Buzarbaruah, M. Ranjan, and R.S. Rawat,
+                                Oral talk, The 45th IEEE International Conference on Plasma Sciences (ICOPS-2018),
+                                Denver, US, June 24-28, 2018.</li>
+                            <li>Ion irradiation on graphite to study its structural and morphological changes: N.J.
+                                Dutta, N. Buzarbaruah, S.R. Mohanty, International Conference on Material Science (ICMS)
+                                Tripura University (14th-16th Feb. 2013), India.</li>
+                            <li>Damage studies on tungsten due to helium ion irradiation: N. Buzarbaruah, N.J. Dutta,
+                                S.R. Mohanty, International Conference on Material Science (ICMS) Tripura University
+                                (14th-16th Feb. 2013), India.</li>
+                            <li>Features of X-ray emission from a plasma focus device, N.K. Neog, S.R. Mohanty, and T.K.
+                                Borthakur, 6th Conference of Asia Plasma & Fusion Association, 3-5, Dec.2007,
+                                Gandhinagar, India.</li>
+                            <li>Development of a Gas Jet-Type Z pinch EUV Light Source for Lithography, N. Iizuka, N.
+                                Kishi, S.R. Mohanty, M. Watanabe, A. Okino, T. Kawamura, K. Horioka and E. Hotta,
+                                Presented in International Symposium on Extreme Ultraviolet Lithography, Oct. 2006,
+                                Barcelona.</li>
+                            <li>Optimization of a gas jet-type Z-pinch discharge EUV light source, N. Iizuka, N. Kishi,
+                                I. Song, T. Sakamoto, Y. Kobayashi, S. R. Mohanty, M. Watanabe, A. Okino and E. Hotta,
+                                Proc. 22nd International Symposium on Discharges and Electrical Insulation in Vacuum,
+                                Matsue, Japan, September 25-29, 2006, Vol.2, pp.630-633 (2006).</li>
+                            <li>Current Control for efficient Z-pinch EUV light source, K. Horioka, E. Hotta, A. Okino,
+                                T. Kawamura, M. Nakajima, M. Watanabe, M. Masnavi, S.R. Mohanty, S. Inho, A. Kikuchi, K.
+                                Takahashi, International Symposium on Extreme Ultraviolet Lithography, 7-9 Nov.2005, San
+                                Diego, USA.</li>
+                            <li>Development of a gas jet type Z-pinch EUV light source, E. Hotta, K. Horioka, A. Okino,
+                                T. Kawamura, M. Watanabe, M. Masnavi, S.R. Mohanty, S. Inho, T. Sakamoto and Y.
+                                Kobayashi, International Symposium on Extreme Ultraviolet Lithography, 7-9 Nov.2005, San
+                                Diego, USA.</li>
+                            <li>Performance of a gas jet type Z-pinch EUV light source, I. Song, Y. Kobayashi, T.
+                                Sakamoto, S.R. Mohanty, M. Watanabe, A. Okino, T. Kawamura, K. Yasuoka, K. Horioka and
+                                E. Hotta, 31st International Conference on Micro- and Nano- Engineering, 19-22
+                                Sept.2005, Viena.</li>
+                            <li>Development of gas jet type Z-pinch extreme ultraviolet light source for next generation
+                                lithography, Inho Song, Yusuke Honma, Kazuhiro Iwata, S.R. Mohanty, Masato Watanabe,
+                                Toru Kawamura, Akitoshi Okino, Koichi Yasuoka, Kazuhiko Horioka and Eiki Hotta,
+                                NIFS-PROC-61, p-23 (2005).</li>
+                            <li>Emission spectroscopy investigation of time resolved ZrO2 and Al2O3 plasma
+                                characteristics, A.D.Handoko, P.S. Lee, R.S. Rawat, C.K. P. Lee, S.R. Mohanty, Symposium
+                                Y, 3-8 July 2005, Singapore.</li>
+                            <li>Comparative study on optical performance of xenon capillary Z-pinch EUV lithography
+                                light source, I. Song, T. Sakamoto, Y. Kobayashi, S.R. Mohanty, M. Watanabe, A. Okino,
+                                T. Kawamura, K. Horioka and E. Hotta, Spectra Asia 2005, Tokyo.</li>
+                            <li>Optical Emission Spectroscopy to Study FeCo Thin Film Deposition Using Plasma Focus,
+                                T.Zhang, S.R.Mohanty, S.M.Hassan, A.Patran, T.L.Tan, S.V.Springham, P.Lee and S.R.Rawat,
+                                AIP Conference Proceedings, Vol.808, pp 231-4 (2006).</li>
+                            <li>Extreme ultraviolet light emission from Z-pinch discharge plasma source, M. Watanabe, I.
+                                Song, T. Sakamoto, Y. Kobayashi, A. Okino, S.R. Mohanty, K. Horioka and E. Hotta, AIP
+                                Conference Proceedings, Vol.808, pp 267-70 (2006).</li>
+                            <li>High quality EUV production from discharge produced plasma, M. Watanabe, I. Song, T.
+                                Sakamoto, Y. Kobayashi, A. Okino, S.R. Mohanty, K. Horioka and E. Hotta, 32nd IEEE
+                                International Conference on Plasma Science, Monterey, CA, June 18-23, 2005.</li>
+                            <li>Development of gas jet Z pinch EUV light source for lithography, Inho Song, Kazuhiro
+                                Iwata, Yusuke Honma, S.R. Mohanty, Masato Watanabe, Toru Kawamura, Akitoshi Okino,
+                                Koichi Yasuoka, Kazuhiko Horioka and Eiki Hotta, 15th IEEE International Pulsed Power
+                                Conference, Monterey, CA, June 13-17, 2005.</li>
+                            <li>Study on optical characteristics of EUV source for semiconductor lithography, K. Iwata,
+                                Y. Honma, I.H. Song, M. Masnavi, S.R. Mohanty, M. Watanabe, A. Okino, K. Yasuoka, K.
+                                Horioka and Eiki Hotta, IEEJ Annual Conference,I-178, p-244 (2005).</li>
+                            <li>A fast capillary discharge plasma dedicated to EUV radiation production-possible source
+                                for EUV lithography C. Fleurier, T. Gonthiez, E. Robert, S.R. Mohanty, O. Sarroukh, R.
+                                Viladrosa, J.M. Pouvesle, C. Cachoncinlle, Conference record of Twenty-Fifth
+                                International Power Modulator Symposium and 2002 High-Voltage Workshop (Cat.
+                                No.02CH37381), 2002, p 587-90.</li>
+                            <li>Spectroscopic and energetic investigation of capillary discharges devoted to EUV
+                                production for new lithography generation, E. Robert, B. Blagojevic, R. Dussart, S.R.
+                                Mohanty, M.M. Idrissi, D.Hong, R. Viladrosa, J.M. Pouvesle, C. Fleurier and C.
+                                Cachoncinlle, in Proceeding of SPIE, vol. 4343, 566-575 (2001).</li>
+                            <li>Potentiality of Z-discharge plasma as a source of coherent soft X-rays, Kazuhiko
+                                Horioka, Mitsuo Nakajima, Tomonao Hosokai, Gohta Niimi, S.R. Mohanty and Eiki Hotta,
+                                Source 2000, July 3-4, 2000, Tokyo Institute of Technology, O- okayam, Japan.</li>
+                            <li>Dynamics and X-ray radiation process of capillary Z-pinch discharge plasma, Gohta Niimi,
+                                S.R. Mohanty, Mitsuo Nakajima, Akitoshi Okino, Masato Watanabe, Kazuhiko Horioka and
+                                Eiki Hotta, in IEEJ meeting on Plasma Sciences, 14-15 June, 2000, Akita, Japan.</li>
+                            <li>Dense Plasma Sequential Focus Device, S.R. Mohanty, R.S. Rawat, and M.P. Srivastava,
+                                Dense Plasma Sequential Focus Device, International Meeting on Frontiers of Physics,
+                                Kuala Lumpur, Malaysia, Oct 25-29, 1998.</li>
+                            <li>Laser shadowgraphic study of plasma sheath in dense plasma focus in the presence of
+                                external axial magnetic field, R.S. Rawat, M.P. Srivastava and S.R. Mohanty, Int. Conf.
+                                on Plasma Physics, Innsbruck, 29th June - 3rd July, 1992, pt.II, pp. 1195-1198.</li>
+                            <li>Spectral analysis of focussed plasmas; C.S. Wong, S.P. Moo, M. Han, Z.M. Jiang, S.R.
+                                Mohanty and C. Silawatshananai, 5th Asia Pacific Physics Conf., 10-15 Aug., 1992, Kuala
+                                Lumpur, vol.1, pp. 626-629.</li>
+                        </ul>
+
+                        <h4 class="subsection-title bilingual-text" data-hi="राष्ट्रीय सम्मेलन"
+                            data-en="National Conferences">National Conferences</h4>
+                        <ul class="conference-list">
+                            <li>Structural changes of tungsten due to neon ion interaction of Tokamak interest, M.
+                                Bhuyan and S.R. Mohanty, Xth Biennial Conference of Physics Academy of North East (PANE)
+                                at St. Anthony's College, Shillong, India, 10 -12 Nov. 2016.</li>
+                            <li>Helium ion irradiation on materials relevant to fusion research, N.J. Dutta, N.
+                                Buzarbaruah, S.R. Mohanty, 29th National Symposium on Plasma Science & Technology
+                                (PLASMA-2014) India.</li>
+                            <li>Characterization of helium ion irradiation induced defects on tungsten, N.J. Dutta, N.
+                                Buzarbaruah, S.R. Mohanty, CPP-IPR Workshop on Linear Tokamak Divertor Simulators for
+                                PSI studies, 24-26 Nov. 2014 Assam, India.</li>
+                            <li>Radiation damage study of graphite exposed to helium ions, N.J. Dutta N. Buzarbaruah,
+                                S.R. Mohanty, PLASMA 2013, KIIT, Dec. 3-6, 2013 Bhubaneswar, India.</li>
+                            <li>Plasma Focus Assisted Ion Irradiation on Graphite, N.J. Dutta N. Buzarbaruah, S.R.
+                                Mohanty, UGC sponsored National Seminar on Plasma Science and Technology, Nabajyoti
+                                college, Kalgachi Assam, 6-7 Nov. 2013.</li>
+                            <li>Damage Studies on Tungsten due to Proton Irradiation from a Plasma Focus Device, M.
+                                Bhuyan and S.R. Mohanty, One Day National Seminar of New Frontiers of Physics, 11th May
+                                2012, Guahati University, Guwahati, India.</li>
+                            <li>Structural and surface morphological changes on tungsten due to ion irradiation, M.
+                                Bhuyan, S.R. Mohanty, C.V.S. Rao, P.A. Rayjada, P.M. Raole, 26th National Symposium on
+                                Plasma Science and Technology, 20-23 Dec. 2011, BIT Mesra, Patana Campus, India. (PSSI
+                                Best Poster Award)</li>
+                            <li>Characterization of axially emitted proton beam from a plasma focus device, M. Bhuyan
+                                and S.R. Mohanty, 56th Annual technical session of Assam Science Society, 23rd March
+                                2011, Dibrugarh University, Assam India.</li>
+                            <li>Studies on proton emission from a plasma focus device and its application on material
+                                modification, M. Bhuyan, N. K. Neog, S.R. Mohanty, C.V.S. Rao, P.M. Raole, 25th National
+                                Symposium on Plasma Science and Technology, 8-11 Dec. 2010, Guwahati, Assam, India.</li>
+                            <li>Studies on ion emission from the plasma focus device by using ion collector and track
+                                detector, M. Bhuyan, N. K. Neog, S.R. Mohanty, C.V.S. Rao, P.M. Raole, in Physics
+                                Academy of North East conference, 3-4 April 2009, Tripura University, India.</li>
+                            <li>EUV diagnostics of pulsed plasma systems, S.R. Mohanty and E. Hotta, 23rd National
+                                Symposium on Plasma Science and Technology, 10-13 Dec., 2008, BARC, Mumbai, India.
+                                (Invited talk)</li>
+                            <li>Characterization of the neon ion beam emitted from a low energy plasma focus device, M.
+                                Bhuyan, N.K. Neog, S.R. Mohanty, C.V.S. Rao and P.M. Raole, 23rd National Symposium on
+                                Plasma Science and Technology, 10-13 Dec., 2008, BARC, Mumbai, India.</li>
+                            <li>Room temperature deposition of polyaniline nanowires in nanosecond timescale using
+                                electron beam of plasma focus device, S.R. Mohanty, N.K. Neog, R.S. Rawat, P. Lee, B.B.
+                                Nayak and B.S. Acharay, 22nd National Symposium on Plasma Science and Technology, 6-10
+                                Dec., 2007, Gujurat. (PSSI Best Poster Award)</li>
+                            <li>Conceptual designing of a capillary dichrage plasma device for production of extreme
+                                ultraviolet radition, N.K. Neog and S.R. Mohanty, 22nd National Symposium on Plasma
+                                Science and Technology (PLASMA2007), 6-10 Dec., 2007, Gujurat.</li>
+                            <li>Pulsed electron beam emission from a 2.2 kJ plasma focus device, N.K. Neog and S.R.
+                                Mohanty, in proceeding of DAE-BRNS-PSI symposium on Power Beams for clean environment
+                                and processes, BARC, Mumbai, India, Sept. 2006, page 167-171.</li>
+                            <li>Time resolved study on the soft as well as hard x-ray emission from a plasma focus
+                                device and their correlation, N. K. Neog, S.R. Mohanty and T.K. Barthakur, Presented in
+                                PLASMA 2005, India.</li>
+                            <li>Soft X-ray enhancement in a plasma focus, N. K. Neog, S.R. Mohanty and H. Bhuyan.
+                                Presented in PLASMA 2004, India.</li>
+                            <li>Plasma focus: a rich source of energetic charge particles and x-rays, N. K. Neog, S.R.
+                                Mohanty and H.Bhuyan, Proceeding of 4Th Physics academic of North East of India, 2004,
+                                page 215-219.</li>
+                            <li>Operation of a low energy plasma focus machine in an enhanced soft X-ray mode, N. Neog,
+                                H. Bhuyan, S.R. Mohanty and S. Bujarbarua, presented in Regional Conference on Physics
+                                research in the North East of India, 2002.</li>
+                            <li>X-ray studies from CPP dense plasma focus device in different anode design, H. Bhuyan,
+                                N.K. Neog, S.R. Mohanty, S. Bujarbarua and R. K. Rout, presented in PLASMA 2002, India.
+                            </li>
+                            <li>Investigation of pulse electron beam emanated from a low energy plasma focus, N. Neog,
+                                S. R. Mohanty, H. Bhuyan and R. K. Rout, presented in PLASMA 2002, India.</li>
+                            <li>Nitriding of stainless steel in glow discharge plasma, M.K. Sharma, A. Baishya, T.K.
+                                Borthakur, M. Kakoti, S.R. Mohanty and B. K. Saikia, presented PLASMA 2002, India.</li>
+                            <li>Energetic ion irradiation of American diamond in a plasma focus device, S.R. Mohanty, H.
+                                Bhuyan, N. Neog, B.B. Nayak, B.S. Acharya and R.K. Rout, in proceeding of Power Beam and
+                                Plasma Processing Conference, Sept. 2002, BARC, Mumbai, India, page 681-685. (Prize
+                                Winning Paper)</li>
+                            <li>An inexpensive multi-channel diode spectrometer for time resolved measurement of pulsed
+                                soft X-rays, H. Bhuyan, S.R. Mohanty, R.K. Rout, T.K. Borthakur, N. Neog and S.
+                                Bujarbarua, presented in National Symposium on Plasma Science and Technology, 17-20
+                                Dec., 2001, India.</li>
+                            <li>Design and development of a novel pinhole camera for space resolved measurement of soft
+                                X-rays emitted from the CPP plasma focus facility, H. Bhuyan, S.R. Mohanty, R.K. Rout,
+                                T.K. Borthakur, N. Neog and S. Bujarbarua, presented in National Symposium on Plasma
+                                Science and Technology, 17-20 Dec., 2001, India.</li>
+                            <li>Experimental research program at Centre of Plasma Physics, S.R. Mohanty and B.K. Saikia,
+                                in proceeding of Regional Conference on Physics research in the North East of India,
+                                17th Oct. 1998, 111.</li>
+                            <li>Ion beam characterization of a low energy dense plasma focus, H. Bhuyan, S.R. Mohanty
+                                and T.K. Borthakur, presented in 13th National Symposium on Plasma Science and
+                                Technology, 27-30 Oct., 1998, Rajkot, India.</li>
+                            <li>Nitriding of high carbon steel samples using dense plasma focus, T.K. Borthakur, A.
+                                Sahu, S.R. Mohanty, B.B. Nayak and B.S. Acharya, presented in 13th National Symposium on
+                                Plasma Science and Technology, 27-30 Oct., 1998, Rajkot, India.</li>
+                            <li>Possible utilization of dense plasma focus for surface hardening, T.K.Borthakur, A.
+                                Sahu, S.R. Mohanty and Heman Bhuyan, presented in 12th National Symposium on Plasma
+                                Science and Technology, 2-5 Dec., 1997, IPR, Gandhinagar, India.</li>
+                            <li>Dense plasma sequential focus device, R.S. Rawat, S.R. Mohanty and M.P. Srivastava,
+                                presented in 12th National Symposium on Plasma Science and Technology, 2-5 Dec., 1997,
+                                IPR, Gandhinagar, India.</li>
+                            <li>Ion irradiation induced structural changes of EB film using dense plasma focus, S.R.
+                                Mohanty, S.Annapoorni, R.S. Rawat and M.P. Srivastava, Mini Symposium on Recent trends
+                                in Plasma Physics, 19-20 Dec. 1994, University of Rajasthan, Jiapore, India.</li>
+                            <li>Current sheath modification in dense plasma focus device under external magnetic field,
+                                R.S. Rawat, S.R. Mohanty and M.P. Srivastava, Ninth National Symposium on Plasma Science
+                                and Technology, 14-17 Nov.1994, Institute of Advanced Study in Science and Technology,
+                                Guwahati, India.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Invited Talks Tab -->
+                    <div id="invited" class="tab-panel">
+
+                        <h3 class="section-title bilingual-text" data-hi="डॉ. एस.आर. मोहंती द्वारा आमंत्रित वार्ताएं"
+                            data-en="Invited Talks by Dr. S.R. Mohanty">Invited Talks by Dr. S.R. Mohanty</h3>
+
+                        <ul class="invited-list">
+                            <li>Delivered an invited talk on "High energy density pinch plasma- a unique tool for plasma
+                                processing and deposition" UGC Sponsored National Seminar on "Recent advances in
+                                material science and their applications" held at BN College, Dhubri, Assam 24-25 March
+                                2017.</li>
+                            <li>Delivered invited talk in International Conference on Plasma Science and Applications
+                                2013 (ICPSA2013) 4-6 Dec 2013, NIE Singapore, Session 4(b).</li>
+                            <li>Studies on charged particle emission from plasma focus device and their application in
+                                material modifications, International Workshop on Plasma Science and Applications
+                                (IWPSA-2010), 25-26 October 2010, Xiamen, China.</li>
+                            <li>EUV diagnostics of pulsed plasma system, International Workshop on Plasma Diagnostics
+                                and Application (IWPDA-2009), 2-3 July 2009, NIE, Singapore.</li>
+                            <li>Discharge produced plasma EUV lithography source, Department of Electric and Electronic
+                                Systems, University of Toyama, Japan, on 28.05.2009.</li>
+                            <li>Plasma Focus: A multiple radiation source for various applications, Prof. Masugata
+                                Laboratory meeting, Department of Electric and Electronic Systems, University of Toyama,
+                                Japan, on 07.05.2009.</li>
+                            <li>EUV diagnostics of pulsed plasma systems, 23rd National Symposium on Plasma Science and
+                                Technology, BARC, Mumbai, Dec.10-13, 2008.</li>
+                            <li>Experimental research activities of Centre of Plasma Physics, Department of Energy
+                                Science, Tokyo Institute of Technology, Yokohama, Japan, 19th Oct. 2007.</li>
+                            <li>Discharge produced plasma source for EUV lithography, Physics Department, Stewart
+                                science College, Cuttack, Orissa, 28th July 2007.</li>
+                            <li>Discharge produced plasma source for EUV Lithography, Institute for Plasma Research,
+                                Gandhinagar, 7th June 2007.</li>
+                            <li>Pinch Plasma Research at Centre of Plasma Physics, Department of Electrical Engineering,
+                                Toyama University, Japan, June 14, 2005.</li>
+                            <li>Plasma Focus Research at Centre of Plasma Physics, Department of Energy Science, Tokyo
+                                Institute of Technology, Yokohama, Japan, 2nd February, 2005.</li>
+                            <li>EUV source based on fast capillary plasma, NIE-AAAPT expert meeting, National Institute
+                                of Education (NIE), Nanyang Technological University, Singapore, 21-22 August, 2004.
+                            </li>
+                            <li>Recent progresses of EUV source development work at GREMI, GREMI, Universite d'Orleans,
+                                France, Oct.2001.</li>
+                            <li>Studies on Dense Plasma Focus and its application, Department of Energy Science, Tokyo
+                                Institute of Technology, Yokohama, Japan, June 2000.</li>
+                            <li>Dense Plasma Focus, it's associate phenomena and applications, Institute of Material
+                                Science, Bhubaneswar, 14th January 1999.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Achievements Tab -->
+                    <div id="achievements" class="tab-panel">
+
+                        <h3 class="section-title bilingual-text" data-hi="उपलब्धियाँ / पुरस्कार / पूर्व छात्र"
+                            data-en="Achievements / Awards / Alumni">Achievements / Awards / Alumni</h3>
+
+                        <h4 class="subsection-title bilingual-text" data-hi="डॉ. एस.आर. मोहंती द्वारा प्राप्त फेलोशिप"
+                            data-en="Fellowships earned by Dr. S.R. Mohanty">Fellowships earned by Dr. S.R. Mohanty</h4>
+                        <ul class="achievement-list">
+                            <li>BOYSCAST Post Doctoral Fellowship, 1999-00</li>
+                            <li>French Research Ministry Post Doctoral Fellowship, 2000-01</li>
+                            <li>Young Scientist Fellowship, DST, India, 2004-07</li>
+                            <li>Research Fellowship, National Institute of Education, Singapore, 2004</li>
+                            <li>JSPS (Japan Society for Promotion of Science) postdoctoral fellowship, 2004-06</li>
+                            <li>Visiting Research Professor, University of Toyama, Japan, May 2009</li>
+                        </ul>
+
+                        <h4 class="subsection-title bilingual-text" data-hi="डॉक्टरेट उपाधि प्राप्त छात्र"
+                            data-en="Student obtained Doctoral Degree">Student obtained Doctoral Degree</h4>
+                        <ul class="achievement-list">
+                            <li><strong>Mr. H. Bhuyan</strong> (Ph.D. degree awarded, Gauhati University, 2004;
+                                Supervisors: Prof. S. Bujarbarua and Dr. S.R. Mohanty; Present Occupation: Associate
+                                Professor, Pontificia Universidad Católica de Chile)</li>
+                            <li><strong>Mr. N.K. Neog</strong> (Ph.D. degree awarded, Gauhati University, 2008;
+                                Supervisor: Dr. S.R. Mohanty; Present Occupation: Scientist-SC, Centre of Plasma
+                                Physics-Institute for Plasma Research, Nazirakhat, Sonapur, Assam)</li>
+                            <li><strong>Ms. M. Bhuyan</strong> (Ph.D. degree awarded, Gauhati University, 2012;
+                                Supervisor: Dr. S.R. Mohanty; Present Occupation: Guest Lecturer, Institute of Science
+                                and Technology, Gauhati University)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-container"></div>
+
+    <script>
+        // Tab Switching Function - Fixed to handle clicks on inner spans
+        function switchTab(tabName) {
+            // Hide all panels
+            document.querySelectorAll('.tab-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+
+            // Remove active from all tabs
+            document.querySelectorAll('.lab-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected panel
+            document.getElementById(tabName).classList.add('active');
+
+            // Activate clicked tab - using closest to handle clicks on inner spans
+            let clickedTab = event.target.closest('.lab-tab');
+            if (clickedTab) {
+                clickedTab.classList.add('active');
+            }
+
+            // Scroll active tab into view on mobile
+            if (window.innerWidth <= 900 && clickedTab) {
+                clickedTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+        }
+
+        // Hide scroll indicators after first interaction
+        let hasInteracted = false;
+        const labTabs = document.getElementById('labTabs');
+        const scrollLeft = document.getElementById('scrollLeft');
+        const scrollRight = document.getElementById('scrollRight');
+
+        if (labTabs) {
+            labTabs.addEventListener('scroll', function () {
+                if (!hasInteracted) {
+                    hasInteracted = true;
+                    if (scrollLeft) scrollLeft.style.display = 'none';
+                    if (scrollRight) scrollRight.style.display = 'none';
+                }
+            }, { once: true });
+
+            labTabs.addEventListener('touchstart', function () {
+                if (!hasInteracted) {
+                    hasInteracted = true;
+                    if (scrollLeft) scrollLeft.style.display = 'none';
+                    if (scrollRight) scrollRight.style.display = 'none';
+                }
+            }, { once: true });
+        }
+
+        // People Filtering Function - Fixed to handle clicks on inner spans
+        function filterPeople(category) {
+            const allCards = document.querySelectorAll('.person-card');
+
+            // Update button states - using closest to handle clicks on inner spans
+            let clickedBtn = event.target.closest('.people-cat-btn');
+            if (clickedBtn) {
+                document.querySelectorAll('.people-cat-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                clickedBtn.classList.add('active');
+            }
+
+            // Show/hide cards
+            allCards.forEach(card => {
+                if (category === 'all') {
+                    card.classList.add('show');
+                } else {
+                    if (card.dataset.category === category) {
+                        card.classList.add('show');
+                    } else {
+                        card.classList.remove('show');
+                    }
+                }
+            });
+        }
+
+        // Fragment Loader
+        function loadFragment(url, containerId) {
+            fetch(url)
+                .then(res => res.text())
+                .then(html => {
+                    const container = document.getElementById(containerId);
+                    container.innerHTML = html;
+
+                    container.querySelectorAll('script').forEach(oldScript => {
+                        const newScript = document.createElement('script');
+                        if (oldScript.src) {
+                            newScript.src = oldScript.src;
+                        } else {
+                            newScript.textContent = oldScript.textContent;
+                        }
+                        oldScript.replaceWith(newScript);
+                    });
+                })
+                .catch(err => console.error('Error loading fragment:', url, err));
+        }
+
+        loadFragment('/UI/header.html', 'header-container');
+        loadFragment('/UI/footer.html', 'footer-container');
+    </script>
+
+</body>
+
+</html>

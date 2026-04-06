@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Right To Information (RTI) - CPP-IPR</title>
+
+  <style>
+    :root {
+      --reach-bg: #ffffff;
+      --reach-border: #d0d7e2;
+      --reach-text: #111827;
+      --reach-muted: #6b7280;
+      --reach-accent: #2563eb;
+      --reach-radius-lg: 16px;
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      font-family: Arial, sans-serif;
+    }
+
+    #header-container,
+    #footer-container {
+      flex-shrink: 0;
+    }
+
+    main {
+      flex: 1;
+      padding: 1.5rem 5vw;
+      box-sizing: border-box;
+    }
+
+    /* ---------- GLOBAL SECTION WIDTH ---------- */
+    .page-section {
+      max-width: 1600px;
+      margin: 0 auto 2rem auto;
+    }
+
+    /* ---------- RTI SECTION STYLES ---------- */
+    .reach-section {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      box-sizing: border-box;
+    }
+
+    /* BANNER IMAGE */
+    .reach-banner {
+      width: 100%;
+      height: auto;
+      border-radius: var(--reach-radius-lg);
+      object-fit: cover;
+    }
+
+    /* MAIN BODY */
+    .reach-main {
+      position: relative;
+      width: 100%;
+      background: var(--reach-bg);
+      border: 1.5px solid var(--reach-border);
+      border-radius: var(--reach-radius-lg);
+      overflow: hidden;
+    }
+
+    /* HEADER INSIDE BOX */
+    .reach-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem 1.75rem 1rem 1.75rem;
+      position: relative;
+    }
+
+    /* Horizontal line with custom width */
+    .reach-header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      height: 2px;
+      background-color: var(--reach-border);
+    }
+
+    .reach-title {
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: var(--reach-text);
+      text-align: center;
+      margin: 0;
+    }
+
+    /* CONTENT AREA */
+    .reach-content {
+      padding: 1.75rem 1.75rem;
+      box-sizing: border-box;
+    }
+
+    .reach-content p {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: var(--reach-text);
+      margin-bottom: 1.2rem;
+      text-align: justify;
+      text-justify: inter-word;
+      hyphens: auto;
+    }
+
+    .reach-content p:last-child {
+      margin-bottom: 0;
+    }
+
+    .reach-content a {
+      color: var(--reach-accent);
+      text-decoration: none;
+    }
+
+    .reach-content a:hover {
+      text-decoration: underline;
+    }
+
+    /* RTI TABLE */
+    .rti-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      background: var(--reach-bg);
+      border: 1.5px solid var(--reach-border);
+      border-radius: var(--reach-radius-lg);
+      overflow: hidden;
+    }
+
+    .rti-table th,
+    .rti-table td {
+      padding: 0.875rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--reach-border);
+    }
+
+    .rti-table th {
+      background: #f9fafb;
+      font-weight: 600;
+      color: var(--reach-text);
+      font-size: 1rem;
+    }
+
+    .rti-table td {
+      font-size: 0.95rem;
+      color: var(--reach-text);
+    }
+
+    .rti-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .rti-table tr:hover {
+      background: #f9fafb;
+    }
+
+    /* EMPHASIS TEXT */
+    .emphasis-text {
+      display: block;
+      font-weight: 600;
+      color: var(--reach-text);
+      margin: 1.5rem 0 1rem 0;
+      font-size: 1.05rem;
+      text-align: justify;
+      text-justify: inter-word;
+      hyphens: auto;
+    }
+
+    /* DOCUMENT LINKS SECTION */
+    .doc-links {
+      margin-top: 1.5rem;
+    }
+
+    .doc-links h3 {
+      font-size: 1.2rem;
+      color: var(--reach-text);
+      margin-bottom: 1rem;
+      font-weight: 600;
+      text-align: left;
+    }
+
+    .doc-links ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .doc-links li {
+      margin-bottom: 0.75rem;
+      padding-left: 1.5rem;
+      position: relative;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      text-align: justify;
+      text-justify: inter-word;
+      hyphens: auto;
+    }
+
+    .doc-links li::before {
+      content: '📄';
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+
+    .doc-links a {
+      word-break: break-word;
+    }
+
+    /* ---------- MOBILE ---------- */
+    @media (max-width: 900px) {
+      .reach-title {
+        font-size: 1.35rem;
+      }
+
+      .reach-header {
+        padding: 1.25rem 1.25rem 0.85rem 1.25rem;
+      }
+
+      .reach-header::after {
+        width: 80%;
+      }
+
+      .reach-content {
+        padding: 1.5rem 1.25rem;
+      }
+
+      .reach-content p {
+        font-size: 0.95rem;
+        text-align: justify;
+        text-justify: inter-word;
+        hyphens: auto;
+        word-spacing: -0.5px;
+      }
+
+      .rti-table {
+        font-size: 0.85rem;
+      }
+
+      .rti-table th,
+      .rti-table td {
+        padding: 0.65rem 0.75rem;
+      }
+
+      /* Make table scrollable on mobile */
+      .table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin: 1.5rem 0;
+      }
+
+      .rti-table {
+        min-width: 600px;
+      }
+
+      .doc-links li {
+        font-size: 0.9rem;
+        text-align: justify;
+        text-justify: inter-word;
+        hyphens: auto;
+        word-spacing: -0.5px;
+      }
+
+      .emphasis-text {
+        font-size: 0.95rem;
+        text-align: justify;
+        text-justify: inter-word;
+        hyphens: auto;
+        word-spacing: -0.5px;
+      }
+    }
+
+    /* Small mobile screens */
+    @media (max-width: 480px) {
+      .reach-content p {
+        font-size: 0.9rem;
+        line-height: 1.6;
+        letter-spacing: 0.2px;
+      }
+
+      .doc-links li {
+        font-size: 0.85rem;
+        line-height: 1.5;
+        letter-spacing: 0.2px;
+      }
+
+      .emphasis-text {
+        font-size: 0.9rem;
+        line-height: 1.6;
+        letter-spacing: 0.2px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <div id="header-container"></div>
+
+  <!-- PAGE CONTENT -->
+  <main>
+    <div class="page-section reach-section">
+
+      <!-- BANNER IMAGE -->
+      <img src="/assets/images/about_banner.jpg" alt="CPP-IPR Banner" class="reach-banner">
+
+      <!-- MAIN BODY -->
+      <div class="reach-main">
+
+        <!-- HEADER INSIDE BOX -->
+        <div class="reach-header">
+          <h1 class="reach-title bilingual-title" data-hi="सूचना का अधिकार (आरटीआई)"
+            data-en="Right To Information (RTI)">
+            Right To Information (RTI)
+          </h1>
+        </div>
+
+        <!-- CONTENT -->
+        <div class="reach-content">
+
+          <p><strong class="bilingual-text"
+              data-hi="प्लाज्मा भौतिकी केंद्र - प्लाज्मा अनुसंधान संस्थान के बारे में जानकारी"
+              data-en="Information about the Centre of Plasma Physics – Institute for Plasma Research">
+              Information about the Centre of Plasma Physics – Institute for Plasma Research
+            </strong></p>
+
+          <p class="bilingual-text"
+            data-hi="एक नया कानून अधिनियमित किया गया है, अर्थात् सूचना का अधिकार अधिनियम, 2005। यह प्लाज्मा भौतिकी केंद्र - प्लाज्मा अनुसंधान संस्थान (सीपीपी-आईपीआर) पर लागू होता है।"
+            data-en="A new legislation has been enacted, viz., the Right to Information Act, 2005. This applies to the Centre of Plasma Physics – Institute for Plasma Research (CPP-IPR).">
+            A new legislation has been enacted, viz., the Right to Information Act, 2005. This applies to the Centre of
+            Plasma Physics – Institute for Plasma Research (CPP-IPR).
+          </p>
+
+          <p class="bilingual-text"
+            data-hi="सूचना का अधिकार अधिनियम, 2005 (आरटीआई) की धारा 5 की उप-धाराओं 1 और 2, और धारा 19 की उप-धारा 1 के प्रावधानों के अनुसार निम्नलिखित अधिकारियों को नामित किया गया है:"
+            data-en="As per the provisions of Sub-sections 1 and 2 of Section 5, and Sub-section 1 of Section 19 of the Right to Information Act, 2005 (RTI) the following officers have been designated as under:">
+            As per the provisions of Sub-sections 1 and 2 of Section 5, and Sub-section 1 of Section 19 of the Right to
+            Information Act, 2005 (RTI) the following officers have been designated as under:
+          </p>
+
+          <!-- RTI OFFICERS TABLE -->
+          <div class="table-wrapper">
+            <table class="rti-table">
+              <thead>
+                <tr>
+                  <th class="bilingual-text" data-hi="अधिकारी" data-en="Officer">Officer</th>
+                  <th class="bilingual-text" data-hi="नाम" data-en="Name">Name</th>
+                  <th class="bilingual-text" data-hi="पदनाम" data-en="Designation">Designation</th>
+                  <th class="bilingual-text" data-hi="ईमेल" data-en="Email">Email</th>
+                  <th class="bilingual-text" data-hi="फोन/फैक्स" data-en="Phone/Fax">Phone/Fax</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="bilingual-text" data-hi="पारदर्शिता अधिकारी" data-en="Transparency Officer">Transparency
+                    Officer</td>
+                  <td>Mr. E. Rajendra Kumar</td>
+                  <td>Scientific Officer - H</td>
+                  <td><a href="mailto:aa.rti@ipr.res.in">aa.rti@ipr.res.in</a></td>
+                  <td>Phone: 079 – 2396 2191</td>
+                </tr>
+                <tr>
+                  <td class="bilingual-text" data-hi="अपीलीय प्राधिकारी" data-en="Appelate Authority">Appelate Authority
+                  </td>
+                  <td>Mr. E. Rajendra Kumar</td>
+                  <td>Scientific Officer - H</td>
+                  <td><a href="mailto:aa.rti@ipr.res.in">aa.rti@ipr.res.in</a></td>
+                  <td>Phone: 079 – 2396 2191</td>
+                </tr>
+                <tr>
+                  <td class="bilingual-text" data-hi="सार्वजनिक सूचना अधिकारी (पीआईओ)"
+                    data-en="Public Information Officer (PIO)">Public Information Officer (PIO)</td>
+                  <td>Dr. M Chakraborty</td>
+                  <td>Scientific Officer - F</td>
+                  <td><a href="mailto:monojit@cppipr.res.in">monojit@cppipr.res.in</a></td>
+                  <td>-</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <span class="emphasis-text bilingual-text"
+            data-hi="आरटीआई अधिनियम के तहत सूचना के लिए अनुरोध पीआईओ को भेजे जाने चाहिए।"
+            data-en="Requests for information under the RTI Act should be sent to the PIO.">
+            Requests for information under the RTI Act should be sent to the PIO.
+          </span>
+
+          <!-- DOCUMENTS SECTION -->
+          <div class="doc-links">
+            <h3 class="bilingual-text" data-hi="महत्वपूर्ण दस्तावेज़" data-en="Important Documents">
+              Important Documents
+            </h3>
+
+            <ul>
+              <li>
+                <span class="bilingual-text" data-hi="खरीद आदेश/अनुबंध का विवरण:"
+                  data-en="Statement of Purchase Order/Contract placed:">
+                  Statement of Purchase Order/Contract placed:
+                </span>
+                <a href="/assets/files/RTI/PO_Details_2022.pdf" target="_blank">2022</a> |
+                <a href="/assets/files/RTI/PO_Details_2023.pdf" target="_blank">2023</a>
+              </li>
+
+              <li>
+                <a href="/assets/files/RTI/PayLevel_IPR-1-7-2022 (1).pdf" target="_blank" class="bilingual-text"
+                  data-hi="आईपीआर कर्मचारियों का वेतनमान" data-en="Pay Scale of IPR Employees">
+                  Pay Scale of IPR Employees
+                </a>
+              </li>
+
+              <li>
+                <a href="/assets/files/RTI/DAE_SnT_careerdigest2022.pdf" target="_blank" class="bilingual-text"
+                  data-hi="1 जुलाई 2022 से वैज्ञानिक और तकनीकी ग्रेड में कर्मियों के पदोन्नति प्रस्तावों की जांच के लिए डीएई दिशानिर्देश"
+                  data-en="DAE Guidelines for Screening of Promotion Proposals of Personnel in Scientific and technical Grades from 1st July 2022">
+                  DAE Guidelines for Screening of Promotion Proposals of Personnel in Scientific and technical Grades
+                  from 1st July 2022
+                </a>
+              </li>
+
+              <li>
+                <a href="/assets/files/RTI/DAE_promotion_policy_SCI-TECH_grades.pdf" target="_blank"
+                  class="bilingual-text"
+                  data-hi="30 जून 2022 तक वैज्ञानिक और तकनीकी ग्रेड में कर्मियों के पदोन्नति प्रस्तावों की जांच के लिए डीएई दिशानिर्देश"
+                  data-en="DAE Guidelines for Screening of Promotion Proposals of Personnel in Scientific and technical Grades upto 30th June 2022">
+                  DAE Guidelines for Screening of Promotion Proposals of Personnel in Scientific and technical Grades
+                  upto 30th June 2022
+                </a>
+              </li>
+
+              <li>
+                <a href="/assets/files/RTI/Recruitment_careerdigest_DAE.pdf" target="_blank" class="bilingual-text"
+                  data-hi="वैज्ञानिक और तकनीकी कर्मियों के लिए भर्ती और पदोन्नति दिशानिर्देश"
+                  data-en="Recruitment and Promotion Guidelines for Scientific & Technical Personnel">
+                  Recruitment and Promotion Guidelines for Scientific & Technical Personnel
+                </a>
+              </li>
+
+              <li>
+                <a href="/assets/files/RTI/Recruitment_and_promotion_Admin_2019_WithAmendment.pdf" target="_blank"
+                  class="bilingual-text" data-hi="आईपीआर के प्रशासनिक कर्मचारियों के लिए भर्ती और पदोन्नति नियम"
+                  data-en="Recruitment and Promotion Rules for Administrative Staff of IPR">
+                  Recruitment and Promotion Rules for Administrative Staff of IPR
+                </a>
+              </li>
+
+              <li>
+                <a href="/assets/files/RTI/OLD_BYLAWS_UPTO_30_4_2019.pdf" target="_blank" class="bilingual-text"
+                  data-hi="30.04.2019 तक वैध उपनियम" data-en="Bye-laws valid upto 30.04.2019">
+                  Bye-laws valid upto 30.04.2019
+                </a>
+              </li>
+
+              <li>
+                <a href="/assets/files/RTI/IPR-BYE-LAWS-2019.pdf" target="_blank" class="bilingual-text"
+                  data-hi="01.05.2019 से प्रभावी संस्थान के उपनियम"
+                  data-en="Bye-laws of the Institute effective from 01.05.2019">
+                  Bye-laws of the Institute effective from 01.05.2019
+                </a>
+              </li>
+
+              <li>
+                <a href="/assets/files/RTI/rules-regfinal.pdf" target="_blank" class="bilingual-text"
+                  data-hi="आईपीआर के नियम और विनियम और ज्ञापन डाउनलोड करें"
+                  data-en="Download Rules and Regulations and Memorandum of Association of IPR">
+                  Download Rules and Regulations and Memorandum of Association of IPR
+                </a>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <div id="footer-container"></div>
+
+  <!-- FRAGMENT LOADER -->
+  <script>
+    function loadFragment(url, containerId) {
+      fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const container = document.getElementById(containerId);
+          container.innerHTML = html;
+
+          container.querySelectorAll('script').forEach(oldScript => {
+            const newScript = document.createElement('script');
+            if (oldScript.src) {
+              newScript.src = oldScript.src;
+            } else {
+              newScript.textContent = oldScript.textContent;
+            }
+            oldScript.replaceWith(newScript);
+          });
+        })
+        .catch(err => console.error('Error loading fragment:', url, err));
+    }
+
+    loadFragment('/UI/header.html', 'header-container');
+    loadFragment('/UI/footer.html', 'footer-container');
+  </script>
+
+  <!-- INCLUDE BILINGUAL LOGIC -->
+  <script src="/UI/bilingual.js"></script>
+
+</body>
+
+</html>

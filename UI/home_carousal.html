@@ -1,0 +1,721 @@
+<!-- UI/home_carousal.html -->
+
+<style>
+  :root {
+    --carousel-bg: #050816;
+    --carousel-accent: #ffb74d;
+    --carousel-accent-soft: rgba(255, 183, 77, 0.2);
+    --carousel-text: #f8fafc;
+    --carousel-muted: #6b7280;
+    --carousel-shadow: 0 18px 45px rgba(15, 23, 42, 0.6);
+    --carousel-radius-lg: 16px;
+    --carousel-radius-md: 10px;
+    --carousel-radius-sm: 6px;
+    --carousel-transition-fast: 0.25s ease-out;
+    --carousel-safe-inset: env(safe-area-inset-bottom, 0px);
+  }
+
+  .home-carousel {
+    width: 100%;
+    /* max-width: 1200px; */
+    margin: 0 auto 2rem auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    /* padding: 0 1rem; */
+    box-sizing: border-box;
+  }
+
+  /* Header / title area */
+  .carousel-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0 0.25rem;
+  }
+
+  .carousel-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .carousel-title-badge {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding: 0.15rem 0.45rem;
+    border-radius: 999px;
+    border: 1px solid var(--carousel-accent-soft);
+    color: var(--carousel-accent);
+    background: rgba(15, 23, 42, 0.6);
+  }
+
+  .carousel-subtitle {
+    font-size: 0.85rem;
+    color: var(--carousel-muted);
+  }
+
+  /* MAIN SLIDE AREA */
+  .carousel-main {
+    position: relative;
+    width: 100%;
+    border-radius: var(--carousel-radius-lg);
+    overflow: hidden;
+    background: radial-gradient(circle at top left, #1f2937 0, #020617 55%);
+    box-shadow: var(--carousel-shadow);
+    border: 1px solid rgba(148, 163, 184, 0.25);
+  }
+
+  /* 16:9 ratio wrapper */
+  .carousel-main-inner {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%; /* 16:9 */
+    overflow: hidden;
+  }
+
+  .carousel-slides {
+    position: absolute;
+    inset: 0;
+  }
+
+  .carousel-slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--carousel-transition-fast);
+    will-change: opacity;
+  }
+
+  .carousel-slide.is-active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .carousel-slide a,
+  .carousel-slide img {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .carousel-slide img {
+    object-fit: cover; /* crop to 16:9 */
+    transform: scale(1.02);
+    transition: transform 4s ease-out;
+  }
+
+  .carousel-slide.is-active img {
+    transform: scale(1.05);
+  }
+
+  /* Gradient overlay at bottom for caption */
+  .carousel-overlay-bottom {
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 40%;
+    background: linear-gradient(to top, rgba(15, 23, 42, 0.85), transparent);
+    pointer-events: none;
+  }
+
+  .carousel-caption {
+    position: absolute;
+    left: 1.5rem;
+    right: 1.5rem;
+    bottom: calc(1.3rem + var(--carousel-safe-inset));
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .carousel-caption-text {
+    display: inline-flex;
+    padding: 0.55rem 0.8rem;
+    border-radius: var(--carousel-radius-md);
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(148, 163, 184, 0.4);
+    font-size: 0.9rem;
+    line-height: 1.4;
+    color: #e5e7eb;
+    backdrop-filter: blur(8px);
+    max-width: min(70%, 600px);
+    pointer-events: none;
+  }
+
+  /* Prev / Next buttons */
+  .carousel-nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 38px;
+    height: 38px;
+    border-radius: 999px;
+    border: none;
+    background: radial-gradient(circle at 20% 20%, #1f2937, #020617);
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #e5e7eb;
+    cursor: pointer;
+    transition: background var(--carousel-transition-fast), transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+    opacity: 0.95;
+    z-index: 3;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .carousel-nav-btn:hover {
+    background: radial-gradient(circle at 20% 20%, #4b5563, #020617);
+    transform: translateY(-50%) translateY(-1px);
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.9);
+  }
+
+  .carousel-nav-btn:active {
+    transform: translateY(-50%) translateY(1px) scale(0.97);
+    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.8);
+  }
+
+  .carousel-nav-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .carousel-prev {
+    left: 0.75rem;
+  }
+
+  .carousel-next {
+    right: 0.75rem;
+  }
+
+  /* THUMBNAILS + HORIZONTAL SCROLL */
+  .carousel-thumbs-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.25rem;
+  }
+
+  .thumbs-nav {
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    border: 1px solid rgba(148, 163, 184, 0.6);
+    background: rgba(15, 23, 42, 0.75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #e5e7eb;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background var(--carousel-transition-fast), border-color var(--carousel-transition-fast), transform 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .thumbs-nav:hover {
+    background: rgba(30, 64, 175, 0.85);
+    border-color: rgba(129, 140, 248, 0.9);
+    transform: translateY(-1px);
+  }
+
+  .thumbs-nav svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .carousel-thumbs {
+    position: relative;
+    flex: 1 1 auto;
+    overflow-x: auto;
+    overflow-y: hidden;
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.25rem 0.15rem 0.4rem;
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(148, 163, 184, 0.7) transparent;
+  }
+
+  .carousel-thumbs::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .carousel-thumbs::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .carousel-thumbs::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.7);
+    border-radius: 999px;
+  }
+
+  .carousel-thumb {
+    border: none;
+    padding: 0;
+    background: transparent;
+    border-radius: var(--carousel-radius-md);
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+    flex: 0 0 120px;
+    height: 68px;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border var(--carousel-transition-fast), opacity 0.18s ease;
+    border: 1px solid transparent;
+    opacity: 0.75;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .carousel-thumb img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+  }
+
+  .carousel-thumb::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top, rgba(15, 23, 42, 0.1), rgba(15, 23, 42, 0.65));
+    opacity: 0;
+    transition: opacity var(--carousel-transition-fast);
+  }
+
+  .carousel-thumb.is-active {
+    opacity: 1;
+    border-color: var(--carousel-accent);
+    box-shadow: 0 0 0 1px rgba(251, 191, 36, 0.7), 0 10px 20px rgba(15, 23, 42, 0.8);
+    transform: translateY(-1px);
+  }
+
+  .carousel-thumb.is-active::after {
+    opacity: 1;
+  }
+
+  .carousel-thumb:hover:not(.is-active) {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 15px rgba(15, 23, 42, 0.7);
+    opacity: 0.95;
+  }
+
+  .carousel-thumb-caption {
+    position: absolute;
+    left: 6px;
+    bottom: 4px;
+    right: 6px;
+    font-size: 0.65rem;
+    color: #e5e7eb;
+    text-shadow: 0 1px 2px rgba(15, 23, 42, 0.9);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    pointer-events: none;
+  }
+
+  /* Fallback text if no slides */
+  .carousel-empty {
+    padding: 2rem 1.5rem;
+    font-size: 0.9rem;
+    color: var(--carousel-muted);
+    background: rgba(15, 23, 42, 0.8);
+  }
+
+  /* --- RESPONSIVE RULES --- */
+
+  /* Medium screens: slightly tighter spacing */
+  @media (max-width: 1024px) {
+    .home-carousel { padding: 0 0.75rem; }
+    .carousel-caption { left: 1.25rem; right: 1.25rem; bottom: calc(1.1rem + var(--carousel-safe-inset)); }
+    .carousel-caption-text { max-width: 72%; font-size: 0.88rem; }
+    .carousel-thumb { flex: 0 0 105px; height: 62px; }
+  }
+
+  /* Tablet / Small desktop */
+  @media (max-width: 768px) {
+    .carousel-header { gap: 0.5rem; align-items: center; }
+    .carousel-subtitle { display: none; } /* compact header on narrow screens */
+    .carousel-caption { left: 1rem; right: 1rem; bottom: calc(0.9rem + var(--carousel-safe-inset)); }
+    .carousel-caption-text { max-width: 100%; font-size: 0.82rem; padding: 0.45rem 0.7rem; }
+    .carousel-nav-btn { width: 36px; height: 36px; }
+    .carousel-prev { left: 0.6rem; }
+    .carousel-next { right: 0.6rem; }
+    .carousel-thumb { flex: 0 0 95px; height: 56px; }
+    .carousel-thumbs { padding-bottom: 0.3rem; }
+  }
+
+  /* Mobile phones */
+  @media (max-width: 480px) {
+    .home-carousel { gap: 0.6rem; padding: 0 0.5rem; }
+    .carousel-title { font-size: 1.05rem; }
+    .carousel-title-badge { font-size: 0.66rem; padding: 0.12rem 0.35rem; }
+    .carousel-caption { left: 0.8rem; right: 0.8rem; bottom: calc(0.7rem + var(--carousel-safe-inset)); }
+    .carousel-caption-text { font-size: 0.78rem; padding: 0.4rem 0.6rem; }
+    .carousel-nav-btn { width: 44px; height: 44px; opacity: 0.9; backdrop-filter: blur(4px); }
+    .carousel-nav-btn svg { width: 20px; height: 20px; }
+    .carousel-prev { left: 0.5rem; }
+    .carousel-next { right: 0.5rem; }
+    .carousel-thumb { flex: 0 0 110px; height: 64px; } /* bigger thumb for finger taps */
+    .carousel-thumbs { gap: 0.6rem; padding: 0.35rem 0.15rem 0.5rem; }
+    .lang-hidden-mobile { display: none; } /* optional utility */
+  }
+
+  /* Very small (ultra narrow) - hide thumbnails and enable dots if you like */
+  @media (max-width: 360px) {
+    .carousel-thumb { flex: 0 0 120px; height: 66px; }
+    .carousel-caption-text { font-size: 0.74rem; }
+  }
+</style>
+
+<div class="home-carousel" aria-roledescription="carousel" id="home-carousel-root">
+  <div class="carousel-header">
+    <div class="carousel-title">
+      <span class="carousel-title-badge" id="carousel-badge">Highlights</span>
+      <span id="carousel-title-text">Recent Activities &amp; Events</span>
+    </div>
+    <div class="carousel-subtitle" id="carousel-subtitle-text">
+      Swipe or use arrows to browse featured moments from CPP-IPR.
+    </div>
+  </div>
+
+  <!-- MAIN CAROUSEL -->
+  <div class="carousel-main" role="region" aria-label="Homepage highlights">
+    <div class="carousel-main-inner">
+      <div class="carousel-slides" id="carousel-slides">
+        <!-- Slides injected by JS -->
+      </div>
+    </div>
+
+    <!-- Navigation arrows -->
+    <button class="carousel-nav-btn carousel-prev" type="button" aria-label="Previous slide" data-action="prev">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M15 5L9 12L15 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <button class="carousel-nav-btn carousel-next" type="button" aria-label="Next slide" data-action="next">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M9 5L15 12L9 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- THUMBNAILS + HORIZONTAL SCROLL -->
+  <div class="carousel-thumbs-wrapper" aria-hidden="false">
+    <button class="thumbs-nav thumbs-prev" type="button" aria-label="Scroll thumbnails left">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M14 6L8 12L14 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
+    <div class="carousel-thumbs" id="carousel-thumbs" role="list">
+      <!-- Thumbs injected by JS -->
+    </div>
+
+    <button class="thumbs-nav thumbs-next" type="button" aria-label="Scroll thumbnails right">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M10 6L16 12L10 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<script>
+  (function () {
+    // Endpoint for slide data
+    const DATA_URL = '/api/home-carousal';
+
+    const slidesContainer = document.getElementById('carousel-slides');
+    const thumbsContainer = document.getElementById('carousel-thumbs');
+    const prevBtn = document.querySelector('.carousel-prev');
+    const nextBtn = document.querySelector('.carousel-next');
+    const thumbsPrevBtn = document.querySelector('.thumbs-prev');
+    const thumbsNextBtn = document.querySelector('.thumbs-next');
+    const carouselRoot = document.getElementById('home-carousel-root');
+
+    let slides = [];
+    let thumbs = [];
+    let currentIndex = 0;
+    let autoTimer = null;
+    const autoDelay = 6000;
+    let touch = { startX: 0, startY: 0, started: false };
+
+    // cache data for language swap
+    let cachedData = [];
+
+    // language header texts
+    const headerText = {
+      en: {
+        badge: 'Highlights',
+        title: 'Recent Activities & Events',
+        subtitle: 'Swipe or use arrows to browse featured moments from CPP-IPR.'
+      },
+      hi: {
+        badge: 'मुख्य झलकियाँ',
+        title: 'हाल की गतिविधियाँ एवं आयोजन',
+        subtitle: 'CPP-IPR की प्रमुख गतिविधियों को देखने के लिए स्वाइप करें या तीरों का प्रयोग करें।'
+      }
+    };
+
+    function getCurrentLang() {
+      return localStorage.getItem('preferred-language') || 'en';
+    }
+
+    function getCaption(item, lang) {
+      if (lang === 'hi' && item.caption_hi) return item.caption_hi;
+      return item.caption_en || item.caption || '';
+    }
+
+    function applyHeaderLang(lang) {
+      const set = headerText[lang] || headerText.en;
+      const badgeEl = document.getElementById('carousel-badge');
+      const titleEl = document.getElementById('carousel-title-text');
+      const subtitleEl = document.getElementById('carousel-subtitle-text');
+
+      if (badgeEl) badgeEl.textContent = set.badge;
+      if (titleEl) titleEl.textContent = set.title;
+      if (subtitleEl) subtitleEl.textContent = set.subtitle;
+    }
+
+    function resolveSrc(item) {
+      if (item.src) return item.src;
+      if (item.filename) return '/assets/images/home_carousal/' + item.filename;
+      return '';
+    }
+
+    function buildFromData(data) {
+      slidesContainer.innerHTML = '';
+      thumbsContainer.innerHTML = '';
+      slides = [];
+      thumbs = [];
+
+      if (!Array.isArray(data) || data.length === 0) {
+        slidesContainer.innerHTML = '<div class="carousel-empty">No images available for the homepage carousel.</div>';
+        return;
+      }
+
+      const lang = getCurrentLang();
+
+      data.forEach((item, index) => {
+        const caption = getCaption(item, lang);
+        const imgSrc = resolveSrc(item);
+
+        const slide = document.createElement('div');
+        slide.className = 'carousel-slide' + (index === 0 ? ' is-active' : '');
+        slide.dataset.index = index;
+        slide.setAttribute('role', 'group');
+        slide.setAttribute('aria-roledescription', 'slide');
+        slide.setAttribute('aria-label', `${index + 1} of ${data.length}`);
+
+        const imgEl = document.createElement('img');
+        imgEl.src = imgSrc;
+        imgEl.alt = item.alt || caption || ('Slide ' + (index + 1));
+        imgEl.loading = 'lazy';
+
+        let contentNode = imgEl;
+        if (item.href) {
+          const link = document.createElement('a');
+          link.href = item.href;
+          link.target = '_blank';
+          link.rel = 'noopener noreferrer';
+          link.appendChild(imgEl);
+          contentNode = link;
+        }
+
+        const overlay = document.createElement('div');
+        overlay.className = 'carousel-overlay-bottom';
+
+        const captionWrapper = document.createElement('div');
+        captionWrapper.className = 'carousel-caption';
+
+        const captionText = document.createElement('div');
+        captionText.className = 'carousel-caption-text';
+        captionText.textContent = caption;
+
+        captionWrapper.appendChild(captionText);
+
+        slide.appendChild(contentNode);
+        slide.appendChild(overlay);
+        slide.appendChild(captionWrapper);
+
+        slidesContainer.appendChild(slide);
+        slides.push(slide);
+
+        // Thumbnail
+        const thumb = document.createElement('button');
+        thumb.className = 'carousel-thumb' + (index === 0 ? ' is-active' : '');
+        thumb.type = 'button';
+        thumb.dataset.index = index;
+        thumb.setAttribute('role', 'listitem');
+        thumb.innerHTML = `
+          <img src="${imgSrc}" alt="${imgEl.alt}" loading="lazy">
+          <div class="carousel-thumb-caption">${caption}</div>
+        `;
+
+        thumb.addEventListener('click', () => {
+          goToSlide(index);
+          restartAuto();
+          ensureThumbVisible(index);
+        });
+
+        thumbsContainer.appendChild(thumb);
+        thumbs.push(thumb);
+      });
+
+      currentIndex = 0;
+      setActiveSlide(0);
+    }
+
+    function setActiveSlide(index) {
+      slides.forEach((slide, i) => slide.classList.toggle('is-active', i === index));
+      thumbs.forEach((thumb, i) => thumb.classList.toggle('is-active', i === index));
+    }
+
+    function goToSlide(index) {
+      if (!slides.length) return;
+      if (index < 0) index = slides.length - 1;
+      if (index >= slides.length) index = 0;
+      currentIndex = index;
+      setActiveSlide(index);
+    }
+
+    function nextSlide() { goToSlide(currentIndex + 1); }
+    function prevSlide() { goToSlide(currentIndex - 1); }
+
+    function startAuto() {
+      stopAuto();
+      if (!slides.length) return;
+      autoTimer = setInterval(() => nextSlide(), autoDelay);
+    }
+
+    function stopAuto() {
+      if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
+    }
+
+    function restartAuto() { stopAuto(); startAuto(); }
+
+    function ensureThumbVisible(index) {
+      const thumb = thumbs[index];
+      if (!thumb) return;
+      const containerRect = thumbsContainer.getBoundingClientRect();
+      const thumbRect = thumb.getBoundingClientRect();
+      if (thumbRect.left < containerRect.left) {
+        thumbsContainer.scrollBy({ left: thumbRect.left - containerRect.left - 16, behavior: 'smooth' });
+      } else if (thumbRect.right > containerRect.right) {
+        thumbsContainer.scrollBy({ left: thumbRect.right - containerRect.right + 16, behavior: 'smooth' });
+      }
+    }
+
+    // Hook buttons
+    prevBtn && prevBtn.addEventListener('click', () => { prevSlide(); restartAuto(); ensureThumbVisible(currentIndex); });
+    nextBtn && nextBtn.addEventListener('click', () => { nextSlide(); restartAuto(); ensureThumbVisible(currentIndex); });
+
+    thumbsPrevBtn && thumbsPrevBtn.addEventListener('click', () => {
+      thumbsContainer.scrollBy({ left: -thumbsContainer.clientWidth * 0.7, behavior: 'smooth' });
+    });
+
+    thumbsNextBtn && thumbsNextBtn.addEventListener('click', () => {
+      thumbsContainer.scrollBy({ left: thumbsContainer.clientWidth * 0.7, behavior: 'smooth' });
+    });
+
+    // Pause on hover (desktop), start again on leave
+    carouselRoot.addEventListener('mouseenter', stopAuto);
+    carouselRoot.addEventListener('mouseleave', startAuto);
+
+    // Keyboard navigation (left/right)
+    document.addEventListener('keydown', (e) => {
+      if (!slides.length) return;
+      if (e.key === 'ArrowLeft') { prevSlide(); restartAuto(); ensureThumbVisible(currentIndex); }
+      else if (e.key === 'ArrowRight') { nextSlide(); restartAuto(); ensureThumbVisible(currentIndex); }
+    });
+
+    // Touch (swipe) support for mobile
+    function onTouchStart(e) {
+      if (!e.touches || e.touches.length === 0) return;
+      touch.startX = e.touches[0].clientX;
+      touch.startY = e.touches[0].clientY;
+      touch.started = true;
+      stopAuto();
+    }
+    function onTouchMove(e) {
+      if (!touch.started || !e.touches || e.touches.length === 0) return;
+      // We could add visual drag feedback; keep simple to avoid layout shifts
+    }
+    function onTouchEnd(e) {
+      if (!touch.started) return;
+      const endX = (e.changedTouches && e.changedTouches[0]) ? e.changedTouches[0].clientX : touch.startX;
+      const endY = (e.changedTouches && e.changedTouches[0]) ? e.changedTouches[0].clientY : touch.startY;
+      const dx = endX - touch.startX;
+      const dy = endY - touch.startY;
+      touch.started = false;
+      // threshold & check mostly horizontal movement
+      const absDx = Math.abs(dx), absDy = Math.abs(dy);
+      if (absDx > 40 && absDx > absDy) {
+        if (dx < 0) nextSlide();
+        else prevSlide();
+        restartAuto();
+        ensureThumbVisible(currentIndex);
+      } else {
+        // treat as tap (no-op)
+      }
+    }
+
+    // Attach touch listeners to the slides container for swipe
+    slidesContainer.addEventListener('touchstart', onTouchStart, { passive: true });
+    slidesContainer.addEventListener('touchmove', onTouchMove, { passive: true });
+    slidesContainer.addEventListener('touchend', onTouchEnd, { passive: true });
+
+    // Language update hook from header
+    window.applyHomeCarouselLang = function (lang) {
+      applyHeaderLang(lang);
+      slides.forEach((slide, index) => {
+        const captionTextEl = slide.querySelector('.carousel-caption-text');
+        const item = cachedData[index];
+        if (!item || !captionTextEl) return;
+        captionTextEl.textContent = getCaption(item, lang);
+      });
+      thumbs.forEach((thumb, index) => {
+        const capEl = thumb.querySelector('.carousel-thumb-caption');
+        const item = cachedData[index];
+        if (!item || !capEl) return;
+        capEl.textContent = getCaption(item, lang);
+      });
+    };
+
+    // Init: fetch API, build UI
+    function init() {
+      const lang = getCurrentLang();
+      applyHeaderLang(lang);
+
+      fetch(DATA_URL)
+        .then(res => {
+          if (!res.ok) throw new Error('Failed to load carousel data from API');
+          return res.json();
+        })
+        .then(data => {
+          cachedData = (Array.isArray(data) ? data : []).map(item => ({
+            id: item.id,
+            filename: item.filename || '',
+            caption_en: item.caption_en || '',
+            caption_hi: item.caption_hi || '',
+            href: item.href || '',
+            src: item.src || null
+          }));
+
+          buildFromData(cachedData);
+          setActiveSlide(0);
+          startAuto();
+        })
+        .catch(err => {
+          console.error('Error loading carousel data:', err);
+          slidesContainer.innerHTML = '<div class="carousel-empty">Unable to load carousel data.</div>';
+        });
+    }
+
+    // initialize
+    init();
+  })();
+</script>

@@ -1,0 +1,310 @@
+<!-- =========================
+     RESEARCH HIGHLIGHTS CAROUSEL
+     ========================= -->
+<section class="research-highlight section">
+  <div class="container">
+
+    <!-- Heading - MATCHES RECENT PUBLICATION STRUCTURE -->
+    <div class="research-header">
+      <div class="research-title" data-i18n="research_highlight_title">
+        Research Highlights
+      </div>
+      <div class="research-subtitle" data-i18n="research_highlight_subtitle">
+        Featured research
+      </div>
+    </div>
+
+    <!-- Carousel Container - USING PADDING-TOP PERCENTAGE (reliable height) -->
+    <div class="research-carousel-wrapper">
+      <div class="research-highlights-carousel" id="researchCarousel">
+        <!-- Images will be loaded dynamically -->
+      </div>
+    </div>
+
+    <!-- Navigation Dots -->
+    <div class="research-dots" id="carouselDots"></div>
+
+  </div>
+</section>
+
+<!-- =========================
+     STYLES
+     ========================= -->
+<style>
+  /* ROOT WRAPPER - MATCHES RECENT PUBLICATION */
+  .research-highlight {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    box-sizing: border-box;
+  }
+
+  .research-highlight .container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .research-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    /* Changed from center to space-between */
+    gap: 0.75rem;
+    padding: 0 0.25rem;
+    flex-wrap: wrap;
+  }
+
+  .research-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #111827;
+  }
+
+  .research-subtitle {
+    font-size: 0.85rem;
+    color: #6b7280;
+    text-align: right;
+  }
+
+  /* WRAPPER - Uses padding-top percentage for reliable height (like main carousel) */
+  .research-carousel-wrapper {
+    position: relative;
+    width: 100%;
+    padding-top: 47.24%;
+    /* 100 / 2.117 = 47.24 - maintains exact 2.117:1 aspect ratio */
+    overflow: hidden;
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    background: #1a1a1a;
+    border: 1.5px solid #d0d7e2;
+  }
+
+  /* CAROUSEL - Now absolute positioned inside wrapper */
+  .research-highlights-carousel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .research-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease-in-out;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+
+  .research-slide.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    cursor: pointer;
+    z-index: 1;
+  }
+
+  .research-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+
+  /* NAVIGATION DOTS */
+  .research-dots {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  .research-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #cbd5e1;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .research-dot.active {
+    background: #f59e0b;
+    width: 12px;
+    height: 12px;
+  }
+
+  .research-dot:hover {
+    background: #94a3b8;
+  }
+
+  /* ---------- TABLET ---------- */
+  @media (max-width: 1024px) {
+    .research-highlight {
+      max-width: 100%;
+    }
+  }
+
+  /* ---------- MOBILE ---------- */
+  @media (max-width: 900px) {
+    .research-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .research-subtitle {
+      text-align: left;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .research-carousel-wrapper {
+      padding-top: 47.24%;
+      /* Maintains same ratio on mobile */
+    }
+  }
+</style>
+
+<!-- =========================
+     BILINGUAL TRANSLATIONS
+     ========================= -->
+<script>
+  window.researchHighlightTranslations = {
+    en: {
+      research_highlight_title: "Research Highlights",
+      research_highlight_subtitle: "Featured research"
+    },
+    hi: {
+      research_highlight_title: "अनुसंधान प्रमुख झलक",
+      research_highlight_subtitle: "प्रमुख अनुसंधान"
+    }
+  };
+
+  window.applyresearchHighlightLang = function (lang) {
+    const dict = window.researchHighlightTranslations[lang] || {};
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (dict[key]) {
+        el.textContent = dict[key];
+      }
+    });
+  };
+
+  /* Fetch and render research highlights carousel */
+  (function () {
+    fetch('/api/research-highlight')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.length > 0) {
+          const section = document.querySelector('.research-highlight');
+          const carousel = document.getElementById('researchCarousel');
+          const dotsContainer = document.getElementById('carouselDots');
+          let currentSlide = 0;
+          let intervalId = null;
+
+          // Clear any existing content
+          carousel.innerHTML = '';
+
+          // Create slides
+          data.forEach((item, index) => {
+            const slide = document.createElement('a');
+            slide.href = item.link || '#';
+
+            if (item.link && item.link !== '#') {
+              slide.target = '_blank';
+              slide.rel = 'noopener noreferrer';
+            } else {
+              slide.addEventListener('click', (e) => e.preventDefault());
+              slide.style.cursor = 'default';
+            }
+
+            slide.className = 'research-slide' + (index === 0 ? ' active' : '');
+            slide.dataset.index = index;
+
+            const img = document.createElement('img');
+            img.src = `/assets/${item.image_path}`;
+            img.alt = 'Research Highlight ' + (index + 1);
+            img.loading = index === 0 ? 'eager' : 'lazy';
+
+            slide.appendChild(img);
+            carousel.appendChild(slide);
+
+            // Create dot
+            const dot = document.createElement('span');
+            dot.className = 'research-dot' + (index === 0 ? ' active' : '');
+            dot.dataset.index = index;
+            dot.addEventListener('click', (e) => {
+              e.stopPropagation();
+              goToSlide(index);
+              restartAutoSlide();
+            });
+            dotsContainer.appendChild(dot);
+          });
+
+          const slides = carousel.querySelectorAll('.research-slide');
+          const dots = dotsContainer.querySelectorAll('.research-dot');
+
+          function goToSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            dots[currentSlide].classList.remove('active');
+            currentSlide = n;
+            slides[currentSlide].classList.add('active');
+            dots[currentSlide].classList.add('active');
+          }
+
+          function nextSlide() {
+            const next = (currentSlide + 1) % slides.length;
+            goToSlide(next);
+          }
+
+          function restartAutoSlide() {
+            if (intervalId) {
+              clearInterval(intervalId);
+            }
+            if (slides.length > 1) {
+              intervalId = setInterval(nextSlide, 5000);
+            }
+          }
+
+          // Start auto-advance
+          if (slides.length > 1) {
+            intervalId = setInterval(nextSlide, 5000);
+          }
+
+          // Section is always visible now (removed display: none)
+          section.style.display = 'flex';
+
+          // Dispatch event that carousel is ready for height sync
+          setTimeout(() => {
+            const wrapper = document.querySelector('.research-carousel-wrapper');
+            if (wrapper) {
+              const event = new CustomEvent('carouselReady', {
+                detail: { height: wrapper.offsetHeight }
+              });
+              window.dispatchEvent(event);
+            }
+          }, 100);
+        }
+      })
+      .catch(err => {
+        console.error('Error loading research highlights:', err);
+      });
+  })();
+</script>

@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Seminars - CPP-IPR</title>
+
+    <style>
+        :root {
+            --semi-bg: #ffffff;
+            --semi-border: #d0d7e2;
+            --semi-text: #111827;
+            --semi-muted: #6b7280;
+            --semi-accent: #2563eb;
+            --semi-radius-lg: 16px;
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            font-family: Arial, sans-serif;
+        }
+
+        #header-container,
+        #footer-container {
+            flex-shrink: 0;
+        }
+
+        main {
+            flex: 1;
+            padding: 1.5rem 5vw;
+            box-sizing: border-box;
+        }
+
+        /* ---------- GLOBAL SECTION WIDTH ---------- */
+        .page-section {
+            max-width: 1600px;
+            margin: 0 auto 2rem auto;
+        }
+
+        /* ---------- SEMINAR SECTION STYLES ---------- */
+        .seminar-section {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            box-sizing: border-box;
+        }
+
+        /* BANNER IMAGE */
+        .seminar-banner {
+            width: 100%;
+            height: auto;
+            border-radius: var(--semi-radius-lg);
+            object-fit: cover;
+        }
+
+        /* MAIN BODY */
+        .seminar-main {
+            position: relative;
+            width: 100%;
+            background: var(--semi-bg);
+            border: 1.5px solid var(--semi-border);
+            border-radius: var(--semi-radius-lg);
+            overflow: hidden;
+        }
+
+        /* HEADER INSIDE BOX */
+        .seminar-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem 1.75rem 1rem 1.75rem;
+            position: relative;
+        }
+
+        /* Horizontal line with custom width */
+        .seminar-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            height: 2px;
+            background-color: var(--semi-border);
+        }
+
+        .seminar-title {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--semi-text);
+            text-align: center;
+            margin: 0;
+        }
+
+        /* CONTENT AREA */
+        .seminar-content {
+            padding: 1.75rem 1.75rem;
+            box-sizing: border-box;
+        }
+
+        /* TALK CONTAINER */
+        .talk-container {
+            margin-bottom: 3rem;
+            border-bottom: 1px solid var(--semi-border);
+            padding-bottom: 2rem;
+        }
+
+        .talk-container:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .talk-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .talk-header h4 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--semi-text);
+            margin: 0;
+            padding-bottom: 0.5rem;
+        }
+
+        .talk-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .talk-info {
+            flex: 1;
+            min-width: 250px;
+            background: #f9fafb;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 3px solid var(--semi-accent);
+        }
+
+        /* Bigger and bold text for talk details */
+        .talk-info .bilingual-text,
+        .talk-title-container .bilingual-text {
+            display: block;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--semi-text);
+            line-height: 1.6;
+            margin-bottom: 0.75rem;
+        }
+
+        .talk-info .bilingual-text:last-child,
+        .talk-title-container .bilingual-text:last-child {
+            margin-bottom: 0;
+        }
+
+        .talk-title-container {
+            flex: 2;
+            min-width: 300px;
+            background: #f9fafb;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 3px solid var(--semi-accent);
+
+            /* Add these properties for vertical centering */
+            display: flex;
+            align-items: center;
+            /* Vertically centers the content */
+        }
+
+        /* Ensure the text inside takes full width */
+        .talk-title-container .bilingual-text {
+            width: 100%;
+            margin-bottom: 0;
+            /* Remove bottom margin since we're centering */
+        }
+
+        .abstract-section {
+            margin-top: 1.5rem;
+        }
+
+        .abstract-section h5 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--semi-text);
+            margin: 0 0 1rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--semi-border);
+        }
+
+        .abstract-text {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: var(--semi-text);
+            text-align: justify;
+        }
+
+        .abstract-paragraph {
+            margin-bottom: 1.5rem;
+        }
+
+        .abstract-paragraph:last-child {
+            margin-bottom: 0;
+        }
+
+        /* YEAR HEADING */
+        .year-heading {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--semi-text);
+            margin: 1rem 0 2rem 0;
+            text-align: center;
+        }
+
+        /* ---------- MOBILE ---------- */
+        @media (max-width: 900px) {
+            .seminar-title {
+                font-size: 1.35rem;
+            }
+
+            .seminar-header {
+                padding: 1.25rem 1.25rem 0.85rem 1.25rem;
+            }
+
+            .seminar-header::after {
+                width: 80%;
+            }
+
+            .seminar-content {
+                padding: 1.5rem 1.25rem;
+            }
+
+            .talk-details {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .talk-info,
+            .talk-title-container {
+                min-width: 100%;
+            }
+
+            .talk-info .bilingual-text,
+            .talk-title-container .bilingual-text {
+                font-size: 1.1rem;
+            }
+
+            .abstract-text {
+                font-size: 0.95rem;
+            }
+
+            .year-heading {
+                font-size: 1.5rem;
+            }
+
+            .talk-header h4 {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <div id="header-container"></div>
+
+    <!-- PAGE CONTENT -->
+    <main>
+        <div class="page-section seminar-section">
+
+            <!-- BANNER IMAGE -->
+            <img src="/assets/images/images/misc/seminar_banner.jpg" alt="Seminars Banner" class="seminar-banner">
+
+            <!-- MAIN BODY -->
+            <div class="seminar-main">
+
+                <!-- HEADER INSIDE BOX -->
+                <div class="seminar-header">
+                    <h1 class="seminar-title bilingual-title" data-hi="संगोष्ठी" data-en="Seminars"></h1>
+                </div>
+
+                <!-- CONTENT -->
+                <div class="seminar-content">
+
+                    <!-- YEAR HEADING -->
+                    <div class="year-heading bilingual-text" data-hi="2025" data-en="2025"></div>
+
+                    <!-- TALK 1 -->
+                    <div class="talk-container">
+                        <div class="talk-header">
+                            <h4 class="bilingual-text" data-hi="वार्ता" data-en="Talk"></h4>
+                        </div>
+
+                        <div class="talk-details">
+                            <div class="talk-info">
+                                <span class="bilingual-text" data-hi="वक्ता: सुश्री सुतापा सामन्ता"
+                                    data-en="Speaker: Ms. Sutapa Samanta"></span>
+                                <span class="bilingual-text" data-hi="समय: 24-01-2025 को 3 PM, सेमिनार हॉल"
+                                    data-en="Time: 3 PM on 24-01-2025, Seminar Hall"></span>
+                            </div>
+
+                            <div class="talk-title-container">
+                                <span class="bilingual-text" data-hi="शीर्षक: अंतिम पंजीकरण वार्ता"
+                                    data-en="Title: Final registration talk"></span>
+                            </div>
+                        </div>
+
+                        <div class="abstract-section">
+                            <h5 class="bilingual-text" data-hi="सारांश" data-en="Abstract"></h5>
+                            <div class="abstract-text">
+                                <p class="abstract-paragraph bilingual-text"
+                                    data-hi="प्लाज़्मा, जिसे 'पदार्थ की चौथी अवस्था' कहा जाता है, आयनित कणों और तटस्थ प्रजातियों का एक विशाल संग्रह है। क्वाज़ी-न्यूट्रैलिटी (अर्ध-तटस्थता) और सामूहिक व्यवहार प्लाज़्मा के दो महत्वपूर्ण गुण हैं, जो इसे सामान्य आयनित गैस से अलग बनाते हैं। अक्सर कहा जाता है कि ब्रह्मांड के लगभग 99% पदार्थ प्लाज़्मा अवस्था में विद्यमान हैं। प्राकृतिक रूप से पाए जाने वाले प्लाज़्मा के उदाहरणों में सौर पवन, गैसीय नीहारिकाएँ तथा अधिकांश अंतरतारकीय हाइड्रोजन शामिल हैं, जबकि विद्युत आर्क, नियोन एवं फ्लोरोसेंट लैम्प, तथा रॉकेट एग्ज़ॉस्ट मानव-निर्मित प्लाज़्मा के सामान्य उदाहरण हैं।"
+                                    data-en="Plasma, the 'fourth state of matter', is a large collection of ionized particles and neutral species. Quasi-neutrality and collective behaviour are two important properties of plasma, make it different from a normal ionized gas. It is often said that almost 99% matter of this universe exists in the plasma state. Examples of naturally occurring plasmas include solar wind, gaseous nebulae and most of the interstellar hydrogen, while electric arcs, neon and fluorescent lamps, rocket exhaust are some common examples of man-made plasmas.">
+                                </p>
+
+                                <p class="abstract-paragraph bilingual-text"
+                                    data-hi="एक सामान्य इलेक्ट्रॉन-आयन प्लाज़्मा इलेक्ट्रॉनों, धनावेशित आयनों और तटस्थ परमाणुओं से बना होता है। किन्तु इलेक्ट्रॉन-अटैचिंग गैसों में निर्मित प्लाज़्मा में ऋणावेशित आयन भी एक अतिरिक्त आवेशित प्रजाति के रूप में उपस्थित होते हैं। जब ऋणावेशित आयनों का घनत्व प्लाज़्मा गतिकी को महत्वपूर्ण रूप से प्रभावित करने लगे, तब उस प्लाज़्मा को इलेक्ट्रोनिगेटिव प्लाज़्मा कहा जाता है।"
+                                    data-en="A typical electron-ion plasma is composed of electrons, positively charged ions and neutral atoms. However, plasmas formed in electron-attaching gases, some negatively charged ions are also present as an additional charged species. When the density of negative ions becomes significant enough to influence the plasma dynamics, the plasma is defined as electronegative plasma.">
+                                </p>
+
+                                <p class="abstract-paragraph bilingual-text"
+                                    data-hi="इलेक्ट्रोनिगेटिव प्लाज़्मा में ऋणायन मुख्यतः दो श्रेणियों में वर्गीकृत किए जाते हैं: आयतन-उत्पन्न ऋणायन (Volume produced negative ions) और सतह-उत्पन्न ऋणायन (Surface produced negative ions)। आयतन-उत्पन्न ऋणायन प्लाज़्मा आयतन में 'डिसोसिएटिव अटैचमेंट' प्रक्रिया द्वारा बनते हैं। जब इलेक्ट्रोनिगेटिव गैस से बना प्लाज़्मा ठोस सतह से अंतःक्रिया करता है, तब सतह-उत्पन्न ऋणायन सतह से इलेक्ट्रॉनों के रेज़ोनेंट टनलिंग द्वारा उत्पन्न होते हैं।"
+                                    data-en="Negative ions in electronegative plasmas are mainly classified into two categories based on their production mechanism: volume produced negative ions and surface produced negative ions. Volume produced negative ions are formed within the plasma volume through a process, called dissociative attachment. When the plasma formed by an electronegative gas interacts with a solid surface, surface produced negative ions are generated through the resonant tunnelling of electrons from the surface.">
+                                </p>
+
+                                <p class="abstract-paragraph bilingual-text"
+                                    data-hi="आयतन-उत्पन्न ऋणायन सतह संशोधन तकनीकों में व्यापक रूप से प्रयुक्त होते हैं, जबकि सतह-उत्पन्न ऋणायन उच्च निष्कर्षण दक्षता के कारण n-NBI प्रणालियों में ऋणायन स्रोतों के लिए अत्यंत महत्वपूर्ण माने जाते हैं।"
+                                    data-en="Plasmas containing volume negative ions are widely used in surface modification techniques; however, surface produced negative ions are regarded as the primary source of negatively charged ions in negative ion-based neutral beam injector (n-NBI) systems, owing to their high extraction efficiency.">
+                                </p>
+
+                                <p class="abstract-paragraph bilingual-text"
+                                    data-hi="व्यावहारिक उपकरणों में उत्पन्न प्लाज़्मा सीमित आकार के निर्वात चैम्बर में संलग्न रहता है। प्लाज़्मा और ठोस सतह के बीच एक पतली धनावेशित परत बनती है, जिसे शीथ (Sheath) कहते हैं। ऋणायनों की उपस्थिति शीथ की संरचना तथा आवेशित कणों के परिवहन एवं वितरण पर गहरा प्रभाव डालती है।"
+                                    data-en="Plasma generated in practical devices, is contained in a vacuum chamber of finite size. At the interface between plasma and any material surface, a thin positively charged layer, known as sheath, forms. The existence of negative ions has a large effect on the structure of the sheath as well as on the transport and spatial distribution of charged particles.">
+                                </p>
+
+                                <p class="abstract-paragraph bilingual-text"
+                                    data-hi="इस अध्ययन में सीज़ियम-लेपित धातु प्लेट के सामने प्लाज़्मा शीथ की संरचना का एक सरल सैद्धांतिक मॉडल द्वारा विश्लेषण किया गया। इसमें इलेक्ट्रॉनों के साथ बहु-प्रजातीय धनायन, सतह-उत्पन्न एवं आयतन-उत्पन्न ऋणायनों को सम्मिलित किया गया। पाया गया कि यदि इलेक्ट्रॉन तापमान और ऋणायन तापमान का अनुपात (γ) (5 + √24) से अधिक हो, तो कुछ इलेक्ट्रोनिगेटिविटी मानों के लिए शीथ-एज पोटेंशियल के बहु-मान संभव होते हैं। यह भी देखा गया कि सतह उत्पादन उपज बढ़ने पर बहु-मान क्षेत्र की चौड़ाई बढ़ती है।"
+                                    data-en="A study has been carried out to investigate the structure of a plasma sheath in front of a caesium coated metallic plate using a simple theoretical model. Along with the electrons, the considered plasma is composed of multi-species of positive ions, and surface and volume produced negative ions. When plasma sheath of a negative ion plasma is observed from the wall side, multiple possible values of the sheath edge potential can be obtained for a specific range of electronegativity. This occurs when the ratio of electron temperature to negative ion temperature γ exceeds (5 + √24). In this study, it has been observed that, the width of multi-valued region increases with the increase in surface production yield.">
+                                </p>
+
+                                <p class="abstract-paragraph bilingual-text"
+                                    data-hi="आंशिक रूप से आयनित प्लाज़्मा में पर्याप्त तटस्थ कण मौजूद रहते हैं, जिससे शीथ क्षेत्र में आयन-तटस्थ टक्करों का प्रभाव उत्पन्न होता है। अध्ययन से ज्ञात हुआ कि टक्करें आयन वेग को घटाती हैं, फलस्वरूप सतह से ऋणायन उत्पादन कम होता है। स्पेस-चार्ज प्रोफ़ाइल शीथ-एज के समीप शिखर दर्शाती है तथा आयन प्रभाव ऊर्जा का आंशिक ह्रास टक्करों के साथ बढ़ता है।"
+                                    data-en="In partially ionized plasmas, a sufficient number of neutral particles coexists with positively and negatively charged particles. Hence, inside the sheath zone, thermal motion of neutral particles and an accelerated motion of positively charged particles towards the wall ensures the presence of ion-neutral collision at that region. A study also has been done to observe the effect of ion-neutral on the plasma sheath for an electronegative plasma in presence of surface produced negative ions. It has been found that, the collision reduces the ion velocity towards the metallic plate and consequently reduces negative ion production from the surface. The space charge profile shows peak near the sheath edge in contrast to the common case, where it has a peak near the wall. Fractional loss of ion impact energy is also has been seen to increase with increasing collision.">
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TALK 2 -->
+                    <div class="talk-container">
+                        <div class="talk-header">
+                            <h4 class="bilingual-text" data-hi="वार्ता" data-en="Talk"></h4>
+                        </div>
+
+                        <div class="talk-details">
+                            <div class="talk-info">
+                                <span class="bilingual-text" data-hi="वक्ता: सुश्री अज़मिराह अहमद"
+                                    data-en="Speaker: Ms. Azmirah Ahmed"></span>
+                                <span class="bilingual-text" data-hi="समय: 20-01-2025 को 3 PM, सेमिनार हॉल"
+                                    data-en="Time: 3 PM on 20-01-2025, Seminar Hall"></span>
+                            </div>
+
+                            <div class="talk-title-container">
+                                <span class="bilingual-text" data-hi="शीर्षक: प्री-थीसिस सबमिशन वार्ता"
+                                    data-en="Title: Pre-thesis submission talk"></span>
+                            </div>
+                        </div>
+
+                        <div class="abstract-section">
+                            <h5 class="bilingual-text" data-hi="सारांश" data-en="Abstract"></h5>
+                            <div class="abstract-text">
+                                <p class="abstract-paragraph bilingual-text"
+                                    data-hi="प्लाज़्मा अनुसंधान वर्तमान में विभिन्न अनुप्रयोग क्षेत्रों में, विशेषकर नियंत्रित ऊष्माण्विकीय संलयन (Fusion) के माध्यम से ऊर्जा उत्पादन हेतु, अपने उत्कर्ष पर है। संलयन रिएक्टर में सकारात्मक शक्ति प्राप्त करने के लिए आत्म-स्थायी प्लाज़्मा स्थितियाँ आवश्यक हैं। चुंबकीय परिरोधन के दौरान ELM जैसी अस्थिरताएँ उत्पन्न होती हैं, जिनके कारण सामग्री सतह पर उच्च ऊष्मा-भार पड़ता है और क्षरण, पिघलन या वाष्पीकरण हो सकता है।"
+                                    data-en="The plasma research is currently at its peak in diverse fields of applications mainly in fusion for power generation since the idea of power generation from fusion in laboratory scale came into consideration. The objective is to achieve a positive power from the fusion reactor by controlled thermonuclear fusion which demands self-sustaining plasma conditions in the reactor. Different instabilities such as transient ELM events (Energy density ~ 0.2 - 2.5 MJ/m2) are generated during the magnetic confinement of the plasma in these fusion reactors. The high heat load during ELM events causes significant damage to material surface of the reactor. There might be surface erosion, melting or vaporization of the material surface which degrades the material with time and also act as a source of impurity generation.">
+                                </p>
+
+                                <p class="abstract-paragraph bilingual-text"
+                                    data-hi="CPP-IPR में विकसित QSPA प्रकार का पल्स्ड प्लाज़्मा एक्सेलेरेटर हाइड्रोजन माध्यम में ~0.22 MJ/m² ऊर्जा घनत्व का पल्स्ड प्लाज़्मा उत्पन्न करने में सक्षम है। प्रणाली अनुकूलन के लिए OES जैसी निष्क्रिय डायग्नोस्टिक तकनीकों का उपयोग किया गया। डॉप्लर शिफ्ट से वेग, स्टार्क ब्रॉडनिंग से घनत्व तथा बोल्ट्ज़मान प्लॉट से इलेक्ट्रॉन उत्तेजन तापमान का निर्धारण किया गया। FLYCHK कोलिज़नल-रेडिएटिव मॉडल आधारित कोड द्वारा इलेक्ट्रॉन तापमान का विश्लेषण प्रस्तुत किया गया।"
+                                    data-en="Different mock-up plasma devices are operating around the world as heat sources to study the interaction of plasma with fusion- relevant material target. The Pulsed Plasma Accelerator, a QSPA type device developed at CPP-IPR is presently capable of producing a pulsed plasma with an energy density of ~ 0.22 MJ/m2 in hydrogen medium. It is one of the promising heat source for simulating the heat load of transient ELM events. However, optimization of the system is the primary requirement for achieving the maximum efficiency and obtaining a continuous uniform plasma stream. Hence, emphasis is given for the optimization that is carried out by studying the different plasma characteristics. Passive diagnostics technique of OES and its different spectroscopic methods are used to extract information on different plasma characteristic parameters. The formation of different ionization species in plasma and its excitation process, the Doppler shift method for plasma velocity estimation, analysis of stark broadened profiles for plasma density, and electron excitation temperature from Boltzmann plot under p-LTE assumption are reported. Apart from this, a collisional radiative model-based code FLYCHK is presented for a basic understanding of the code, its applicability conditions, and the approach to determining electron temperature.">
+                                </p>
+
+                                <p class="abstract-paragraph bilingual-text"
+                                    data-hi="बाह्य अनुदैर्ध्य चुंबकीय क्षेत्र के प्रभाव, गैस दाब और डिस्चार्ज वोल्टेज पर निर्भरता का अध्ययन किया गया। हाई-स्पीड इमेजिंग द्वारा प्लाज़्मा संरचना, घूर्णन, खोखले कोर और दाब-निर्भर लोब संरचनाएँ देखी गईं।"
+                                    data-en="The evolution of plasma density, Texc, and Te are also reported to draw a conclusion on plasma characteristics for different time frames of plasma lifetime. The influence of an externally applied longitudinal magnetic field on the characteristic parameters of plasma is studied. A comparative study on the behavior of neutral and ionized argon species excitations, plasma density, electron excitation temperature, and electron temperature both in the absence and presence of an external longitudinal magnetic field is carried out thereby providing information on the interaction of the magnetic field with the plasma species. The dependence of the plasma characteristics on the gas pressure (plenum pressure) and discharge voltage is also studied. Apart from this, a time evolution study of plasma behavior in the absence and presence of magnetic field is also studied. Another diagnostics technique of high-speed imaging carried out using a High-speed video camera is discussed. A high-speed video camera is used to study the morphology of the plasma stream. Under a special arrangement of the electromagnet, the formation of different rotating structures of plasma is observed. In this study, three distinct cases of interaction are observed and outlined - one is the rotating plasma, second is the formation of time dependent low intense core which appears as a hollow region surrounded by intensely emitting plasma particles and, the third is the development of pressure dependent plasma lobe structures.">
+                                </p>
+
+                                <p class="abstract-paragraph bilingual-text"
+                                    data-hi="हाइड्रोजन प्लाज़्मा और टंग्स्टन लक्ष्यों के बीच अंतःक्रिया में सतह संशोधनों जैसे ब्लिस्टर, क्रैक, अशुद्धि पुनः-जमा और अवशिष्ट तनाव का अध्ययन किया गया। निष्कर्ष में PPS को 300 KJ तक उन्नत कर उच्च ऊर्जा घनत्व प्राप्त करने की संभावनाएँ प्रस्तुत की गईं।"
+                                    data-en="The interaction of hydrogen plasma with fusion-relevant tungsten targets is studied. Initially, the process of optimization of the plasma is discussed for its application in plasma-material interaction. The process involves the estimation of the different plasma parameters including plasma density and energy density under varied experimental conditions. The surface modifications of plasma-irradiated tungsten targets such as blister formation, development and propagation of cracks, impurity re-deposition, strain propagation to material depth, and accumulation of tensile residual stress in the material are discussed in detail. The results are summarized at the conclusion and an outlook is provided on prospects and scopes of upgradation of PPS to 300 KJ to achieve higher energy density to simulate higher heat load of ELM events and also explore other research fields for its efficient application.">
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <div id="footer-container"></div>
+
+    <!-- FRAGMENT LOADER -->
+    <script>
+        function loadFragment(url, containerId) {
+            fetch(url)
+                .then(res => res.text())
+                .then(html => {
+                    const container = document.getElementById(containerId);
+                    container.innerHTML = html;
+
+                    container.querySelectorAll('script').forEach(oldScript => {
+                        const newScript = document.createElement('script');
+                        if (oldScript.src) {
+                            newScript.src = oldScript.src;
+                        } else {
+                            newScript.textContent = oldScript.textContent;
+                        }
+                        oldScript.replaceWith(newScript);
+                    });
+                })
+                .catch(err => console.error('Error loading fragment:', url, err));
+        }
+
+        loadFragment('/UI/header.html', 'header-container');
+        loadFragment('/UI/footer.html', 'footer-container');
+    </script>
+
+</body>
+
+</html>

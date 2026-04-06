@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Forms & Links Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    /* =====================================================
+       GLOBAL RESET & BASE
+       ===================================================== */
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 1.5rem 4vw;
+      background: #0f172a;
+      color: #e5e7eb;
+      line-height: 1.5;
+    }
+
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* =====================================================
+       HEADER
+       ===================================================== */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.4rem;
+      white-space: nowrap;
+    }
+
+    h2 {
+      margin: 0 0 1rem;
+      font-size: 1.1rem;
+    }
+
+    /* =====================================================
+       FLASH MESSAGES
+       ===================================================== */
+    .flash-messages {
+      margin-bottom: 1rem;
+    }
+
+    .flash-message {
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .flash-success {
+      background: #166534;
+      color: #dcfce7;
+      border: 1px solid #22c55e;
+    }
+
+    .flash-error {
+      background: #7f1d1d;
+      color: #fecaca;
+      border: 1px solid #ef4444;
+    }
+
+    /* =====================================================
+       CARDS
+       ===================================================== */
+    .card {
+      background: #020617;
+      border-radius: 14px;
+      padding: 1.25rem;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      margin-bottom: 1.75rem;
+    }
+
+    /* =====================================================
+       FORMS
+       ===================================================== */
+    label {
+      display: block;
+      font-size: 0.9rem;
+      margin-bottom: 0.25rem;
+      color: #cbd5f5;
+    }
+
+    input[type="text"],
+    input[type="url"],
+    input[type="file"],
+    select {
+      width: 100%;
+      padding: 0.5rem 0.6rem;
+      border-radius: 8px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 0.9rem;
+      margin-bottom: 0.75rem;
+      font-family: inherit;
+    }
+
+    input[type="file"] {
+      padding: 0.3rem 0.6rem;
+    }
+
+    select {
+      cursor: pointer;
+    }
+
+    input[type="checkbox"] {
+      margin-right: 0.5rem;
+      accent-color: #f59e0b;
+      width: 1rem;
+      height: 1rem;
+      cursor: pointer;
+    }
+
+    .inline-input {
+      width: 100%;
+      padding: 0.5rem 0.6rem;
+      border-radius: 8px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .muted {
+      color: #94a3b8;
+      font-size: 0.85rem;
+    }
+
+    .form-section {
+      display: none;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(148, 163, 184, 0.2);
+    }
+
+    .form-section.active {
+      display: block;
+    }
+
+    /* Style for file input */
+    input[type="file"] {
+      padding: 0.5rem;
+      cursor: pointer;
+    }
+
+    input[type="file"]::-webkit-file-upload-button {
+      background: #1e293b;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      border-radius: 6px;
+      color: #e5e7eb;
+      padding: 0.3rem 0.8rem;
+      margin-right: 0.8rem;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .inline-input {
+      width: 100%;
+      padding: 0.5rem 0.6rem;
+      border-radius: 8px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .muted {
+      color: #94a3b8;
+      font-size: 0.85rem;
+      margin-top: -0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .reorder-hint {
+      font-size: 0.9rem;
+      color: #94a3b8;
+      margin-bottom: 0.75rem;
+      padding: 0.5rem;
+      background: rgba(15, 23, 42, 0.6);
+      border-radius: 6px;
+    }
+
+    /* Edit mode styles */
+    .edit-mode {
+      background: rgba(15, 23, 42, 0.6);
+      padding: 0.75rem;
+      border-radius: 8px;
+      margin-top: 0.5rem;
+    }
+
+    .edit-mode label {
+      margin-top: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* =====================================================
+       BUTTONS
+       ===================================================== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem 1.1rem;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: 0.18s ease;
+      text-decoration: none;
+      color: inherit;
+      min-width: 88px;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(to right, #f59e0b, #ec4899);
+      color: #0b1120;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.9;
+    }
+
+    .btn-danger {
+      background: #ef4444;
+      color: #fee2e2;
+    }
+
+    .btn-danger:hover {
+      background: #dc2626;
+    }
+
+    .btn-secondary {
+      background: #fff8c2;
+      color: #000;
+      border: 1px solid #e6d98a;
+    }
+
+    .btn-secondary:hover {
+      background: #fef08a;
+    }
+
+    .btn-exit {
+      background: transparent;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    .btn-exit:hover {
+      background: rgba(148, 163, 184, 0.1);
+    }
+
+    /* =====================================================
+       TABLE (DESKTOP)
+       ===================================================== */
+    .table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border-radius: 8px;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      min-width: 900px;
+    }
+
+    .table th,
+    .table td {
+      padding: 0.6rem;
+      border-bottom: 1px solid rgba(30, 64, 175, 0.4);
+      vertical-align: top;
+    }
+
+    .table th {
+      color: #93c5fd;
+      background: rgba(15, 23, 42, 0.6);
+      text-align: left;
+    }
+
+    .drag-handle {
+      cursor: grab;
+      font-size: 1.2rem;
+      color: #94a3b8;
+      user-select: none;
+    }
+
+    .drag-handle:active {
+      cursor: grabbing;
+    }
+
+    tbody.draggable-rows tr.dragging {
+      opacity: 0.4;
+    }
+
+    .actions-row {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .file-link {
+      color: #60a5fa;
+      text-decoration: none;
+      word-break: break-all;
+    }
+
+    .file-link:hover {
+      text-decoration: underline;
+    }
+
+    .section-divider {
+      margin: 2rem 0 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 2px solid rgba(148, 163, 184, 0.2);
+    }
+
+    /* =====================================================
+       MOBILE CARD LAYOUT (PORTRAIT)
+       ===================================================== */
+    .mobile-items-list {
+      display: none;
+    }
+
+    .mobile-item-card {
+      background: #071031;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      transition: opacity 0.2s;
+    }
+
+    .mobile-item-card.dragging {
+      opacity: 0.4;
+    }
+
+    .mobile-item-card .card-drag-handle {
+      font-size: 1.5rem;
+      cursor: grab;
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      margin-bottom: 0.5rem;
+      color: #94a3b8;
+      user-select: none;
+    }
+
+    .mobile-item-card .card-drag-handle:active {
+      cursor: grabbing;
+    }
+
+    .mobile-item-card .card-section {
+      margin-bottom: 0.75rem;
+    }
+
+    .mobile-item-card .card-section label {
+      font-size: 0.8rem;
+      color: #93c5fd;
+      margin-bottom: 0.25rem;
+      display: block;
+    }
+
+    .mobile-item-card .card-name {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #60a5fa;
+      margin-bottom: 0.5rem;
+    }
+
+    .mobile-item-card .actions-row {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .mobile-item-card .actions-row .btn {
+      width: 100%;
+    }
+
+    .type-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: rgba(59, 130, 246, 0.2);
+      color: #93c5fd;
+    }
+
+    /* =====================================================
+       RESPONSIVE — PORTRAIT / TABLET
+       ===================================================== */
+    @media (orientation: portrait) {
+      body {
+        padding: 1rem;
+      }
+
+      .header {
+        flex-wrap: wrap;
+      }
+
+      .header h1 {
+        flex: 1 1 100%;
+      }
+
+      /* Hide desktop table, show mobile cards */
+      .table-wrapper {
+        display: none;
+      }
+
+      .mobile-items-list {
+        display: block;
+      }
+    }
+
+    /* =====================================================
+       RESPONSIVE — MOBILE (SMALL PORTRAIT)
+       ===================================================== */
+    @media (max-width: 480px) {
+      .actions-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .actions-row .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+
+    <div class="header">
+      <h1>Forms & Links Admin</h1>
+      <a href="{{ url_for('admin_home.admin_home') }}" class="btn btn-exit">Exit</a>
+    </div>
+
+    <!-- FLASH MESSAGES -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-messages">
+      {% for category, message in messages %}
+      <div class="flash-message flash-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <!-- ADD NEW ITEM -->
+    <div class="card">
+      <h2>Add New Item</h2>
+
+      <label>Select Type</label>
+      <select id="itemType" onchange="toggleFormSections()">
+        <option value="">-- Choose Type --</option>
+        <option value="form">Downloadable Forms</option>
+        <option value="link">Links</option>
+      </select>
+
+      <!-- FORM SECTION -->
+      <div id="formSection" class="form-section">
+        <form method="POST" action="{{ url_for('admin_forms_links.upload_form') }}" enctype="multipart/form-data"
+          onsubmit="return validateFormForm(this)">
+          <label>Form Name (English)</label>
+          <input type="text" name="name_en" required>
+
+          <label>Form Name (Hindi)</label>
+          <input type="text" name="name_hi" required>
+
+          <label>Upload PDF (PDF files only)</label>
+          <input type="file" name="file" accept=".pdf" required>
+
+          <button class="btn btn-primary" style="margin-top: 0.6rem;">Add Form</button>
+        </form>
+      </div>
+
+      <!-- LINK SECTION -->
+      <div id="linkSection" class="form-section">
+        <form method="POST" action="{{ url_for('admin_forms_links.add_link') }}"
+          onsubmit="return validateLinkForm(this)">
+          <label>Link Name (English)</label>
+          <input type="text" name="name_en" required>
+
+          <label>Link Name (Hindi)</label>
+          <input type="text" name="name_hi" required>
+
+          <label>URL</label>
+          <input type="url" name="url" placeholder="https://example.com" required>
+
+          <button class="btn btn-primary" style="margin-top: 0.6rem;">Add Link</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- DOWNLOADABLE FORMS -->
+    <div class="card">
+      <h2>Downloadable Forms</h2>
+
+      {% if forms|length == 0 %}
+      <p class="muted">No forms uploaded yet.</p>
+      {% else %}
+      <button id="saveFormsOrderBtn" class="btn btn-primary" style="margin-bottom:0.6rem;">
+        Save Order
+      </button>
+
+      <!-- DESKTOP TABLE VIEW -->
+      <div class="table-wrapper">
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="width:40px;"></th>
+              <th>Form Name</th>
+              <th>File</th>
+              <th>Uploaded</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody class="draggable-rows" id="formsTbody">
+            {% for f in forms %}
+            <tr draggable="true" data-id="{{ f.id }}">
+              <td><span class="drag-handle">☰</span></td>
+
+              <td>
+                <div class="view-mode">
+                  <strong>EN:</strong> <span class="name-en-view">{{ f.name_en }}</span><br>
+                  <strong>HI:</strong> <span class="name-hi-view">{{ f.name_hi }}</span>
+                </div>
+
+                <div class="edit-mode" style="display:none;">
+                  <input class="inline-input name-en" value="{{ f.name_en }}" placeholder="Name (English)">
+                  <input class="inline-input name-hi" value="{{ f.name_hi }}" placeholder="Name (Hindi)">
+                </div>
+              </td>
+
+              <td>
+                <a href="/assets/files/forms/{{ f.filename }}" target="_blank" class="file-link">
+                  {{ f.filename }}
+                </a>
+              </td>
+
+              <td class="muted">{{ format_date(f.uploaded_at) }}</td>
+
+              <td>
+                <div class="actions-row">
+                  <button class="btn btn-secondary" onclick="toggleEdit(this, 'form')" data-id="{{ f.id }}">
+                    Edit
+                  </button>
+
+                  <button class="btn btn-primary" style="display:none;" onclick="saveEdit(this, 'form')"
+                    data-id="{{ f.id }}">
+                    Save
+                  </button>
+
+                  <button class="btn btn-secondary" style="display:none;" onclick="cancelEdit(this)">
+                    Cancel
+                  </button>
+
+                  <button class="btn btn-danger" data-id="{{ f.id }}" onclick="deleteItem(this.dataset.id, 'form')">
+                    Delete
+                  </button>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- MOBILE CARD VIEW -->
+      <div class="mobile-items-list" id="mobileFormsList">
+        {% for f in forms %}
+        <div class="mobile-item-card" draggable="true" data-id="{{ f.id }}">
+          <span class="card-drag-handle" title="Drag to reorder">☰</span>
+
+          <div class="card-section">
+            <span class="type-badge">FORM</span>
+          </div>
+
+          <div class="card-section">
+            <label>Form Name</label>
+            <div class="view-mode">
+              <strong>EN:</strong> <span class="name-en-view">{{ f.name_en }}</span><br>
+              <strong>HI:</strong> <span class="name-hi-view">{{ f.name_hi }}</span>
+            </div>
+
+            <div class="edit-mode" style="display:none;">
+              <input class="inline-input name-en" value="{{ f.name_en }}" placeholder="Name (English)">
+              <input class="inline-input name-hi" value="{{ f.name_hi }}" placeholder="Name (Hindi)">
+            </div>
+          </div>
+
+          <div class="card-section">
+            <label>File</label>
+            <a href="/assets/files/forms/{{ f.filename }}" target="_blank" class="file-link">
+              {{ f.filename }}
+            </a>
+          </div>
+
+          <div class="card-section">
+            <label>Uploaded</label>
+            <span class="muted">{{ format_date(f.uploaded_at) }}</span>
+          </div>
+
+          <div class="actions-row">
+            <button class="btn btn-secondary" onclick="toggleEdit(this, 'form')" data-id="{{ f.id }}">
+              Edit
+            </button>
+
+            <button class="btn btn-primary" style="display:none;" onclick="saveEdit(this, 'form')" data-id="{{ f.id }}">
+              Save
+            </button>
+
+            <button class="btn btn-secondary" style="display:none;" onclick="cancelEdit(this)">
+              Cancel
+            </button>
+
+            <button class="btn btn-danger" data-id="{{ f.id }}" onclick="deleteItem(this.dataset.id, 'form')">
+              Delete
+            </button>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- LINKS -->
+    <div class="card">
+      <h2>Links</h2>
+
+      {% if links|length == 0 %}
+      <p class="muted">No links added yet.</p>
+      {% else %}
+      <button id="saveLinksOrderBtn" class="btn btn-primary" style="margin-bottom:0.6rem;">
+        Save Order
+      </button>
+
+      <!-- DESKTOP TABLE VIEW -->
+      <div class="table-wrapper">
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="width:40px;"></th>
+              <th>Link Name</th>
+              <th>URL</th>
+              <th>Added</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody class="draggable-rows" id="linksTbody">
+            {% for l in links %}
+            <tr draggable="true" data-id="{{ l.id }}">
+              <td><span class="drag-handle">☰</span></td>
+
+              <td>
+                <div class="view-mode">
+                  <strong>EN:</strong> <span class="name-en-view">{{ l.name_en }}</span><br>
+                  <strong>HI:</strong> <span class="name-hi-view">{{ l.name_hi }}</span>
+                </div>
+
+                <div class="edit-mode" style="display:none;">
+                  <input class="inline-input name-en" value="{{ l.name_en }}" placeholder="Name (English)">
+                  <input class="inline-input name-hi" value="{{ l.name_hi }}" placeholder="Name (Hindi)">
+                  <input class="inline-input url-input" value="{{ l.url }}" placeholder="URL">
+                </div>
+              </td>
+
+              <td>
+                <a href="{{ l.url }}" target="_blank" class="file-link url-display">
+                  {{ l.url }}
+                </a>
+              </td>
+
+              <td class="muted">{{ format_date(l.created_at) }}</td>
+
+              <td>
+                <div class="actions-row">
+                  <button class="btn btn-secondary" onclick="toggleEdit(this, 'link')" data-id="{{ l.id }}">
+                    Edit
+                  </button>
+
+                  <button class="btn btn-primary" style="display:none;" onclick="saveEdit(this, 'link')"
+                    data-id="{{ l.id }}">
+                    Save
+                  </button>
+
+                  <button class="btn btn-secondary" style="display:none;" onclick="cancelEdit(this)">
+                    Cancel
+                  </button>
+
+                  <button class="btn btn-danger" data-id="{{ l.id }}" onclick="deleteItem(this.dataset.id, 'link')">
+                    Delete
+                  </button>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- MOBILE CARD VIEW -->
+      <div class="mobile-items-list" id="mobileLinksList">
+        {% for l in links %}
+        <div class="mobile-item-card" draggable="true" data-id="{{ l.id }}">
+          <span class="card-drag-handle" title="Drag to reorder">☰</span>
+
+          <div class="card-section">
+            <span class="type-badge">LINK</span>
+          </div>
+
+          <div class="card-section">
+            <label>Link Name</label>
+            <div class="view-mode">
+              <strong>EN:</strong> <span class="name-en-view">{{ l.name_en }}</span><br>
+              <strong>HI:</strong> <span class="name-hi-view">{{ l.name_hi }}</span>
+            </div>
+
+            <div class="edit-mode" style="display:none;">
+              <input class="inline-input name-en" value="{{ l.name_en }}" placeholder="Name (English)">
+              <input class="inline-input name-hi" value="{{ l.name_hi }}" placeholder="Name (Hindi)">
+              <input class="inline-input url-input" value="{{ l.url }}" placeholder="URL">
+            </div>
+          </div>
+
+          <div class="card-section">
+            <label>URL</label>
+            <a href="{{ l.url }}" target="_blank" class="file-link url-display">
+              {{ l.url }}
+            </a>
+          </div>
+
+          <div class="card-section">
+            <label>Added</label>
+            <span class="muted">{{ format_date(l.created_at) }}</span>
+          </div>
+
+          <div class="actions-row">
+            <button class="btn btn-secondary" onclick="toggleEdit(this, 'link')" data-id="{{ l.id }}">
+              Edit
+            </button>
+
+            <button class="btn btn-primary" style="display:none;" onclick="saveEdit(this, 'link')" data-id="{{ l.id }}">
+              Save
+            </button>
+
+            <button class="btn btn-secondary" style="display:none;" onclick="cancelEdit(this)">
+              Cancel
+            </button>
+
+            <button class="btn btn-danger" data-id="{{ l.id }}" onclick="deleteItem(this.dataset.id, 'link')">
+              Delete
+            </button>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <script>
+    /* ------- FILE VALIDATION FUNCTION ------- */
+    function validatePdfFile(file) {
+      const allowedExtensions = ['.pdf'];
+      const fileName = file.name;
+      const ext = '.' + fileName.split('.').pop().toLowerCase();
+      return allowedExtensions.includes(ext);
+    }
+
+    /* ------- URL VALIDATION FUNCTION ------- */
+    function validateUrl(url) {
+      try {
+        new URL(url);
+        return true;
+      } catch {
+        return false;
+      }
+    }
+
+    /* ------- FORM VALIDATION FUNCTIONS ------- */
+    function validateFormForm(form) {
+      const fileInput = form.querySelector('input[type="file"]');
+      const nameEn = form.querySelector('input[name="name_en"]').value.trim();
+      const nameHi = form.querySelector('input[name="name_hi"]').value.trim();
+
+      if (!nameEn) {
+        alert('Form Name (English) is required.');
+        return false;
+      }
+
+      if (fileInput.files.length === 0) {
+        alert('Please select a PDF file to upload.');
+        return false;
+      }
+
+      const file = fileInput.files[0];
+      if (!validatePdfFile(file)) {
+        alert(`Only PDF files are allowed. The file "${file.name}" is not a PDF.`);
+        return false;
+      }
+      return true;
+    }
+
+    function validateLinkForm(form) {
+      const nameEn = form.querySelector('input[name="name_en"]').value.trim();
+      const nameHi = form.querySelector('input[name="name_hi"]').value.trim();
+      const url = form.querySelector('input[name="url"]').value.trim();
+
+      if (!nameEn) {
+        alert('Link Name (English) is required.');
+        return false;
+      }
+
+      if (!url) {
+        alert('URL is required.');
+        return false;
+      }
+
+      if (!validateUrl(url)) {
+        alert('Please enter a valid URL (e.g., https://example.com).');
+        return false;
+      }
+      return true;
+    }
+
+    /* ------- TOGGLE FORM SECTIONS ------- */
+    function toggleFormSections() {
+      const type = document.getElementById('itemType').value;
+      const formSection = document.getElementById('formSection');
+      const linkSection = document.getElementById('linkSection');
+
+      formSection.classList.remove('active');
+      linkSection.classList.remove('active');
+
+      if (type === 'form') {
+        formSection.classList.add('active');
+      } else if (type === 'link') {
+        linkSection.classList.add('active');
+      }
+    }
+
+    /* ------- INLINE EDITING ------- */
+    function toggleEdit(btn, type) {
+      const container = btn.closest('tr') || btn.closest('.mobile-item-card');
+
+      container.querySelector('.view-mode').style.display = 'none';
+      container.querySelector('.edit-mode').style.display = 'block';
+
+      btn.style.display = 'none';
+      container.querySelector('[onclick^="saveEdit"]').style.display = 'inline-flex';
+      container.querySelector('[onclick^="cancelEdit"]').style.display = 'inline-flex';
+    }
+
+    function cancelEdit(btn) {
+      const container = btn.closest('tr') || btn.closest('.mobile-item-card');
+
+      container.querySelector('.edit-mode').style.display = 'none';
+      container.querySelector('.view-mode').style.display = 'block';
+
+      container.querySelector('[onclick^="toggleEdit"]').style.display = 'inline-flex';
+      container.querySelector('[onclick^="saveEdit"]').style.display = 'none';
+      container.querySelector('[onclick^="cancelEdit"]').style.display = 'none';
+    }
+
+    async function saveEdit(btn, type) {
+      const container = btn.closest('tr') || btn.closest('.mobile-item-card');
+      const id = btn.dataset.id;
+
+      const nameEn = container.querySelector('.name-en').value.trim();
+      const nameHi = container.querySelector('.name-hi').value.trim();
+
+      // Validate required fields
+      if (!nameEn) {
+        alert('Name (English) is required.');
+        return;
+      }
+
+      const payload = {
+        name_en: nameEn,
+        name_hi: nameHi
+      };
+
+      if (type === 'link') {
+        const url = container.querySelector('.url-input').value.trim();
+
+        if (!url) {
+          alert('URL is required.');
+          return;
+        }
+
+        if (!validateUrl(url)) {
+          alert('Please enter a valid URL (e.g., https://example.com).');
+          return;
+        }
+
+        payload.url = url;
+      }
+
+      const endpoint = type === 'form'
+        ? `{{ url_for('admin_forms_links.edit_form', item_id=0) }}`.replace('/0', `/${id}`)
+        : `{{ url_for('admin_forms_links.edit_link', item_id=0) }}`.replace('/0', `/${id}`);
+
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          const itemType = type === 'form' ? 'Form' : 'Link';
+          alert(itemType + ' updated successfully!');
+          location.reload();
+        } else {
+          const errorData = await res.json().catch(() => ({}));
+          alert('Save failed: ' + (errorData.error || `Status ${res.status}`));
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Error saving: ' + err.message);
+      }
+    }
+
+    /* ------- DELETE ------- */
+    function deleteItem(id, type) {
+      if (!confirm('Are you sure you want to delete this ' + type + ' permanently? This action cannot be undone.')) return;
+
+      const endpoint = type === 'form'
+        ? `{{ url_for('admin_forms_links.delete_form', item_id=0) }}`.replace('/0', `/${id}`)
+        : `{{ url_for('admin_forms_links.delete_link', item_id=0) }}`.replace('/0', `/${id}`);
+
+      fetch(endpoint, { method: 'POST' })
+        .then(res => {
+          if (res.ok) {
+            const itemType = type === 'form' ? 'Form' : 'Link';
+            alert(itemType + ' deleted successfully!');
+            location.reload();
+          } else {
+            return res.json().then(data => {
+              throw new Error(data.error || 'Delete failed');
+            });
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          alert('Delete error: ' + err.message);
+        });
+    }
+
+    /* ------- DRAG & DROP REORDER ------- */
+    function setupDragDrop(tbody, mobileList) {
+      let draggingRow = null;
+
+      // Desktop table drag handlers
+      if (tbody) {
+        tbody.addEventListener('dragstart', e => {
+          draggingRow = e.target.closest('tr');
+          if (draggingRow) draggingRow.classList.add('dragging');
+          e.dataTransfer.effectAllowed = 'move';
+        });
+
+        tbody.addEventListener('dragover', e => {
+          e.preventDefault();
+          const target = e.target.closest('tr');
+          if (!target || target === draggingRow) return;
+
+          const bounding = target.getBoundingClientRect();
+          const offset = e.clientY - bounding.top;
+          const after = offset > (bounding.height / 2);
+
+          if (after) {
+            tbody.insertBefore(draggingRow, target.nextSibling);
+          } else {
+            tbody.insertBefore(draggingRow, target);
+          }
+        });
+
+        tbody.addEventListener('dragend', () => {
+          if (draggingRow) draggingRow.classList.remove('dragging');
+          draggingRow = null;
+        });
+      }
+
+      // Mobile cards drag handlers
+      if (mobileList) {
+        mobileList.addEventListener('dragstart', e => {
+          draggingRow = e.target.closest('.mobile-item-card');
+          if (draggingRow) draggingRow.classList.add('dragging');
+          e.dataTransfer.effectAllowed = 'move';
+        });
+
+        mobileList.addEventListener('dragover', e => {
+          e.preventDefault();
+          const target = e.target.closest('.mobile-item-card');
+          if (!target || target === draggingRow) return;
+
+          const bounding = target.getBoundingClientRect();
+          const offset = e.clientY - bounding.top;
+          const after = offset > (bounding.height / 2);
+
+          if (after) {
+            mobileList.insertBefore(draggingRow, target.nextSibling);
+          } else {
+            mobileList.insertBefore(draggingRow, target);
+          }
+        });
+
+        mobileList.addEventListener('dragend', () => {
+          if (draggingRow) draggingRow.classList.remove('dragging');
+          draggingRow = null;
+        });
+      }
+    }
+
+    // Setup drag & drop for forms
+    const formsTbody = document.getElementById('formsTbody');
+    const mobileFormsList = document.getElementById('mobileFormsList');
+    setupDragDrop(formsTbody, mobileFormsList);
+
+    // Setup drag & drop for links
+    const linksTbody = document.getElementById('linksTbody');
+    const mobileLinksList = document.getElementById('mobileLinksList');
+    setupDragDrop(linksTbody, mobileLinksList);
+
+    /* ------- SAVE ORDER ------- */
+    async function saveOrder(type) {
+      let order = [];
+      let tbody, mobileList;
+
+      if (type === 'form') {
+        tbody = document.getElementById('formsTbody');
+        mobileList = document.getElementById('mobileFormsList');
+      } else {
+        tbody = document.getElementById('linksTbody');
+        mobileList = document.getElementById('mobileLinksList');
+      }
+
+      // Get order from whichever view is visible
+      if (tbody) {
+        const rows = tbody.querySelectorAll('tr');
+        if (rows.length > 0) {
+          order = [...rows].map(tr => tr.dataset.id);
+        }
+      }
+
+      if (order.length === 0 && mobileList) {
+        const cards = mobileList.querySelectorAll('.mobile-item-card');
+        if (cards.length > 0) {
+          order = [...cards].map(card => card.dataset.id);
+        }
+      }
+
+      if (order.length === 0) {
+        alert(`No ${type}s to reorder`);
+        return;
+      }
+
+      const endpoint = type === 'form'
+        ? "{{ url_for('admin_forms_links.reorder_forms') }}"
+        : "{{ url_for('admin_forms_links.reorder_links') }}";
+
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ order })
+        });
+
+        if (res.ok) {
+          const itemType = type === 'form' ? 'Forms' : 'Links';
+          alert(itemType + ' order saved successfully!');
+        } else {
+          const errorData = await res.json().catch(() => ({}));
+          alert('Failed to save order: ' + (errorData.error || `Status ${res.status}`));
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Error saving order: ' + err.message);
+      }
+    }
+
+    document.getElementById('saveFormsOrderBtn')?.addEventListener('click', () => saveOrder('form'));
+    document.getElementById('saveLinksOrderBtn')?.addEventListener('click', () => saveOrder('link'));
+  </script>
+</body>
+
+</html>

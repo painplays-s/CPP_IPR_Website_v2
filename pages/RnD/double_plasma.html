@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Double Plasma Device Laboratory - CPP-IPR</title>
+
+  <style>
+    :root {
+      --lab-bg: #ffffff;
+      --lab-border: #d0d7e2;
+      --lab-text: #111827;
+      --lab-muted: #6b7280;
+      --lab-accent: #2563eb;
+      --lab-radius-lg: 16px;
+      --lab-tab-active: #2563eb;
+      --lab-tab-hover: #e5e7eb;
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      line-height: 1.6;
+    }
+
+    #header-container,
+    #footer-container {
+      flex-shrink: 0;
+    }
+
+    main {
+      flex: 1;
+      padding: 1.5rem 5vw;
+      box-sizing: border-box;
+      background: #f9fafb;
+    }
+
+    .page-section {
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    .lab-banner {
+      width: 100%;
+      height: auto;
+      max-height: 300px;
+      border-radius: var(--lab-radius-lg);
+      object-fit: cover;
+      margin-bottom: 1.5rem;
+    }
+
+    .lab-container {
+      background: var(--lab-bg);
+      border: 1.5px solid var(--lab-border);
+      border-radius: var(--lab-radius-lg);
+      overflow: hidden;
+    }
+
+    .lab-header {
+      padding: 2rem 2rem 1.5rem;
+      text-align: center;
+      border-bottom: 2px solid var(--lab-border);
+    }
+
+    .lab-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--lab-text);
+      margin: 0;
+    }
+
+    .lab-tabs-wrapper {
+      position: relative;
+      border-bottom: 2px solid var(--lab-border);
+      background: #f9fafb;
+    }
+
+    .lab-tabs {
+      display: flex;
+      gap: 0.5rem;
+      padding: 1.5rem 2rem 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: thin;
+      -ms-overflow-style: auto;
+    }
+
+    .lab-tabs::-webkit-scrollbar {
+      height: 4px;
+    }
+
+    .lab-tabs::-webkit-scrollbar-track {
+      background: var(--lab-border);
+      border-radius: 10px;
+    }
+
+    .lab-tabs::-webkit-scrollbar-thumb {
+      background: var(--lab-accent);
+      border-radius: 10px;
+    }
+
+    .lab-tab {
+      padding: 0.75rem 1.5rem;
+      background: transparent;
+      border: none;
+      border-radius: 8px 8px 0 0;
+      color: var(--lab-muted);
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .lab-tab:hover {
+      background: var(--lab-tab-hover);
+      color: var(--lab-text);
+    }
+
+    .lab-tab.active {
+      background: var(--lab-tab-active);
+      color: #ffffff;
+    }
+
+    .lab-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--lab-accent);
+    }
+
+    .scroll-indicator {
+      display: none;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(37, 99, 235, 0.9);
+      color: white;
+      padding: 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      pointer-events: none;
+      z-index: 10;
+      animation: fadeInOut 2s infinite;
+    }
+
+    .scroll-indicator.left {
+      left: 0.5rem;
+    }
+
+    .scroll-indicator.right {
+      right: 0.5rem;
+    }
+
+    @keyframes fadeInOut {
+
+      0%,
+      100% {
+        opacity: 0.7;
+      }
+
+      50% {
+        opacity: 1;
+      }
+    }
+
+    .lab-content {
+      padding: 2rem 5%;
+      text-align: justify;
+      text-justify: inter-word;
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .overview-section {
+      max-width: 100%;
+    }
+
+    .overview-section h3 {
+      font-size: 1.5rem;
+      color: var(--lab-text);
+      margin: 0 0 1rem;
+      font-weight: 600;
+    }
+
+    .overview-section h4 {
+      font-size: 1.3rem;
+      color: var(--lab-text);
+      margin: 1.5rem 0 1rem;
+      font-weight: 600;
+    }
+
+    .overview-section p {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: var(--lab-text);
+      margin-bottom: 1.2rem;
+      text-align: justify;
+    }
+
+    .overview-section img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 12px;
+      margin: 1.5rem auto;
+      border: 1px solid var(--lab-border);
+      display: block;
+    }
+
+    .research-item {
+      margin-bottom: 3rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--lab-border);
+    }
+
+    .research-item:last-child {
+      border-bottom: none;
+    }
+
+    .research-item h3 {
+      font-size: 1.4rem;
+      color: var(--lab-accent);
+      margin: 0 0 1rem;
+      font-weight: 600;
+    }
+
+    .research-item p {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: var(--lab-text);
+      margin-bottom: 1rem;
+      text-align: justify;
+    }
+
+    .people-categories {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .people-cat-btn {
+      padding: 0.6rem 1.2rem;
+      background: #f3f4f6;
+      border: 1px solid var(--lab-border);
+      border-radius: 8px;
+      color: var(--lab-text);
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .people-cat-btn:hover {
+      background: #e5e7eb;
+    }
+
+    .people-cat-btn.active {
+      background: var(--lab-tab-active);
+      color: #ffffff;
+      border-color: var(--lab-accent);
+    }
+
+    .people-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .person-card {
+      display: none;
+      background: #ffffff;
+      border: 1.5px solid var(--lab-border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      transition: all 0.2s;
+    }
+
+    .person-card.show {
+      display: block;
+    }
+
+    .person-card:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .person-photo {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin: 0 auto 1rem;
+      border: 3px solid var(--lab-border);
+    }
+
+    .person-name {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--lab-text);
+      margin: 0 0 0.5rem;
+    }
+
+    .person-role {
+      font-size: 0.95rem;
+      color: var(--lab-muted);
+      margin: 0 0 1rem;
+      font-style: italic;
+    }
+
+    .person-email {
+      font-size: 0.9rem;
+      word-break: break-all;
+      margin-bottom: 0.75rem;
+    }
+
+    .person-email a {
+      color: var(--lab-accent);
+      text-decoration: none;
+    }
+
+    .person-links {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .person-links a {
+      padding: 0.4rem 0.8rem;
+      background: #f3f4f6;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      color: var(--lab-text);
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .person-links a:hover {
+      background: var(--lab-accent);
+      color: #ffffff;
+    }
+
+    .person-expertise {
+      margin-top: 1rem;
+      text-align: left;
+    }
+
+    .person-expertise h5 {
+      font-size: 0.9rem;
+      color: var(--lab-text);
+      margin: 0 0 0.5rem;
+      font-weight: 600;
+    }
+
+    .person-expertise ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .person-expertise li {
+      font-size: 0.85rem;
+      color: var(--lab-muted);
+      padding: 0.25rem 0;
+      padding-left: 1rem;
+      position: relative;
+    }
+
+    .person-expertise li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: var(--lab-accent);
+    }
+
+    .publications-year {
+      margin-bottom: 2.5rem;
+    }
+
+    .publications-year h3 {
+      font-size: 1.3rem;
+      color: var(--lab-text);
+      margin: 0 0 1rem;
+      font-weight: 600;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--lab-border);
+    }
+
+    .publications-list {
+      list-style: decimal;
+      padding-left: 1.5rem;
+      margin: 0;
+    }
+
+    .publications-list li {
+      padding: 1rem;
+      margin-bottom: 0.75rem;
+      background: #f9fafb;
+      border-radius: 8px;
+      border-left: 3px solid var(--lab-accent);
+      font-size: 0.95rem;
+      line-height: 1.7;
+      text-align: justify;
+    }
+
+    .awards-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .awards-list li {
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      border-radius: 8px;
+      border-left: 4px solid #f59e0b;
+      font-size: 1rem;
+      line-height: 1.7;
+      text-align: justify;
+    }
+
+    .facility-item {
+      margin-bottom: 2.5rem;
+    }
+
+    .facility-item p {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: var(--lab-text);
+      margin-bottom: 1rem;
+      text-align: justify;
+    }
+
+    /* ---------- BILINGUAL TEXT STYLES ---------- */
+    .bilingual-title,
+    .bilingual-text {
+      transition: all 0.2s ease;
+    }
+
+    @media (max-width: 900px) {
+      .lab-title {
+        font-size: 1.5rem;
+      }
+
+      .lab-header {
+        padding: 1.5rem 1.25rem 1rem;
+      }
+
+      .lab-tabs-wrapper {
+        padding: 0;
+      }
+
+      .lab-tabs {
+        padding: 1rem 1rem 0;
+        gap: 0.75rem;
+        -webkit-overflow-scrolling: touch;
+        scroll-behavior: smooth;
+      }
+
+      .lab-tab {
+        font-size: 0.9rem;
+        padding: 0.6rem 1rem;
+      }
+
+      .lab-content {
+        padding: 1.5rem 5%;
+      }
+
+      .people-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .scroll-indicator {
+        display: block;
+      }
+    }
+
+    @media (orientation: portrait) {
+      .lab-tabs {
+        -webkit-overflow-scrolling: touch;
+        scroll-behavior: smooth;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <div id="header-container"></div>
+
+  <!-- PAGE CONTENT -->
+  <main>
+    <div class="page-section">
+
+      <!-- BANNER IMAGE -->
+      <img src="/assets/images/dpd/dpd1.jpg" alt="Double Plasma Device Laboratory Banner" class="lab-banner">
+
+      <!-- LAB CONTAINER -->
+      <div class="lab-container">
+
+        <!-- LAB HEADER -->
+        <div class="lab-header">
+          <h1 class="lab-title bilingual-title" data-hi="डबल प्लाज्मा उपकरण प्रयोगशाला"
+            data-en="Double Plasma Device Laboratory">
+            Double Plasma Device Laboratory
+          </h1>
+        </div>
+
+        <!-- TAB NAVIGATION -->
+        <div class="lab-tabs-wrapper">
+          <div class="lab-tabs" id="labTabs">
+            <button class="lab-tab active" onclick="switchTab('overview')">
+              <span class="bilingual-text" data-hi="अवलोकन" data-en="Overview">Overview</span>
+            </button>
+            <button class="lab-tab" onclick="switchTab('research')">
+              <span class="bilingual-text" data-hi="अनुसंधान" data-en="Research">Research</span>
+            </button>
+            <button class="lab-tab" onclick="switchTab('facilities')">
+              <span class="bilingual-text" data-hi="सुविधाएं" data-en="Facilities">Facilities</span>
+            </button>
+            <button class="lab-tab" onclick="switchTab('people')">
+              <span class="bilingual-text" data-hi="लोग" data-en="People">People</span>
+            </button>
+            <button class="lab-tab" onclick="switchTab('publications')">
+              <span class="bilingual-text" data-hi="प्रकाशन" data-en="Publications">Publications</span>
+            </button>
+            <button class="lab-tab" onclick="switchTab('awards')">
+              <span class="bilingual-text" data-hi="पुरस्कार" data-en="Awards">Awards</span>
+            </button>
+          </div>
+
+          <!-- Scroll indicators -->
+          <div class="scroll-indicator left" id="scrollLeft">◄ Swipe</div>
+          <div class="scroll-indicator right" id="scrollRight">Swipe ►</div>
+        </div>
+
+        <!-- TAB CONTENT -->
+        <div class="lab-content">
+
+          <!-- ========== OVERVIEW TAB ========== -->
+          <div id="overview" class="tab-panel active">
+            <div class="overview-section">
+              <h3 class="bilingual-text" data-hi="डबल प्लाज्मा उपकरण प्रयोगशाला का अवलोकन"
+                data-en="Overview of Double Plasma Device Laboratory">Overview of Double Plasma Device Laboratory</h3>
+
+              <p class="bilingual-text"
+                data-hi="डबल प्लाज्मा उपकरण (डीपीडी) प्रयोगशाला का प्रायोगिक कक्ष (120 सेमी लंबा, 30 सेमी व्यास) संस्थान द्वारा नब्बे के दशक की शुरुआत में खरीदा गया पहला कक्ष है (चित्र 1)। प्रारंभ में इसका उपयोग ग्लो डिस्चार्ज प्रक्रिया द्वारा प्लाज्मा उत्पन्न करने के लिए किया जाता था। 2003 से, दो बेलनाकार चुंबकीय पिंजरों (लंबाई 32 सेमी और व्यास 25 सेमी) का उपयोग करके, इस कक्ष में दो क्षेत्रों में फिलामेंट डिस्चार्ज प्लाज्मा (आर्गन और हाइड्रोजन गैसों में) उत्पन्न किए गए हैं (चित्र 2)। कार्यशील दबाव आमतौर पर रोटरी और डिफ्यूजन पंप (1000 लीटर/सेकंड) के साथ कक्ष को ~ 10⁻⁶ एमबार तक खाली करने के बाद ~ 10⁻⁴ एमबार पर रखा जाता है। पूर्ण रेखांकित कस्पड चुंबकीय पिंजरे (1.2 केजी/4 केजी सतह क्षेत्र शक्ति) इन दो क्षेत्रों को सीमित करते हैं जिनमें आवश्यकता होने पर अलग-अलग प्लाज्मा उत्पन्न किए जा सकते हैं। इन क्षेत्रों, जो आमतौर पर एक ग्रिड और चुंबकीय फिल्टर द्वारा अलग किए जाते हैं, जैसा कि प्रायोगिक उद्देश्य की आवश्यकता होती है, स्रोत और लक्ष्य क्षेत्र कहलाते हैं। चूंकि इन दोनों क्षेत्रों में प्लाज्मा उत्पन्न, सीमित और अध्ययन किया जा सकता है, इसलिए इसे डबल प्लाज्मा उपकरण कहा जाता है। डीपीडी बहुत कम प्रयास और कठिनाई के साथ विभिन्न प्रायोगिक विन्यास स्थापित करने की अनुमति देते हैं। ऐसी प्रायोगिक प्रणालियाँ विसरित प्लाज्मा विशेषताओं, इलेक्ट्रॉन और आयन बीम के उत्पादन, तरंगों के प्रक्षेपण, आवरण विशेषताओं और कई अन्य प्लाज्मा घटनाओं पर अध्ययन करने में सक्षम हैं। मामूली बदलावों के साथ इसका उपयोग नकारात्मक आयन उत्पादन और इसकी गतिशीलता पर अध्ययन करने के लिए किया जा सकता है। इसलिए, डीपीडी प्रयोग करने के लिए बहुत बहुमुखी और आकर्षक हैं।"
+                data-en="The double plasma device (DPD) laboratory's experimental chamber (120 cm long, 30 cm diameter) is the first one bought by the institute in the early nineties (Fig. 1). Initially it was used to produce plasma by the glow discharge process. Since 2003, using two cylindrical magnetic cages (length 32 cm and diameter 25 cm), filament discharge plasmas (in Argon and in Hydrogen gases) have been produced in two regions in this chamber (Fig. 2). Working pressure is usually kept at ~ 10⁻⁴ mbars after evacuating the chamber to ~ 10⁻⁶ mbars with a rotary and diffusion pump (1000 l/s). Full lined cusped magnetic cages (1.2 kG/4 kG surface field strength) confine these two regions in which plasmas can be produced separately if needed. These regions, usually separated by a grid and also magnetic filter, as experimental aim demands, are called the source and target regions. As plasma can be produced, confined and studied in both these regions therefore it is called a double plasma device. DPDs allow setting up of various experimental configurations with little effort and difficulty. Such experimental systems are capable of performing studies on diffused plasma characteristics, generation of electron and ion beams, launching of waves, sheath characteristics and a host of other plasma phenomena. With minor changes it can be used to conduct studies on negative ion production and its dynamics. Therefore, DPDs are very versatile and attractive to conduct experiments.">
+                The double plasma device (DPD) laboratory's experimental chamber (120 cm long, 30 cm diameter) is the
+                first one bought by the institute in the early nineties (Fig. 1). Initially it was used to produce
+                plasma by the glow discharge process. Since 2003, using two cylindrical magnetic cages (length 32 cm and
+                diameter 25 cm), filament discharge plasmas (in Argon and in Hydrogen gases) have been produced in two
+                regions in this chamber (Fig. 2). Working pressure is usually kept at ~ 10⁻⁴ mbars after evacuating the
+                chamber to ~ 10⁻⁶ mbars with a rotary and diffusion pump (1000 l/s). Full lined cusped magnetic cages
+                (1.2 kG/4 kG surface field strength) confine these two regions in which plasmas can be produced
+                separately if needed. These regions, usually separated by a grid and also magnetic filter, as
+                experimental aim demands, are called the source and target regions. As plasma can be produced, confined
+                and studied in both these regions therefore it is called a double plasma device. DPDs allow setting up
+                of various experimental configurations with little effort and difficulty. Such experimental systems are
+                capable of performing studies on diffused plasma characteristics, generation of electron and ion beams,
+                launching of waves, sheath characteristics and a host of other plasma phenomena. With minor changes it
+                can be used to conduct studies on negative ion production and its dynamics. Therefore, DPDs are very
+                versatile and attractive to conduct experiments.
+              </p>
+
+              <img src="/assets/images/dpd/DPD.jpg" alt="Double Plasma Device">
+
+            </div>
+          </div>
+
+          <!-- ========== RESEARCH TAB ========== -->
+          <div id="research" class="tab-panel">
+            <div class="research-item">
+              <p class="bilingual-text" data-hi="सूचना अभी अद्यतन की जानी है। कृपया बाद में पुनः प्रयास करें।"
+                data-en="Information is yet to be updated. Please check back later.">
+                <em>Information is yet to be updated. Please check back later.</em>
+              </p>
+            </div>
+          </div>
+
+          <!-- ========== FACILITIES TAB ========== -->
+          <div id="facilities" class="tab-panel">
+            <div class="facility-item">
+              <p class="bilingual-text" data-hi="सूचना अभी अद्यतन की जानी है। कृपया बाद में पुनः प्रयास करें।"
+                data-en="Information is yet to be updated. Please check back later.">
+                <em>Information is yet to be updated. Please check back later.</em>
+              </p>
+            </div>
+          </div>
+
+          <!-- ========== PEOPLE TAB ========== -->
+          <div id="people" class="tab-panel">
+
+            <!-- People Category Buttons -->
+            <div class="people-categories">
+              <button class="people-cat-btn active" onclick="filterPeople('all')">
+                <span class="bilingual-text" data-hi="सभी" data-en="All">All</span>
+              </button>
+              <button class="people-cat-btn" onclick="filterPeople('faculty')">
+                <span class="bilingual-text" data-hi="संकाय" data-en="Faculty">Faculty</span>
+              </button>
+              <button class="people-cat-btn" onclick="filterPeople('pdf')">
+                <span class="bilingual-text" data-hi="पोस्ट-डॉक्टरल फेलो" data-en="Post-Doctoral Fellows">Post-Doctoral
+                  Fellows</span>
+              </button>
+              <button class="people-cat-btn" onclick="filterPeople('scholar')">
+                <span class="bilingual-text" data-hi="शोध विद्वार्थी" data-en="Research Scholars">Research
+                  Scholars</span>
+              </button>
+              <button class="people-cat-btn" onclick="filterPeople('technical')">
+                <span class="bilingual-text" data-hi="तकनीकी कर्मचारी" data-en="Technical Staff">Technical Staff</span>
+              </button>
+              <button class="people-cat-btn" onclick="filterPeople('former')">
+                <span class="bilingual-text" data-hi="पूर्व सदस्य" data-en="Former Members">Former Members</span>
+              </button>
+              <button class="people-cat-btn" onclick="filterPeople('collaborator')">
+                <span class="bilingual-text" data-hi="सहयोगी" data-en="Collaborators">Collaborators</span>
+              </button>
+            </div>
+
+            <!-- People Grid -->
+            <div class="people-grid">
+
+              <!-- Faculty 1 -->
+              <div class="person-card show" data-category="faculty">
+                <img src="/assets/images/dpd/monojit_2.jpg" alt="Dr. M. Chakraborty" class="person-photo">
+                <h4 class="person-name">Dr. M. Chakraborty</h4>
+                <p class="person-role bilingual-text" data-hi="वैज्ञानिक अधिकारी - एफ" data-en="Scientific Officer - F">
+                  Scientific Officer - F</p>
+                <div class="person-email">
+                  <a href="mailto:monojit@cppipr.res.in">monojit@cppipr.res.in</a>
+                </div>
+                <div class="person-links">
+                  <a href="https://www.researchgate.net/profile/M_Chakraborty" target="_blank">ResearchGate</a>
+                </div>
+                <div class="person-expertise">
+                  <h5 class="bilingual-text" data-hi="विशेषज्ञता का क्षेत्र:" data-en="Area of Expertise:">Area of
+                    Expertise:</h5>
+                  <ul>
+                    <li class="bilingual-text" data-hi="धूलयुक्त प्लाज्मा" data-en="Dusty Plasma">Dusty Plasma</li>
+                    <li class="bilingual-text" data-hi="चुंबकीय प्लाज्मा" data-en="Magnetized Plasma">Magnetized Plasma
+                    </li>
+                    <li class="bilingual-text" data-hi="हेलिकॉन प्लाज्मा" data-en="Helicon Plasma">Helicon Plasma</li>
+                    <li class="bilingual-text" data-hi="नकारात्मक आयन" data-en="Negative Ions">Negative Ions</li>
+                  </ul>
+                </div>
+              </div>
+
+              <!-- Faculty 2 -->
+              <div class="person-card show" data-category="faculty">
+                <img src="/assets/images/dpd/neog_2.jpg" alt="Dr. N. K. Neog" class="person-photo">
+                <h4 class="person-name">Dr. N. K. Neog</h4>
+                <p class="person-role bilingual-text" data-hi="वैज्ञानिक अधिकारी - एफ" data-en="Scientific Officer - F">
+                  Scientific Officer - F</p>
+                <div class="person-email">
+                  <a href="mailto:nirod@cppipr.res.in">nirod@cppipr.res.in</a>
+                </div>
+                <div class="person-links">
+                  <a href="https://www.researchgate.net/profile/Nk-Neog" target="_blank">ResearchGate</a>
+                </div>
+              </div>
+
+              <!-- PDF -->
+              <div class="person-card show" data-category="pdf">
+                <img src="/assets/images/dpd/Anuj.jpg" alt="Anuj Ram Baitha" class="person-photo">
+                <h4 class="person-name">Anuj Ram Baitha</h4>
+                <p class="person-role bilingual-text" data-hi="पोस्ट डॉक्टरल फेलो<br>डीपीडी प्रयोगशाला"
+                  data-en="Post Doctoral Fellow<br>DPD laboratory">Post Doctoral Fellow<br>DPD laboratory</p>
+                <div class="person-email">
+                  <a href="mailto:anuj.baitha@cppipr.res.in">anuj.baitha@cppipr.res.in</a>
+                </div>
+                <div class="person-links">
+                  <a href="https://www.researchgate.net/profile/Anuj-Baitha" target="_blank">ResearchGate</a>
+                </div>
+                <div class="person-expertise">
+                  <h5 class="bilingual-text" data-hi="विशेषज्ञता का क्षेत्र:" data-en="Area of Expertise:">Area of
+                    Expertise:</h5>
+                  <ul>
+                    <li class="bilingual-text" data-hi="प्रायोगिक प्लाज्मा भौतिकी"
+                      data-en="Experimental plasma physics">Experimental plasma physics</li>
+                    <li class="bilingual-text" data-hi="प्लाज्मा निदान" data-en="Plasma diagnostics">Plasma diagnostics
+                    </li>
+                    <li class="bilingual-text" data-hi="चुंबकीय प्लाज्मा" data-en="Magnetized plasma">Magnetized plasma
+                    </li>
+                    <li class="bilingual-text" data-hi="द्विध्रुवीय प्लाज्मा" data-en="Dipole plasma">Dipole plasma</li>
+                    <li class="bilingual-text" data-hi="ईसीआर प्लाज्मा कन्फाइनमेंट" data-en="ECR plasma confinement">ECR
+                      plasma confinement</li>
+                    <li class="bilingual-text" data-hi="अंतरिक्ष प्लाज्मा" data-en="Space plasma">Space plasma</li>
+                  </ul>
+                </div>
+              </div>
+
+              <!-- Research Scholar -->
+              <div class="person-card show" data-category="scholar">
+                <img src="/assets/images/dpd/jocelyn.jpg" alt="Ms. Jocelyn Sangma" class="person-photo">
+                <h4 class="person-name">Ms. Jocelyn Sangma</h4>
+                <p class="person-role bilingual-text" data-hi="वरिष्ठ शोध फेलो<br>डीपीडी प्रयोगशाला"
+                  data-en="Senior Research Fellow<br>DPD laboratory">Senior Research Fellow<br>DPD laboratory</p>
+                <div class="person-email">
+                  <a href="mailto:jocelyn.sangma@cppipr.res.in">jocelyn.sangma@cppipr.res.in</a>
+                </div>
+                <div class="person-links">
+                  <a href="https://www.researchgate.net/profile/Jocelyn_Sangma" target="_blank">ResearchGate</a>
+                </div>
+                <div class="person-expertise">
+                  <h5 class="bilingual-text" data-hi="विशेषज्ञता का क्षेत्र:" data-en="Area of Expertise:">Area of
+                    Expertise:</h5>
+                  <ul>
+                    <li class="bilingual-text" data-hi="चुंबकीय प्लाज्मा" data-en="Magnetized Plasma">Magnetized Plasma
+                    </li>
+                    <li class="bilingual-text" data-hi="प्लाज्मा निदान" data-en="Plasma diagnostics">Plasma diagnostics
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <!-- Technical Staff 1 -->
+              <div class="person-card show" data-category="technical">
+                <img src="/assets/images/dpd/partha.jpg" alt="Mr. Partha Protim Nath" class="person-photo">
+                <h4 class="person-name">Mr. Partha Protim Nath</h4>
+                <p class="person-role bilingual-text" data-hi="तकनीशियन - ए" data-en="Technician - A">Technician - A</p>
+                <div class="person-email">
+                  <a href="mailto:partha.nath@cppipr.res.in">partha.nath@cppipr.res.in</a>
+                </div>
+              </div>
+
+              <!-- Technical Staff 2 -->
+              <div class="person-card show" data-category="technical">
+                <img src="/assets/images/dpd/debashish_2.jpg" alt="Mr. Debashish Bera" class="person-photo">
+                <h4 class="person-name">Mr. Debashish Bera</h4>
+                <p class="person-role bilingual-text" data-hi="वैज्ञानिक सहायक-बी" data-en="Scientific Assistant-B">
+                  Scientific Assistant-B</p>
+                <div class="person-email">
+                  <a href="mailto:debasish.bera@cppipr.res.in">debasish.bera@cppipr.res.in</a>
+                </div>
+                <div class="person-links">
+                  <a href="https://www.researchgate.net/profile/Debasish-Bera-5" target="_blank">ResearchGate</a>
+                </div>
+              </div>
+
+              <!-- Former Member 1 -->
+              <div class="person-card show" data-category="former">
+                <img src="/assets/images/dpd/bidyut.jpg" alt="Dr. Bidyut Kumar Das" class="person-photo">
+                <h4 class="person-name">Dr. Bidyut Kumar Das</h4>
+                <p class="person-role bilingual-text"
+                  data-hi="सहायक प्रोफेसर<br>विज्ञान संकाय, असम डाउन टाउन विश्वविद्यालय, गुवाहाटी, असम"
+                  data-en="Assistant Professor<br>Faculty of Sciences, Assam Down Town University, Guwahati, Assam">
+                  Assistant Professor<br>Faculty of Sciences, Assam Down Town University, Guwahati, Assam</p>
+                <div class="person-email">
+                  <a href="mailto:bdyt.ds@rediffmail.com">bdyt.ds@rediffmail.com</a>
+                </div>
+                <div class="person-links">
+                  <a href="https://www.researchgate.net/profile/Nayan_Talukdar5" target="_blank">ResearchGate</a>
+                </div>
+              </div>
+
+              <!-- Former Member 2 -->
+              <div class="person-card show" data-category="former">
+                <img src="/assets/images/dpd/parismita.jpg" alt="Dr. Parismita Hazarika" class="person-photo">
+                <h4 class="person-name">Dr. Parismita Hazarika</h4>
+                <p class="person-role bilingual-text" data-hi="पूर्व शोध फेलो" data-en="Former Research Fellow">Former
+                  Research Fellow</p>
+                <div class="person-email">
+                  <a href="mailto:hazarika.parismita@rediffmail.com">hazarika.parismita@rediffmail.com</a>
+                </div>
+                <div class="person-links">
+                  <a href="https://www.researchgate.net/profile/Parismita_Hazarika3" target="_blank">ResearchGate</a>
+                </div>
+              </div>
+
+              <!-- Former Member 3 -->
+              <div class="person-card show" data-category="former">
+                <img src="/assets/images/dpd/atri_2.jpg" alt="Mr. Atri Mukherjee" class="person-photo">
+                <h4 class="person-name">Mr. Atri Mukherjee</h4>
+                <p class="person-role bilingual-text" data-hi="पूर्व सदस्य" data-en="Former Member">Former Member</p>
+                <div class="person-email">
+                  <a href="mailto:atri.mukherjee56@gmail.com">atri.mukherjee56@gmail.com</a>
+                </div>
+                <div class="person-links">
+                  <a href="https://www.researchgate.net/profile/Atri-Mukherjee-3" target="_blank">ResearchGate</a>
+                </div>
+              </div>
+
+              <!-- Collaborator -->
+              <div class="person-card show" data-category="collaborator">
+                <img src="/assets/images/dpd/mainak_2.jpg" alt="Dr. Mainak Bandyopadhyay" class="person-photo">
+                <h4 class="person-name">Dr. Mainak Bandyopadhyay</h4>
+                <p class="person-role bilingual-text"
+                  data-hi="वैज्ञानिक अधिकारी - एच<br>आईटीईआर इंडिया, प्लाज्मा अनुसंधान संस्थान"
+                  data-en="Scientific Officer - H<br>ITER India, Institute for Plasma Research">Scientific Officer -
+                  H<br>ITER India, Institute for Plasma Research</p>
+                <div class="person-email">
+                  <a href="mailto:mainak.bandyopadhyay@iter-india.org">mainak.bandyopadhyay@iter-india.org</a><br>
+                  <a href="mailto:mainak@ipr.res.in">mainak@ipr.res.in</a>
+                </div>
+                <div class="person-links">
+                  <a href="https://www.researchgate.net/profile/Mainak_Bandyopadhyay" target="_blank">ResearchGate</a>
+                </div>
+                <div class="person-expertise">
+                  <h5 class="bilingual-text" data-hi="विशेषज्ञता का क्षेत्र:" data-en="Area of Expertise:">Area of
+                    Expertise:</h5>
+                  <ul>
+                    <li class="bilingual-text" data-hi="प्लाज्मा भौतिकी" data-en="Plasma Physics">Plasma Physics</li>
+                    <li class="bilingual-text" data-hi="नकारात्मक आयन निष्कर्षण" data-en="Negative Ion Extraction">
+                      Negative Ion Extraction</li>
+                    <li class="bilingual-text" data-hi="न्यूट्रल बीम इंजेक्शन प्रणाली"
+                      data-en="Neutral Beam Injection System">Neutral Beam Injection System</li>
+                  </ul>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- ========== PUBLICATIONS TAB ========== -->
+          <div id="publications" class="tab-panel">
+
+            <div class="publications-year">
+              <h3 class="bilingual-text" data-hi="प्रकाशन" data-en="Publications">Publications</h3>
+
+              <ol class="publications-list">
+                <li>Effect of Discharge Plasma Potential on Diffusion Plasma Parameters Controlled by a Mesh Grid in a
+                  Double Plasma Device. Contributions to Plasma Physics. M.K. Mishra, A. Phukan, M. Chakraborty. Vol.
+                  53, 3, p. 206-213, 2013</li>
+                <li>Improvement of charged particles transport across a transverse magnetic filter field by
+                  Electrostatic trapping of magnetized electrons. B.K. Das, P. Hazarika, M. Chakraborty, M.
+                  Bandyopadhyay. Physics of Plasmas 21, 072118 (2014)</li>
+                <li>Effect of electron emission on an ion sheath structure. M. K. Mishra, A. Phukan, M. Chakraborty.
+                  Physica Scripta 89, 095602 (2014)</li>
+                <li>A technique to control cross-field diffusion of plasma across a transverse magnetic field.P.
+                  Hazarika, M. Chakraborty, B. K. Das and M. Bandyopadhyay. Physics of Plasmas, 23, 122105 (2016)</li>
+                <li>Plasma Parameters Controlled by a Movable Ion Sheath. M. K. Mishra, A. Phukan, and M. Chakraborty.
+                  Plasma Physics Reports, Vol. 44, No. 8, pp. 1–7, 2018</li>
+                <li>Influence of high energy electrons on negative ion density in a hot cathode discharge.Jocelyn
+                  Sangma, Narayan Sharma, Monojit Chakraborty, Mainak Bandyopadhyay. Physics of Plasmas, 29, 033501
+                  (2022)</li>
+                <li>Studies of sheath characteristics in a double plasma device with a negatively biased separating grid
+                  and a magnetic filter field. Physics of Plasmas. B. K. Das, M.Chakrabory, M. Bandyopadhyay. Vol. 19,
+                  p. 092104, 2012.</li>
+                <li>Dependence of Plasma Parameters on Plate Separation and Filament Location in a Double Plasma Device.
+                  Journal of Modern Physics. M. Chakraborty, B. K. Das, M. K. Mishra and M. Bandyopadhyay. Vol. 2012, 3,
+                  p. 1002, 2012.</li>
+                <li>Influence of plasma loss area on transport of charged particles trough a transverse magnetic field.
+                  Physics of Plasmas. B. K. Das, M. Bandyopadhyay, M. Chakrabory. Vol. 19, p. 013504, 2012.</li>
+                <li>Comparative studies on charged particle flow in a double plasma device. M.Chakraborty, B. K. Das.
+                  Physics of Plasmas. Vol. 18, p. 103501, 2011.</li>
+                <li>Effect of filament position on diffused plasma parameters. Monojit Chakraborty, Bidyut K. Das,
+                  Mrinal K. Mishra and Mainak Bandyopadhyay. Chinese Journal of Physics. Vol. 49, No. 6, p1199, December
+                  2011.</li>
+                <li>Variation of plasma parameters in a modified mode of plasma production in a double plasma device. A.
+                  Phukan, M.K. Mishra, B.K. Saikia and M. Chakraborty. Pramana - J. Phys. Vol. 74, p. 399, 2010</li>
+                <li>Growth of electron energies with ion beam injection in double plasma device. M.K. Mishra, A. Phukan,
+                  M. Chakraborty and K.S. Goswami. The European Physical Journal D. DOI: 10.1140/epjd/e2007-00316-1.
+                </li>
+                <li>Variations of plasma parameters and sheath thickness due to the extraction of ion and electron flux
+                  in a double plasma device. M. K. Mishra, A. Phukan and M. Chakraborty. Contributions to Plasma
+                  Physics. Vol. 47, No. 10, p. 703, 2007.</li>
+                <li>Mechanical variation of diffused plasma parameters in a double plasma device. A. Phukan, M.K. Mishra
+                  and M. Chakraborty. Journal of Physics D, Applied Physics. Vol. 40, No.12, p. 3616, June 2007.</li>
+                <li>Role of high energetic electrons in controlling diffused plasma parameters in a double plasma
+                  device. M.K. Mishra, A. Phukan, M. Chakraborty and K.S. Goswami. Physics Letters A. Vol. 365, Issues
+                  1-2, p. 135, May 2007.</li>
+                <li>Plasma parameter variation in ion beam formation mode in a double plasma device. M.K. Mishra, A.
+                  Phukan and M. Chakraborty. Japanese Journal of Applied Physics. Vol. 45, No. 12, p. 9216, December
+                  2006.</li>
+                <li>Effect of anode potential on Langmuir probe measurements. M.K. Mishra, A. Phukan, M. Chakraborty,
+                  K.S. Goswami and B.K. Saikia. Indian Journal of Physics. Vol. 80, No.7, p. 757, July 2005.</li>
+              </ol>
+            </div>
+
+          </div>
+
+          <!-- ========== AWARDS TAB ========== -->
+          <div id="awards" class="tab-panel">
+
+            <h4 class="bilingual-text"
+              style="font-size: 1.2rem; color: var(--lab-text); margin: 0 0 1rem; font-weight: 600;"
+              data-hi="पीएच.डी. उपाधि" data-en="Ph.D. Degree">Ph.D. Degree</h4>
+
+            <ul class="awards-list">
+              <li class="bilingual-text"
+                data-hi="डॉ. बी. दास को गौहाटी विश्वविद्यालय, गुवाहाटी द्वारा पीएच.डी. उपाधि प्रदान की गई। (2019)"
+                data-en="Ph.D. degree awarded to Dr. B. Das by Gauhati University, Guwahati. (2019)"><em>Ph.D. degree
+                  awarded to Dr. B. Das by Gauhati University, Guwahati. (2019)</em></li>
+              <li class="bilingual-text"
+                data-hi="डॉ. पी. हजारिका को गौहाटी विश्वविद्यालय, गुवाहाटी द्वारा पीएच.डी. उपाधि प्रदान की गई। (2014)"
+                data-en="Ph.D. degree awarded to Dr. P. Hazarika by Gauhati University, Guwahati. (2014)"><em>Ph.D.
+                  degree awarded to Dr. P. Hazarika by Gauhati University, Guwahati. (2014)</em></li>
+            </ul>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <div id="footer-container"></div>
+
+  <!-- SCRIPTS -->
+  <script>
+    // Tab Switching Function - Fixed to handle clicks on inner spans
+    function switchTab(tabName) {
+      // Hide all panels
+      document.querySelectorAll('.tab-panel').forEach(panel => {
+        panel.classList.remove('active');
+      });
+
+      // Remove active from all tabs
+      document.querySelectorAll('.lab-tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+
+      // Show selected panel
+      document.getElementById(tabName).classList.add('active');
+
+      // Activate clicked tab - using closest to handle clicks on inner spans
+      let clickedTab = event.target.closest('.lab-tab');
+      if (clickedTab) {
+        clickedTab.classList.add('active');
+      }
+
+      // Scroll active tab into view on mobile
+      if (window.innerWidth <= 900 && clickedTab) {
+        clickedTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
+    }
+
+    // Hide scroll indicators after first interaction
+    let hasInteracted = false;
+    const labTabs = document.getElementById('labTabs');
+    const scrollLeft = document.getElementById('scrollLeft');
+    const scrollRight = document.getElementById('scrollRight');
+
+    if (labTabs) {
+      labTabs.addEventListener('scroll', function () {
+        if (!hasInteracted) {
+          hasInteracted = true;
+          if (scrollLeft) scrollLeft.style.display = 'none';
+          if (scrollRight) scrollRight.style.display = 'none';
+        }
+      }, { once: true });
+
+      labTabs.addEventListener('touchstart', function () {
+        if (!hasInteracted) {
+          hasInteracted = true;
+          if (scrollLeft) scrollLeft.style.display = 'none';
+          if (scrollRight) scrollRight.style.display = 'none';
+        }
+      }, { once: true });
+    }
+
+    // People Filtering Function - Fixed to handle clicks on inner spans
+    function filterPeople(category) {
+      const allCards = document.querySelectorAll('.person-card');
+
+      // Update button states - using closest to handle clicks on inner spans
+      let clickedBtn = event.target.closest('.people-cat-btn');
+      if (clickedBtn) {
+        document.querySelectorAll('.people-cat-btn').forEach(btn => {
+          btn.classList.remove('active');
+        });
+        clickedBtn.classList.add('active');
+      }
+
+      // Show/hide cards
+      allCards.forEach(card => {
+        if (category === 'all') {
+          card.classList.add('show');
+        } else {
+          if (card.dataset.category === category) {
+            card.classList.add('show');
+          } else {
+            card.classList.remove('show');
+          }
+        }
+      });
+    }
+
+    // Fragment Loader
+    function loadFragment(url, containerId) {
+      fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const container = document.getElementById(containerId);
+          container.innerHTML = html;
+
+          container.querySelectorAll('script').forEach(oldScript => {
+            const newScript = document.createElement('script');
+            if (oldScript.src) {
+              newScript.src = oldScript.src;
+            } else {
+              newScript.textContent = oldScript.textContent;
+            }
+            oldScript.replaceWith(newScript);
+          });
+        })
+        .catch(err => console.error('Error loading fragment:', url, err));
+    }
+
+    loadFragment('/UI/header.html', 'header-container');
+    loadFragment('/UI/footer.html', 'footer-container');
+  </script>
+
+</body>
+
+</html>

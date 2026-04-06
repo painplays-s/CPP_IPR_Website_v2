@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Library - CPP-IPR</title>
+
+    <style>
+        :root {
+            --lib-bg: #ffffff;
+            --lib-border: #d0d7e2;
+            --lib-text: #111827;
+            --lib-muted: #6b7280;
+            --lib-accent: #2563eb;
+            --lib-radius-lg: 16px;
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            font-family: Arial, sans-serif;
+        }
+
+        #header-container,
+        #footer-container {
+            flex-shrink: 0;
+        }
+
+        main {
+            flex: 1;
+            padding: 1.5rem 5vw;
+            box-sizing: border-box;
+        }
+
+        /* ---------- GLOBAL SECTION WIDTH ---------- */
+        .page-section {
+            max-width: 1600px;
+            margin: 0 auto 2rem auto;
+        }
+
+        /* ---------- LIBRARY SECTION STYLES ---------- */
+        .library-section {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            box-sizing: border-box;
+        }
+
+        /* BANNER IMAGE */
+        .library-banner {
+            width: 100%;
+            height: auto;
+            border-radius: var(--lib-radius-lg);
+            object-fit: cover;
+        }
+
+        /* MAIN BODY */
+        .library-main {
+            position: relative;
+            width: 100%;
+            background: var(--lib-bg);
+            border: 1.5px solid var(--lib-border);
+            border-radius: var(--lib-radius-lg);
+            overflow: hidden;
+        }
+
+        /* HEADER INSIDE BOX */
+        .library-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem 1.75rem 1rem 1.75rem;
+            position: relative;
+        }
+
+        /* Horizontal line with custom width */
+        .library-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            height: 2px;
+            background-color: var(--lib-border);
+        }
+
+        .library-title {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--lib-text);
+            text-align: center;
+            margin: 0;
+        }
+
+        /* CONTENT AREA */
+        .library-content {
+            padding: 1.75rem 1.75rem;
+            box-sizing: border-box;
+        }
+
+        .library-content p {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: var(--lib-text);
+            margin-bottom: 1.2rem;
+            text-align: justify;
+            text-justify: inter-word;
+            hyphens: auto;
+        }
+
+        .library-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        .library-content a {
+            color: var(--lib-accent);
+            text-decoration: none;
+        }
+
+        .library-content a:hover {
+            text-decoration: underline;
+        }
+
+        /* SECTION HEADINGS */
+        .section-heading {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--lib-text);
+            margin: 1.5rem 0 1rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--lib-border);
+        }
+
+        .section-heading:first-of-type {
+            margin-top: 0;
+        }
+
+        /* COLLECTIONS TABLE */
+        .collections-table {
+            width: 60%;
+            margin: 1.5rem auto;
+            border-collapse: collapse;
+        }
+
+        .collections-table td {
+            padding: 0.5rem;
+            vertical-align: top;
+        }
+
+        .collections-table ul {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin: 0;
+        }
+
+        .collections-table li {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: var(--lib-text);
+            text-align: justify;
+            text-justify: inter-word;
+            hyphens: auto;
+        }
+
+        /* USERS LIST */
+        .users-list {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin: 0.5rem 0 1rem 0;
+        }
+
+        .users-list li {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: var(--lib-text);
+            text-align: justify;
+            text-justify: inter-word;
+            hyphens: auto;
+        }
+
+        /* SERVICES LIST */
+        .services-list {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin: 0.5rem 0 1rem 0;
+        }
+
+        .services-list li {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: var(--lib-text);
+            text-align: justify;
+            text-justify: inter-word;
+            hyphens: auto;
+        }
+
+        /* USEFUL LINKS TABLE */
+        .links-table {
+            width: 70%;
+            margin: 1rem 0;
+            border-collapse: collapse;
+            background-color: #ffffff;
+        }
+
+        .links-table td {
+            padding: 0.5rem;
+            height: 30px;
+            vertical-align: middle;
+        }
+
+        .links-table td:first-child {
+            width: 3%;
+        }
+
+        .links-table td:last-child {
+            width: 97%;
+        }
+
+        .link-dot {
+            width: 4px;
+            height: 4px;
+            margin-right: 0.5rem;
+            vertical-align: middle;
+        }
+
+        .link-item {
+            color: var(--lib-accent);
+            text-decoration: none;
+            font-size: 1rem;
+        }
+
+        .link-item:hover {
+            text-decoration: underline;
+        }
+
+        /* WORKING HOURS */
+        .working-hours {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: var(--lib-text);
+            margin: 0.5rem 0 1rem 0;
+            text-align: justify;
+            text-justify: inter-word;
+            hyphens: auto;
+        }
+
+        /* ---------- MOBILE ---------- */
+        @media (max-width: 900px) {
+            .library-title {
+                font-size: 1.35rem;
+            }
+
+            .library-header {
+                padding: 1.25rem 1.25rem 0.85rem 1.25rem;
+            }
+
+            .library-header::after {
+                width: 80%;
+            }
+
+            .library-content {
+                padding: 1.5rem 1.25rem;
+            }
+
+            .library-content p,
+            .collections-table li,
+            .users-list li,
+            .services-list li,
+            .working-hours {
+                font-size: 0.95rem;
+                text-align: justify;
+                text-justify: inter-word;
+                hyphens: auto;
+                word-spacing: -0.5px;
+            }
+
+            .collections-table {
+                width: 100%;
+            }
+
+            .links-table {
+                width: 100%;
+            }
+
+            .section-heading {
+                font-size: 1.2rem;
+            }
+        }
+
+        /* Small mobile screens */
+        @media (max-width: 480px) {
+
+            .library-content p,
+            .collections-table li,
+            .users-list li,
+            .services-list li,
+            .working-hours {
+                font-size: 0.9rem;
+                line-height: 1.6;
+                letter-spacing: 0.2px;
+            }
+
+            .collections-table td {
+                display: block;
+                width: 100%;
+            }
+
+            .collections-table tr {
+                display: block;
+                margin-bottom: 0.5rem;
+            }
+
+            .links-table {
+                width: 100%;
+            }
+
+            .links-table td:first-child {
+                width: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <div id="header-container"></div>
+
+    <!-- PAGE CONTENT -->
+    <main>
+        <div class="page-section library-section">
+
+            <!-- BANNER IMAGE -->
+            <img src="/assets/images/about_banner.jpg" alt="CPP-IPR Banner" class="library-banner">
+
+            <!-- MAIN BODY -->
+            <div class="library-main">
+
+                <!-- HEADER INSIDE BOX -->
+                <div class="library-header">
+                    <h1 class="library-title bilingual-title" data-hi="पुस्तकालय" data-en="Library">Library</h1>
+                </div>
+
+                <!-- CONTENT -->
+                <div class="library-content">
+
+                    <p class="bilingual-text"
+                        data-hi="सीपीपी-आईपीआर पुस्तकालय सीपीपी-आईपीआर की मुख्य इमारत में स्थित है। इसकी स्थापना संस्थान के वैज्ञानिक और तकनीकी कार्यक्रमों को समर्थन देने के लिए की गई थी।"
+                        data-en="The CPP-IPR library is located in the main building of CPP-IPR. It was established to support the scientific and technical programs of the institute.">
+                        The CPP-IPR library is located in the main building of CPP-IPR. It was established to support
+                        the scientific and technical programs of the institute.
+                    </p>
+
+                    <!-- COLLECTIONS -->
+                    <div class="section-heading bilingual-text" data-hi="संग्रह" data-en="COLLECTIONS">COLLECTIONS</div>
+
+                    <p class="bilingual-text"
+                        data-hi="पुस्तकालय के संग्रह में पुस्तकें, जर्नल, वैज्ञानिक पत्रिकाएं, शोध प्रबंध और समाचार पत्र शामिल हैं। पुस्तकालय में पुस्तकों का संग्रह निम्नलिखित विषय क्षेत्रों को कवर करता है:"
+                        data-en="Collection of the library includes books, journals, scientific magazines, thesis and newspapers. The collection of books in the library covers the following subject areas:">
+                        Collection of the library includes books, journals, scientific magazines, thesis and newspapers.
+                        The collection of books in the library covers the following subject areas:
+                    </p>
+
+                    <table class="collections-table">
+                        <tr>
+                            <td>
+                                <ul>
+                                    <li class="bilingual-text" data-hi="सामान्य भौतिकी" data-en="General Physics">
+                                        General Physics</li>
+                                </ul>
+                            </td>
+                            <td>
+                                <ul>
+                                    <li class="bilingual-text" data-hi="खगोल विज्ञान" data-en="Astronomy">Astronomy</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <ul>
+                                    <li class="bilingual-text" data-hi="प्लाज्मा भौतिकी" data-en="Plasma Physics">Plasma
+                                        Physics</li>
+                                </ul>
+                            </td>
+                            <td>
+                                <ul>
+                                    <li class="bilingual-text" data-hi="गणित" data-en="Mathematics">Mathematics</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <ul>
+                                    <li class="bilingual-text" data-hi="इलेक्ट्रिकल इंजीनियरिंग"
+                                        data-en="Electrical Engineering">Electrical Engineering</li>
+                                </ul>
+                            </td>
+                            <td>
+                                <ul>
+                                    <li class="bilingual-text" data-hi="कंप्यूटर विज्ञान" data-en="Computer Science">
+                                        Computer Science
+                                    </li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <ul>
+                                    <li class="bilingual-text" data-hi="इलेक्ट्रॉनिक्स" data-en="Electronics">
+                                        Electronics</li>
+                                </ul>
+                            </td>
+                            <td></td>
+                        </tr>
+                    </table>
+
+                    <!-- WORKING HOURS -->
+                    <div class="section-heading bilingual-text" data-hi="कार्य के घंटे" data-en="WORKING HOURS">WORKING
+                        HOURS</div>
+
+                    <div class="working-hours bilingual-text"
+                        data-hi="पुस्तकालय सोमवार से शुक्रवार सुबह 9:00 बजे से शाम 5:30 बजे तक खुला रहता है।"
+                        data-en="The library remains open from 9:00 am to 5:30 pm from Monday to Friday.">
+                        The library remains open from 9:00 am to 5:30 pm from Monday to Friday.
+                    </div>
+
+                    <!-- USERS -->
+                    <div class="section-heading bilingual-text" data-hi="उपयोगकर्ता" data-en="USERS">USERS</div>
+
+                    <ul class="users-list">
+                        <li class="bilingual-text" data-hi="संस्थान के कर्मचारी" data-en="Employees of the institute">
+                            Employees of the institute
+                        </li>
+                        <li class="bilingual-text" data-hi="शोध छात्र" data-en="Research scholars">Research scholars
+                        </li>
+                    </ul>
+
+                    <!-- SERVICES -->
+                    <div class="section-heading bilingual-text" data-hi="सेवाएं" data-en="SERVICES">SERVICES</div>
+
+                    <p class="bilingual-text" data-hi="पुस्तकालय निम्नलिखित सेवाएं प्रदान करता है:"
+                        data-en="The library provides the following services:">
+                        The library provides the following services:
+                    </p>
+
+                    <ul class="services-list">
+                        <li class="bilingual-text" data-hi="परिसंचरण सेवा" data-en="Circulation service">Circulation
+                            service</li>
+                        <li class="bilingual-text" data-hi="वाचनालय सेवा" data-en="Reading room service">Reading room
+                            service</li>
+                        <li class="bilingual-text" data-hi="प्रतिकृति सेवा (फोटोकॉपी)"
+                            data-en="Reprographic service (photocopy)">Reprographic service (photocopy)</li>
+                    </ul>
+
+                    <!-- USEFUL LINKS -->
+                    <div class="section-heading bilingual-text" data-hi="उपयोगी लिंक" data-en="USEFUL LINKS">USEFUL
+                        LINKS</div>
+
+                    <table class="links-table">
+                        <tr>
+                            <td><img src="/assets/images/dot.jpg" width="4" height="4" alt="•" class="link-dot"
+                                    onerror="this.style.display='none'"></td>
+                            <td><a href="http://www.ipr.res.in/~library/LIBRARY.html" target="_blank"
+                                    class="link-item">IPR Library</a></td>
+                        </tr>
+                        <tr>
+                            <td><img src="/assets/images/dot.jpg" width="4" height="4" alt="•" class="link-dot"
+                                    onerror="this.style.display='none'"></td>
+                            <td><a href="http://www.ipr.res.in/~library/onlineres/E-JNL.html" target="_blank"
+                                    class="link-item">e-Journals</a></td>
+                        </tr>
+                        <tr>
+                            <td><img src="/assets/images/dot.jpg" width="4" height="4" alt="•" class="link-dot"
+                                    onerror="this.style.display='none'"></td>
+                            <td><a href="http://www.sciencedirect.com" target="_blank" class="link-item">Science
+                                    Direct</a></td>
+                        </tr>
+                        <tr>
+                            <td><img src="/assets/images/dot.jpg" width="4" height="4" alt="•" class="link-dot"
+                                    onerror="this.style.display='none'"></td>
+                            <td><a href="http://iopscience.iop.org/journals" target="_blank" class="link-item">IOP
+                                    journals</a></td>
+                        </tr>
+                        <tr>
+                            <td><img src="/assets/images/dot.jpg" width="4" height="4" alt="•" class="link-dot"
+                                    onerror="this.style.display='none'"></td>
+                            <td><a href="http://publish.aps.org/" target="_blank" class="link-item">APS journals</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><img src="/assets/images/dot.jpg" width="4" height="4" alt="•" class="link-dot"
+                                    onerror="this.style.display='none'"></td>
+                            <td><a href="http://www.plasmas.org/resources.htm" target="_blank" class="link-item">Virtual
+                                    Library</a></td>
+                        </tr>
+                    </table>
+
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <div id="footer-container"></div>
+
+    <!-- FRAGMENT LOADER -->
+    <script>
+        function loadFragment(url, containerId) {
+            fetch(url)
+                .then(res => res.text())
+                .then(html => {
+                    const container = document.getElementById(containerId);
+                    container.innerHTML = html;
+
+                    container.querySelectorAll('script').forEach(oldScript => {
+                        const newScript = document.createElement('script');
+                        if (oldScript.src) {
+                            newScript.src = oldScript.src;
+                        } else {
+                            newScript.textContent = oldScript.textContent;
+                        }
+                        oldScript.replaceWith(newScript);
+                    });
+                })
+                .catch(err => console.error('Error loading fragment:', url, err));
+        }
+
+        loadFragment('/UI/header.html', 'header-container');
+        loadFragment('/UI/footer.html', 'footer-container');
+    </script>
+
+    <!-- Inline script to handle missing dot images -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Hide any broken dot images
+            document.querySelectorAll('img[src="/assets/images/dot.jpg"]').forEach(img => {
+                img.onerror = function () { this.style.display = 'none'; };
+            });
+        });
+    </script>
+
+    <!-- INCLUDE BILINGUAL LOGIC -->
+    <script src="/UI/bilingual.js"></script>
+
+</body>
+
+</html>
