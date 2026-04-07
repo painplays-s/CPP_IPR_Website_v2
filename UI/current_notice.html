@@ -130,14 +130,13 @@
   /* Content wrapper */
   .notice-content-wrapper {
     display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
+    flex-direction: column;
+    gap: 0.25rem;
     width: 100%;
   }
 
   /* Link container */
   .notice-link {
-    flex: 1;
     color: var(--notice-text);
     text-decoration: none;
     transition: color 0.2s ease;
@@ -150,6 +149,14 @@
   .notice-link:hover {
     color: var(--notice-accent);
     text-decoration: underline;
+  }
+
+  /* Date style */
+  .notice-date {
+    font-size: 0.7rem;
+    color: var(--notice-muted);
+    margin-top: 0.1rem;
+    display: block;
   }
 
   .notice-empty {
@@ -263,6 +270,22 @@
       return item.description_en || '';
     }
 
+    // Format date function
+    function formatDate(dateStr) {
+      if (!dateStr) return '';
+      try {
+        const d = new Date(dateStr);
+        if (isNaN(d.getTime())) return '';
+        return d.toLocaleDateString('en-IN', {
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric'
+        });
+      } catch (e) {
+        return '';
+      }
+    }
+
     // Create notice item with type on top and NEW badge on right
     function createNoticeItem(item, lang) {
       const div = document.createElement('div');
@@ -287,7 +310,7 @@
         typeHeader.appendChild(img);
       }
 
-      // Content wrapper for link
+      // Content wrapper for link and date
       const contentWrapper = document.createElement('div');
       contentWrapper.className = 'notice-content-wrapper';
 
@@ -300,6 +323,14 @@
       link.textContent = getDescription(item, lang);
 
       contentWrapper.appendChild(link);
+
+      // Add date below the description
+      if (item.uploaded_at) {
+        const dateSpan = document.createElement('div');
+        dateSpan.className = 'notice-date';
+        dateSpan.textContent = formatDate(item.uploaded_at);
+        contentWrapper.appendChild(dateSpan);
+      }
 
       div.appendChild(typeHeader);
       div.appendChild(contentWrapper);

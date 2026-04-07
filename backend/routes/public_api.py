@@ -47,6 +47,7 @@ def api_current_notice():
         "description_hi": r["description_hi"] or "",
         "filename": r["filename"],
         "is_new": bool(r["is_new"]),
+        "uploaded_at": r["uploaded_at"],
     } for r in rows])
 
 @public_api.route("/api/research-highlight")
