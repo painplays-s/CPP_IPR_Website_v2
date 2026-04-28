@@ -21,6 +21,7 @@
       height: 100%;
       margin: 0;
       padding: 0;
+      overflow-x: hidden;
     }
 
     body {
@@ -220,6 +221,85 @@
 
     .doc-links a {
       word-break: break-word;
+      text-decoration: none;
+      display: inline-block;
+      cursor: pointer;
+    }
+
+    .doc-links a:hover {
+      text-decoration: underline;
+    }
+
+    /* PDF Modal Styles - Larger window */
+    .pdf-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.9);
+      z-index: 10000;
+      overflow-y: auto;
+      cursor: pointer;
+    }
+
+    .pdf-modal.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .pdf-modal-content {
+      position: relative;
+      width: 95%;
+      max-width: 1400px;
+      height: 92vh;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: default;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .pdf-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 20px;
+      background: #003366;
+      color: white;
+      font-weight: 600;
+    }
+
+    .pdf-modal-header h4 {
+      margin: 0;
+      font-size: 1rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex: 1;
+    }
+
+    .pdf-close-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 28px;
+      cursor: pointer;
+      line-height: 1;
+      padding: 0 8px;
+      transition: opacity 0.2s;
+    }
+
+    .pdf-close-btn:hover {
+      opacity: 0.8;
+    }
+
+    .pdf-viewer {
+      width: 100%;
+      height: calc(92vh - 50px);
+      border: none;
     }
 
     /* ---------- MOBILE ---------- */
@@ -257,7 +337,6 @@
         padding: 0.65rem 0.75rem;
       }
 
-      /* Make table scrollable on mobile */
       .table-wrapper {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
@@ -283,9 +362,24 @@
         hyphens: auto;
         word-spacing: -0.5px;
       }
+
+      .pdf-modal-content {
+        width: 98%;
+        height: 90vh;
+      }
+
+      .pdf-modal-header h4 {
+        max-width: 180px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .pdf-viewer {
+        height: calc(90vh - 50px);
+      }
     }
 
-    /* Small mobile screens */
     @media (max-width: 480px) {
       .reach-content p {
         font-size: 0.9rem;
@@ -304,6 +398,11 @@
         line-height: 1.6;
         letter-spacing: 0.2px;
       }
+
+      .pdf-modal-header h4 {
+        max-width: 120px;
+        font-size: 0.85rem;
+      }
     }
   </style>
 </head>
@@ -312,6 +411,17 @@
 
   <!-- HEADER -->
   <div id="header-container"></div>
+
+  <!-- PDF Modal for embedded viewing - Larger window, no download button -->
+  <div id="pdfModal" class="pdf-modal">
+    <div class="pdf-modal-content">
+      <div class="pdf-modal-header">
+        <h4 id="pdfModalTitle">PDF Document</h4>
+        <button class="pdf-close-btn" id="pdfCloseBtn">&times;</button>
+      </div>
+      <iframe id="pdfViewerFrame" class="pdf-viewer" src=""></iframe>
+    </div>
+  </div>
 
   <!-- PAGE CONTENT -->
   <main>
@@ -401,7 +511,7 @@
             Requests for information under the RTI Act should be sent to the PIO.
           </span>
 
-          <!-- DOCUMENTS SECTION -->
+          <!-- DOCUMENTS SECTION - PDFs open in embedded modal (URL never shows in address bar) -->
           <div class="doc-links">
             <h3 class="bilingual-text" data-hi="महत्वपूर्ण दस्तावेज़" data-en="Important Documents">
               Important Documents
@@ -413,19 +523,24 @@
                   data-en="Statement of Purchase Order/Contract placed:">
                   Statement of Purchase Order/Contract placed:
                 </span>
-                <a href="/assets/files/RTI/PO_Details_2022.pdf" target="_blank">2022</a> |
-                <a href="/assets/files/RTI/PO_Details_2023.pdf" target="_blank">2023</a>
+                <a href="javascript:void(0)" class="pdf-link" data-pdf="/assets/files/RTI/PO_Details_2022.pdf"
+                  data-name="Purchase Order Details 2022">2022</a> |
+                <a href="javascript:void(0)" class="pdf-link" data-pdf="/assets/files/RTI/PO_Details_2023.pdf"
+                  data-name="Purchase Order Details 2023">2023</a>
               </li>
 
               <li>
-                <a href="/assets/files/RTI/PayLevel_IPR-1-7-2022 (1).pdf" target="_blank" class="bilingual-text"
+                <a href="javascript:void(0)" class="pdf-link bilingual-text"
+                  data-pdf="/assets/files/RTI/PayLevel_IPR-1-7-2022 (1).pdf" data-name="Pay Scale of IPR Employees"
                   data-hi="आईपीआर कर्मचारियों का वेतनमान" data-en="Pay Scale of IPR Employees">
                   Pay Scale of IPR Employees
                 </a>
               </li>
 
               <li>
-                <a href="/assets/files/RTI/DAE_SnT_careerdigest2022.pdf" target="_blank" class="bilingual-text"
+                <a href="javascript:void(0)" class="pdf-link bilingual-text"
+                  data-pdf="/assets/files/RTI/DAE_SnT_careerdigest2022.pdf"
+                  data-name="DAE Guidelines for Screening of Promotion Proposals from 1st July 2022"
                   data-hi="1 जुलाई 2022 से वैज्ञानिक और तकनीकी ग्रेड में कर्मियों के पदोन्नति प्रस्तावों की जांच के लिए डीएई दिशानिर्देश"
                   data-en="DAE Guidelines for Screening of Promotion Proposals of Personnel in Scientific and technical Grades from 1st July 2022">
                   DAE Guidelines for Screening of Promotion Proposals of Personnel in Scientific and technical Grades
@@ -434,8 +549,9 @@
               </li>
 
               <li>
-                <a href="/assets/files/RTI/DAE_promotion_policy_SCI-TECH_grades.pdf" target="_blank"
-                  class="bilingual-text"
+                <a href="javascript:void(0)" class="pdf-link bilingual-text"
+                  data-pdf="/assets/files/RTI/DAE_promotion_policy_SCI-TECH_grades.pdf"
+                  data-name="DAE Guidelines for Screening of Promotion Proposals upto 30th June 2022"
                   data-hi="30 जून 2022 तक वैज्ञानिक और तकनीकी ग्रेड में कर्मियों के पदोन्नति प्रस्तावों की जांच के लिए डीएई दिशानिर्देश"
                   data-en="DAE Guidelines for Screening of Promotion Proposals of Personnel in Scientific and technical Grades upto 30th June 2022">
                   DAE Guidelines for Screening of Promotion Proposals of Personnel in Scientific and technical Grades
@@ -444,7 +560,9 @@
               </li>
 
               <li>
-                <a href="/assets/files/RTI/Recruitment_careerdigest_DAE.pdf" target="_blank" class="bilingual-text"
+                <a href="javascript:void(0)" class="pdf-link bilingual-text"
+                  data-pdf="/assets/files/RTI/Recruitment_careerdigest_DAE.pdf"
+                  data-name="Recruitment and Promotion Guidelines for Scientific & Technical Personnel"
                   data-hi="वैज्ञानिक और तकनीकी कर्मियों के लिए भर्ती और पदोन्नति दिशानिर्देश"
                   data-en="Recruitment and Promotion Guidelines for Scientific & Technical Personnel">
                   Recruitment and Promotion Guidelines for Scientific & Technical Personnel
@@ -452,22 +570,27 @@
               </li>
 
               <li>
-                <a href="/assets/files/RTI/Recruitment_and_promotion_Admin_2019_WithAmendment.pdf" target="_blank"
-                  class="bilingual-text" data-hi="आईपीआर के प्रशासनिक कर्मचारियों के लिए भर्ती और पदोन्नति नियम"
+                <a href="javascript:void(0)" class="pdf-link bilingual-text"
+                  data-pdf="/assets/files/RTI/Recruitment_and_promotion_Admin_2019_WithAmendment.pdf"
+                  data-name="Recruitment and Promotion Rules for Administrative Staff of IPR"
+                  data-hi="आईपीआर के प्रशासनिक कर्मचारियों के लिए भर्ती और पदोन्नति नियम"
                   data-en="Recruitment and Promotion Rules for Administrative Staff of IPR">
                   Recruitment and Promotion Rules for Administrative Staff of IPR
                 </a>
               </li>
 
               <li>
-                <a href="/assets/files/RTI/OLD_BYLAWS_UPTO_30_4_2019.pdf" target="_blank" class="bilingual-text"
+                <a href="javascript:void(0)" class="pdf-link bilingual-text"
+                  data-pdf="/assets/files/RTI/OLD_BYLAWS_UPTO_30_4_2019.pdf" data-name="Bye-laws valid upto 30.04.2019"
                   data-hi="30.04.2019 तक वैध उपनियम" data-en="Bye-laws valid upto 30.04.2019">
                   Bye-laws valid upto 30.04.2019
                 </a>
               </li>
 
               <li>
-                <a href="/assets/files/RTI/IPR-BYE-LAWS-2019.pdf" target="_blank" class="bilingual-text"
+                <a href="javascript:void(0)" class="pdf-link bilingual-text"
+                  data-pdf="/assets/files/RTI/IPR-BYE-LAWS-2019.pdf"
+                  data-name="Bye-laws of the Institute effective from 01.05.2019"
                   data-hi="01.05.2019 से प्रभावी संस्थान के उपनियम"
                   data-en="Bye-laws of the Institute effective from 01.05.2019">
                   Bye-laws of the Institute effective from 01.05.2019
@@ -475,7 +598,9 @@
               </li>
 
               <li>
-                <a href="/assets/files/RTI/rules-regfinal.pdf" target="_blank" class="bilingual-text"
+                <a href="javascript:void(0)" class="pdf-link bilingual-text"
+                  data-pdf="/assets/files/RTI/rules-regfinal.pdf"
+                  data-name="Rules and Regulations and Memorandum of Association of IPR"
                   data-hi="आईपीआर के नियम और विनियम और ज्ञापन डाउनलोड करें"
                   data-en="Download Rules and Regulations and Memorandum of Association of IPR">
                   Download Rules and Regulations and Memorandum of Association of IPR
@@ -521,6 +646,84 @@
 
   <!-- INCLUDE BILINGUAL LOGIC -->
   <script src="/UI/bilingual.js"></script>
+
+  <!-- PDF Modal Handler - Opens PDFs in embedded viewer (URL never shows in address bar) -->
+  <script>
+    (function () {
+      const modal = document.getElementById('pdfModal');
+      const pdfFrame = document.getElementById('pdfViewerFrame');
+      const modalTitle = document.getElementById('pdfModalTitle');
+      const closeBtn = document.getElementById('pdfCloseBtn');
+
+      // Function to open PDF in modal
+      function openPDF(pdfUrl, fileName) {
+        // Set the iframe source to the PDF
+        // Using direct PDF embedding - browser will handle it natively
+        pdfFrame.src = pdfUrl;
+        modalTitle.textContent = fileName || 'PDF Document';
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+
+      // Close modal function
+      function closeModal() {
+        modal.classList.remove('active');
+        // Clear iframe source to stop loading and prevent audio/video continuing
+        setTimeout(() => {
+          pdfFrame.src = '';
+        }, 300);
+        document.body.style.overflow = '';
+      }
+
+      // Add click handlers to all PDF links
+      document.querySelectorAll('.pdf-link').forEach(link => {
+        // Remove any existing event listeners by replacing with new one
+        if (link._pdfHandler) {
+          link.removeEventListener('click', link._pdfHandler);
+        }
+
+        const handler = function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          const pdfUrl = link.getAttribute('data-pdf');
+          // Get filename from data-name or from link text
+          let fileName = link.getAttribute('data-name');
+          if (!fileName) {
+            fileName = link.textContent.trim();
+          }
+          if (pdfUrl) {
+            openPDF(pdfUrl, fileName);
+          } else {
+            console.error('No PDF URL found for this link');
+          }
+        };
+
+        link._pdfHandler = handler;
+        link.addEventListener('click', handler);
+      });
+
+      // Close modal on close button click
+      if (closeBtn) {
+        closeBtn.addEventListener('click', closeModal);
+      }
+
+      // Close modal on background click
+      if (modal) {
+        modal.addEventListener('click', function (e) {
+          if (e.target === modal) {
+            closeModal();
+          }
+        });
+      }
+
+      // Close modal on Escape key
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && modal && modal.classList.contains('active')) {
+          closeModal();
+        }
+      });
+    })();
+  </script>
 
 </body>
 

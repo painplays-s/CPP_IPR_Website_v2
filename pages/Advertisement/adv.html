@@ -22,6 +22,7 @@
       height: 100%;
       margin: 0;
       padding: 0;
+      overflow-x: hidden;
     }
 
     body {
@@ -285,7 +286,7 @@
       line-height: 1.6;
     }
 
-    /* DOWNLOAD LINK */
+    /* DOWNLOAD LINK - Now styled as button */
     .download-link {
       display: inline-flex;
       align-items: center;
@@ -294,6 +295,10 @@
       text-decoration: none;
       font-weight: 500;
       transition: color 0.2s ease;
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-size: 0.95rem;
     }
 
     .download-link:hover {
@@ -363,6 +368,78 @@
     .page-btn.dots:hover {
       background: transparent;
       border-color: var(--adv-border);
+    }
+
+    /* PDF Modal Styles */
+    .adv-pdf-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.9);
+      z-index: 10000;
+      overflow-y: auto;
+      cursor: pointer;
+    }
+
+    .adv-pdf-modal.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .adv-pdf-modal-content {
+      position: relative;
+      width: 95%;
+      max-width: 1400px;
+      height: 92vh;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: default;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .adv-pdf-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 20px;
+      background: #003366;
+      color: white;
+      font-weight: 600;
+    }
+
+    .adv-pdf-modal-header h4 {
+      margin: 0;
+      font-size: 1rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex: 1;
+    }
+
+    .adv-pdf-close-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 28px;
+      cursor: pointer;
+      line-height: 1;
+      padding: 0 8px;
+      transition: opacity 0.2s;
+    }
+
+    .adv-pdf-close-btn:hover {
+      opacity: 0.8;
+    }
+
+    .adv-pdf-viewer {
+      width: 100%;
+      height: calc(92vh - 50px);
+      border: none;
     }
 
     /* ---------- MOBILE ---------- */
@@ -484,6 +561,27 @@
         padding: 0 0.5rem;
         font-size: 0.85rem;
       }
+
+      .adv-pdf-modal-content {
+        width: 98%;
+        height: 90vh;
+      }
+
+      .adv-pdf-modal-header h4 {
+        max-width: 180px;
+        font-size: 0.85rem;
+      }
+
+      .adv-pdf-viewer {
+        height: calc(90vh - 50px);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .adv-pdf-modal-header h4 {
+        max-width: 120px;
+        font-size: 0.8rem;
+      }
     }
   </style>
 </head>
@@ -492,6 +590,17 @@
 
   <!-- HEADER -->
   <div id="header-container"></div>
+
+  <!-- PDF Modal for embedded viewing -->
+  <div id="advPdfModal" class="adv-pdf-modal">
+    <div class="adv-pdf-modal-content">
+      <div class="adv-pdf-modal-header">
+        <h4 id="advPdfModalTitle">Advertisement Document</h4>
+        <button class="adv-pdf-close-btn" id="advPdfCloseBtn">&times;</button>
+      </div>
+      <iframe id="advPdfViewerFrame" class="adv-pdf-viewer" src=""></iframe>
+    </div>
+  </div>
 
   <!-- PAGE CONTENT -->
   <main>
@@ -524,7 +633,7 @@
               <label for="itemsPerPage" class="bilingual-text" data-hi="प्रति पृष्ठ:" data-en="Items per page:">
                 Items per page:
               </label>
-              <select id="itemsPerPage" onchange="changeItemsPerPage(this.value)">
+              <select id="itemsPerPage">
                 <option value="10">10</option>
                 <option value="20" selected>20</option>
                 <option value="50">50</option>
@@ -588,8 +697,64 @@
     loadFragment('/UI/footer.html', 'footer-container');
   </script>
 
-  <!-- ADVERTISEMENTS LOGIC WITH PAGINATION -->
+  <!-- ADVERTISEMENTS LOGIC WITH PAGINATION AND PDF MODAL -->
   <script>
+    // PDF Modal elements
+    const pdfModal = document.getElementById('advPdfModal');
+    const pdfFrame = document.getElementById('advPdfViewerFrame');
+    const pdfModalTitle = document.getElementById('advPdfModalTitle');
+    const pdfCloseBtn = document.getElementById('advPdfCloseBtn');
+
+    // PDF Modal functions
+    function openAdvPdfModal(pdfUrl, fileName) {
+      if (!pdfModal || !pdfFrame) return;
+      pdfFrame.src = pdfUrl;
+      pdfModalTitle.textContent = fileName || 'Advertisement Document';
+      pdfModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeAdvPdfModal() {
+      if (!pdfModal) return;
+      pdfModal.classList.remove('active');
+      setTimeout(() => {
+        if (pdfFrame) pdfFrame.src = '';
+      }, 300);
+      document.body.style.overflow = '';
+    }
+
+    // Setup PDF modal close handlers
+    function setupPdfModal() {
+      if (pdfCloseBtn) {
+        pdfCloseBtn.addEventListener('click', closeAdvPdfModal);
+      }
+
+      if (pdfModal) {
+        pdfModal.addEventListener('click', function (e) {
+          if (e.target === pdfModal) {
+            closeAdvPdfModal();
+          }
+        });
+      }
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && pdfModal && pdfModal.classList.contains('active')) {
+          closeAdvPdfModal();
+        }
+      });
+    }
+
+    // Check if file is PDF
+    function isPdfFile(filename) {
+      if (!filename) return false;
+      return filename.toLowerCase().endsWith('.pdf');
+    }
+
+    // Get PDF URL
+    function getAdvPdfUrl(filename) {
+      return '/assets/files/advertisements/' + filename;
+    }
+
     // State variables
     let currentYear = new Date().getFullYear();
     let allYears = [];
@@ -601,8 +766,17 @@
 
     // Load on page ready
     document.addEventListener('DOMContentLoaded', async () => {
+      setupPdfModal();
       await loadYears();
       await loadAdvertisements(currentYear, currentPage);
+
+      // Setup items per page change listener
+      const itemsPerPageSelect = document.getElementById('itemsPerPage');
+      if (itemsPerPageSelect) {
+        itemsPerPageSelect.addEventListener('change', (e) => {
+          changeItemsPerPage(e.target.value);
+        });
+      }
     });
 
     // Load available years
@@ -642,7 +816,7 @@
     // Switch year
     async function switchYear(year) {
       currentYear = year;
-      currentPage = 1; // Reset to first page
+      currentPage = 1;
       renderYearTabs();
       await loadAdvertisements(year, currentPage);
     }
@@ -650,7 +824,7 @@
     // Change items per page
     async function changeItemsPerPage(value) {
       itemsPerPage = parseInt(value);
-      currentPage = 1; // Reset to first page
+      currentPage = 1;
       await loadAdvertisements(currentYear, currentPage);
     }
 
@@ -665,18 +839,13 @@
       paginationContainer.style.display = 'none';
 
       try {
-        // In a real implementation, the API should support pagination
-        // For now, we'll fetch all and paginate client-side
-        // Replace this with: const res = await fetch(`/api/advertisements/year/${year}?page=${page}&limit=${itemsPerPage}`);
         const res = await fetch(`/api/advertisements/year/${year}`);
         const data = await res.json();
 
-        // Client-side pagination (replace with server-side pagination in production)
         const allAdvertisements = data.advertisements || [];
         totalItems = allAdvertisements.length;
         totalPages = Math.ceil(totalItems / itemsPerPage);
 
-        // Get current page items
         const start = (page - 1) * itemsPerPage;
         const end = start + itemsPerPage;
         currentAdvertisements = allAdvertisements.slice(start, end);
@@ -717,15 +886,12 @@
 
       if (totalPages <= 1) return;
 
-      // Previous button
       const prevBtn = createPageButton('Prev', currentPage - 1, currentPage === 1);
       pagination.appendChild(prevBtn);
 
-      // Page numbers
       let startPage = Math.max(1, currentPage - 2);
       let endPage = Math.min(totalPages, currentPage + 2);
 
-      // Always show first page
       if (startPage > 1) {
         pagination.appendChild(createPageButton('1', 1));
         if (startPage > 2) {
@@ -733,12 +899,10 @@
         }
       }
 
-      // Page numbers
       for (let i = startPage; i <= endPage; i++) {
         pagination.appendChild(createPageButton(i.toString(), i, false, i === currentPage));
       }
 
-      // Always show last page
       if (endPage < totalPages) {
         if (endPage < totalPages - 1) {
           pagination.appendChild(createDots());
@@ -746,7 +910,6 @@
         pagination.appendChild(createPageButton(totalPages.toString(), totalPages));
       }
 
-      // Next button
       const nextBtn = createPageButton('Next', currentPage + 1, currentPage === totalPages);
       pagination.appendChild(nextBtn);
     }
@@ -776,12 +939,26 @@
       if (newPage >= 1 && newPage <= totalPages && newPage !== currentPage) {
         currentPage = newPage;
         await loadAdvertisements(currentYear, currentPage);
-
-        // Scroll to top of table smoothly
         document.querySelector('.table-container')?.scrollIntoView({
           behavior: 'smooth',
           block: 'start'
         });
+      }
+    }
+
+    // Handle advertisement click with PDF modal
+    function handleAdvertisementClick(ad, event) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      const filename = ad.filename;
+      const description = ad.description || 'Advertisement Document';
+
+      if (isPdfFile(filename)) {
+        const pdfUrl = getAdvPdfUrl(filename);
+        openAdvPdfModal(pdfUrl, description);
+      } else {
+        window.open(getAdvPdfUrl(filename), '_blank');
       }
     }
 
@@ -819,13 +996,15 @@
 
       advertisements.forEach(ad => {
         const newBadge = ad.is_new ? '<span class="new-badge">NEW</span>' : '';
+        const isPdf = isPdfFile(ad.filename);
+
         html += `
           <tr>
             <td data-label="Advertisement No.">
-              <span class="adv-no">${escapeHtml(ad.advertisement_no)}</span>${newBadge}
+              <span class="adv-no">${escapeHtml(ad.advertisement_no || '—')}</span>${newBadge}
             </td>
             <td data-label="Description">
-              <div class="adv-description">${escapeHtml(ad.description)}</div>
+              <div class="adv-description">${escapeHtml(ad.description || '—')}</div>
             </td>
             <td data-label="Advertisement Date">
               <span class="adv-date">${formatDate(ad.advertisement_date)}</span>
@@ -834,13 +1013,13 @@
               <span class="adv-date">${formatDate(ad.advertisement_end_date)}</span>
             </td>
             <td data-label="Details">
-              <a href="/assets/files/advertisements/${ad.filename}" 
-                 target="_blank" 
-                 class="download-link bilingual-text"
-                 data-hi="डाउनलोड करें"
-                 data-en="Download">
-                Download
-              </a>
+              <button class="download-link adv-view-btn"
+                      data-filename="${escapeHtml(ad.filename || '')}"
+                      data-name="${escapeHtml(ad.description || 'Advertisement Document')}"
+                      data-is-pdf="${isPdf}"
+                      data-url="/assets/files/advertisements/${escapeHtml(ad.filename || '')}">
+                ${isPdf ? 'View Advertisement' : 'Download'}
+              </button>
             </td>
           </tr>
         `;
@@ -853,21 +1032,45 @@
       `;
 
       container.innerHTML = html;
+
+      // Attach click handlers to all advertisement view buttons
+      document.querySelectorAll('.adv-view-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const filename = btn.getAttribute('data-filename');
+          const name = btn.getAttribute('data-name');
+          const isPdf = btn.getAttribute('data-is-pdf') === 'true';
+          const url = btn.getAttribute('data-url');
+
+          if (isPdf && filename) {
+            openAdvPdfModal(url, name);
+          } else {
+            window.open(url, '_blank');
+          }
+        });
+      });
     }
 
     // Format date
     function formatDate(dateStr) {
       if (!dateStr) return '—';
-      const d = new Date(dateStr);
-      return d.toLocaleDateString('en-IN', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric'
-      });
+      try {
+        const d = new Date(dateStr);
+        if (isNaN(d.getTime())) return '—';
+        return d.toLocaleDateString('en-IN', {
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric'
+        });
+      } catch (e) {
+        return '—';
+      }
     }
 
     // Escape HTML
     function escapeHtml(text) {
+      if (!text) return '';
       const div = document.createElement('div');
       div.textContent = text;
       return div.innerHTML;

@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description"
+        content="CPP-IPR - Centre for Plasma Physics - Institute for Plasma Research, Department of Atomic Energy. Screen Reader Access and Accessibility Compliance Information." />
+    <title>Screen Reader Access | CPP-IPR, DAE</title>
+
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+            background-color: #f5f7fa;
+        }
+
+        #header-container,
+        #footer-container {
+            flex-shrink: 0;
+        }
+
+        main {
+            flex: 1;
+            padding: 1.5rem 5vw;
+            box-sizing: border-box;
+        }
+
+        /* Accessibility Skip Link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: #003366;
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+            z-index: 1000;
+            font-weight: bold;
+            border-radius: 0 0 4px 0;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Focus visible for keyboard navigation */
+        *:focus-visible {
+            outline: 3px solid #FF6B35;
+            outline-offset: 2px;
+        }
+
+        /* Page Section Styling */
+        .page-section {
+            max-width: 1400px;
+            margin: 0 auto 2rem auto;
+        }
+
+        /* Screen Reader Content Container */
+        .screen-reader-content {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .screen-reader-header {
+            border-bottom: 3px solid #FF6B35;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+        }
+
+        .screen-reader-header h1 {
+            color: #003366;
+            font-size: 1.8rem;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .screen-reader-header h2 {
+            color: #2c3e50;
+            font-size: 1.2rem;
+            font-weight: normal;
+            margin: 0;
+        }
+
+        .dept-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #003366 0%, #1a4d80 100%);
+            color: white;
+            padding: 0.25rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Compliance Notice */
+        .compliance-notice {
+            background: #e8f0fe;
+            border-left: 5px solid #003366;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+
+        .compliance-notice p {
+            margin: 0.5rem 0;
+            line-height: 1.5;
+        }
+
+        /* Table Styling */
+        .accessibility-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.95rem;
+        }
+
+        .accessibility-table caption {
+            text-align: left;
+            font-weight: bold;
+            margin-bottom: 0.75rem;
+            color: #003366;
+            font-size: 1.1rem;
+        }
+
+        .accessibility-table th,
+        .accessibility-table td {
+            border: 1px solid #d1d5db;
+            padding: 12px 15px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .accessibility-table th {
+            background-color: #003366;
+            color: white;
+            font-weight: 600;
+        }
+
+        .accessibility-table tr:nth-child(even) {
+            background-color: #f9fafb;
+        }
+
+        .accessibility-table tr:hover {
+            background-color: #f0f4f9;
+        }
+
+        .table-link {
+            color: #003366;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .table-link:hover {
+            text-decoration: underline;
+            color: #FF6B35;
+        }
+
+        /* Assistive Tech Links Section */
+        .assistive-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .assistive-link-card {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .assistive-link-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+        }
+
+        .assistive-link-card a {
+            color: #003366;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .assistive-link-card a:hover {
+            color: #FF6B35;
+        }
+
+        .assistive-link-card p {
+            margin: 0.5rem 0 0;
+            font-size: 0.8rem;
+            color: #4b5563;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: #fef3c7;
+            border-left: 5px solid #f59e0b;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+
+        .info-box p {
+            margin: 0.5rem 0;
+        }
+
+        /* Footer note */
+        .footer-note {
+            text-align: center;
+            padding: 1rem;
+            font-size: 0.85rem;
+            color: #6c757d;
+            border-top: 1px solid #dee2e6;
+            margin-top: 1.5rem;
+        }
+
+        /* Screen Reader Only Class */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+
+        /* Responsive Table */
+        @media (max-width: 768px) {
+            .screen-reader-content {
+                padding: 1rem;
+            }
+
+            .accessibility-table th,
+            .accessibility-table td {
+                padding: 8px 10px;
+                font-size: 0.85rem;
+            }
+
+            .assistive-links {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Accessibility Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- HEADER (Imported from UI fragment) -->
+    <div id="header-container"></div>
+
+    <!-- MAIN CONTENT -->
+    <main id="main-content" tabindex="-1">
+
+        <!-- Screen Reader Access Main Section -->
+        <div class="page-section">
+            <div class="screen-reader-content">
+
+                <div class="screen-reader-header">
+                    <h1 id="screen-reader-access-heading" class="bilingual-title" data-en="Screen Reader Access"
+                        data-hi="स्क्रीन रीडर पहुँच">Screen Reader Access</h1>
+                    <h2 class="bilingual-subtitle"
+                        data-en="Accessibility Compliance | Information for Visually Impaired Users"
+                        data-hi="पहुँच अनुपालन | दृष्टिबाधित उपयोगकर्ताओं के लिए जानकारी">Accessibility Compliance |
+                        Information for Visually Impaired Users</h2>
+                    <div class="dept-badge bilingual-text"
+                        data-en="Department of Atomic Energy | CPP-IPR (Centre for Plasma Physics - Institute for Plasma Research)"
+                        data-hi="परमाणु ऊर्जा विभाग | सीपीपी-आईपीआर (प्लाज्मा भौतिकी केंद्र - प्लाज्मा अनुसंधान संस्थान)">
+                        Department of Atomic Energy | CPP-IPR (Centre for Plasma Physics - Institute for Plasma
+                        Research)</div>
+                </div>
+
+                <!-- Introduction / Compliance Statement -->
+                <div class="compliance-notice">
+                    <p class="bilingual-text"
+                        data-en="<strong>Web Accessibility Compliance:</strong> The official website of <strong>CPP-IPR (Centre for Plasma Physics - Institute for Plasma Research)</strong>, under the <strong>Department of Atomic Energy (DAE)</strong>, complies with the <strong>World Wide Web Consortium (W3C) Web Content Accessibility Guidelines (WCAG) 2.0 Level AA</strong>. This initiative enables people with visual impairments to access the website using assistive technologies such as screen readers."
+                        data-hi="<strong>वेब पहुँच अनुपालन:</strong> <strong>सीपीपी-आईपीआर (प्लाज्मा भौतिकी केंद्र - प्लाज्मा अनुसंधान संस्थान)</strong> की आधिकारिक वेबसाइट, <strong>परमाणु ऊर्जा विभाग (डीएई)</strong> के तहत, <strong>वर्ल्ड वाइड वेब कंसोर्टियम (डब्ल्यू3सी) वेब कंटेंट एक्सेसिबिलिटी गाइडलाइंस (डब्ल्यूसीएजी) 2.0 लेवल एए</strong> का अनुपालन करती है। यह पहल दृष्टिबाधित लोगों को स्क्रीन रीडर जैसी सहायक प्रौद्योगिकियों का उपयोग करके वेबसाइट तक पहुँचने में सक्षम बनाती है।">
+                        Web Accessibility Compliance...</p>
+                    <p class="bilingual-text"
+                        data-en="The information on this website is fully accessible with various screen readers, including <strong>JAWS (Job Access With Speech), NVDA (Non Visual Desktop Access), SAFA (Screen Access For All), Supernova, Window-Eyes, VoiceOver, and TalkBack</strong>."
+                        data-hi="इस वेबसाइट की जानकारी विभिन्न स्क्रीन रीडर के साथ पूरी तरह से सुलभ है, जिसमें <strong>जॉज़ (जॉब एक्सेस विद स्पीच), एनवीडीए (नॉन विजुअल डेस्कटॉप एक्सेस), साफा (स्क्रीन एक्सेस फॉर ऑल), सुपरनोवा, विंडो-आइज, वॉइसओवर और टॉकबैक</strong> शामिल हैं।">
+                        The information on this website is fully accessible...</p>
+                </div>
+
+                <!-- Information Related to Various Screen Readers -->
+                <h3 class="bilingual-text" style="color: #003366; margin: 1.5rem 0 0.5rem 0;"
+                    data-en="Information Related to Various Screen Readers"
+                    data-hi="विभिन्न स्क्रीन रीडर से संबंधित जानकारी">Information Related to Various Screen Readers</h3>
+                <p class="bilingual-text" style="margin-bottom: 0.5rem;"
+                    data-en="The following table lists screen readers that are compatible with the CPP-IPR / DAE website. Users can download or purchase these tools based on their requirements."
+                    data-hi="निम्नलिखित तालिका स्क्रीन रीडर की सूची देती है जो सीपीपी-आईपीआर / डीएई वेबसाइट के साथ संगत हैं। उपयोगकर्ता अपनी आवश्यकताओं के आधार पर इन उपकरणों को डाउनलोड या खरीद सकते हैं।">
+                    The following table lists screen readers...</p>
+
+                <table class="accessibility-table" aria-describedby="screenreader-table-desc">
+                    <caption id="screenreader-table-desc" class="bilingual-text"
+                        data-en="Screen Reader Software Information - Compatibility with CPP-IPR Website"
+                        data-hi="स्क्रीन रीडर सॉफ्टवेयर जानकारी - सीपीपी-आईपीआर वेबसाइट के साथ संगतता">Screen Reader
+                        Software Information - Compatibility with CPP-IPR Website</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col" class="bilingual-text" data-en="Screen Reader Name"
+                                data-hi="स्क्रीन रीडर का नाम">Screen Reader Name</th>
+                            <th scope="col" class="bilingual-text" data-en="Website / Download Link"
+                                data-hi="वेबसाइट / डाउनलोड लिंक">Website / Download Link</th>
+                            <th scope="col" class="bilingual-text" data-en="License Type" data-hi="लाइसेंस प्रकार">
+                                License Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Screen Access For All (SAFA)</strong></td>
+                            <td><a href="http://www.nabdelhi.org/NAB_SAFA.htm" class="table-link" target="_blank"
+                                    rel="noopener noreferrer">Visit Website</a></td>
+                            <td class="bilingual-text" data-en="Free" data-hi="मुफ्त">Free</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Non Visual Desktop Access (NVDA)</strong></td>
+                            <td><a href="http://www.nvaccess.org/" class="table-link" target="_blank"
+                                    rel="noopener noreferrer">http://www.nvaccess.org/</a></td>
+                            <td class="bilingual-text" data-en="Free (Open Source)" data-hi="मुफ्त (ओपन सोर्स)">Free
+                                (Open Source)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>System Access To Go</strong></td>
+                            <td><a href="http://www.satogo.com/en/" class="table-link" target="_blank"
+                                    rel="noopener noreferrer">Visit Website</a></td>
+                            <td class="bilingual-text" data-en="Free" data-hi="मुफ्त">Free</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Thunder</strong></td>
+                            <td><a href="http://www.screenreader.net/index.php?pageid=11" class="table-link"
+                                    target="_blank" rel="noopener noreferrer">Visit Website</a></td>
+                            <td class="bilingual-text" data-en="Free" data-hi="मुफ्त">Free</td>
+                        </tr>
+                        <tr>
+                            <td><strong>WebAnywhere</strong></td>
+                            <td><a href="http://webanywhere.cs.washington.edu/wa.php" class="table-link" target="_blank"
+                                    rel="noopener noreferrer">Visit Website</a></td>
+                            <td class="bilingual-text" data-en="Free (Web-based)" data-hi="मुफ्त (वेब-आधारित)">Free
+                                (Web-based)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Hal (Dolphin)</strong></td>
+                            <td><a href="http://www.yourdolphin.co.uk/productdetail.asp?id=5" class="table-link"
+                                    target="_blank" rel="noopener noreferrer">Visit Website</a></td>
+                            <td class="bilingual-text" data-en="Commercial" data-hi="व्यावसायिक">Commercial</td>
+                        </tr>
+                        <tr>
+                            <td><strong>JAWS (Job Access With Speech)</strong></td>
+                            <td><a href="http://www.freedomscientific.com/JAWSHQ/JAWSHeadquarters01" class="table-link"
+                                    target="_blank" rel="noopener noreferrer">Visit Website</a></td>
+                            <td class="bilingual-text" data-en="Commercial" data-hi="व्यावसायिक">Commercial</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Supernova (Dolphin)</strong></td>
+                            <td><a href="http://www.yourdolphin.co.uk/productdetail.asp?id=1" class="table-link"
+                                    target="_blank" rel="noopener noreferrer">Visit Website</a></td>
+                            <td class="bilingual-text" data-en="Commercial" data-hi="व्यावसायिक">Commercial</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Window-Eyes (GW Micro)</strong></td>
+                            <td><a href="http://www.gwmicro.com/Window-Eyes/" class="table-link" target="_blank"
+                                    rel="noopener noreferrer">Visit Website</a></td>
+                            <td class="bilingual-text" data-en="Commercial" data-hi="व्यावसायिक">Commercial</td>
+                        </tr>
+                        <tr>
+                            <td><strong>VoiceOver (macOS/iOS)</strong></td>
+                            <td><a href="https://www.apple.com/accessibility/vision/" class="table-link" target="_blank"
+                                    rel="noopener noreferrer">Apple Accessibility</a></td>
+                            <td class="bilingual-text" data-en="Built-in (Free)" data-hi="अंतर्निहित (मुफ्त)">Built-in
+                                (Free)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>TalkBack (Android)</strong></td>
+                            <td><a href="https://support.google.com/accessibility/android/answer/6283677"
+                                    class="table-link" target="_blank" rel="noopener noreferrer">Google Support</a></td>
+                            <td class="bilingual-text" data-en="Built-in (Free)" data-hi="अंतर्निहित (मुफ्त)">Built-in
+                                (Free)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Assistive Technologies Information -->
+                <div class="info-box">
+                    <p class="bilingual-text"
+                        data-en="<strong>💡 What are Assistive Technologies?</strong> Assistive technologies are specialized tools designed to cater to the needs of persons with various impairments including Visual, Hearing, Mobility, and Learning impairments. <strong>Screen Readers</strong> are assistive devices that convert text into synthesized speech or Braille output, enabling visually impaired users to listen to and comprehend the content on a webpage."
+                        data-hi="<strong>💡 सहायक प्रौद्योगिकियां क्या हैं?</strong> सहायक प्रौद्योगिकियां विशेष उपकरण हैं जो दृश्य, श्रवण, गतिशीलता और सीखने की अक्षमताओं सहित विभिन्न अक्षमताओं वाले व्यक्तियों की आवश्यकताओं को पूरा करने के लिए डिज़ाइन की गई हैं। <strong>स्क्रीन रीडर</strong> सहायक उपकरण हैं जो पाठ को संश्लेषित भाषण या ब्रेल आउटपुट में परिवर्तित करते हैं, जिससे दृष्टिबाधित उपयोगकर्ता वेबपेज पर सामग्री सुन और समझ सकते हैं।">
+                        Assistive Technologies Information</p>
+                    <p class="bilingual-text"
+                        data-en="For more information about assistive technologies and screen readers, please refer to the official resources below."
+                        data-hi="सहायक प्रौद्योगिकियों और स्क्रीन रीडर के बारे में अधिक जानकारी के लिए, कृपया नीचे दिए गए आधिकारिक संसाधनों को देखें।">
+                        For more information, please refer to the official resources below.</p>
+                </div>
+
+                <h3 class="bilingual-text" style="color: #003366; margin: 1rem 0 1rem 0;"
+                    data-en="Official Resources for Assistive Technologies"
+                    data-hi="सहायक प्रौद्योगिकियों के लिए आधिकारिक संसाधन">Official Resources for Assistive Technologies
+                </h3>
+                <div class="assistive-links">
+                    <div class="assistive-link-card"><a href="http://www.screenreader.net" target="_blank"
+                            rel="noopener noreferrer">screenreader.net</a>
+                        <p class="bilingual-text" data-en="Thunder Screen Reader" data-hi="थंडर स्क्रीन रीडर">Thunder
+                            Screen Reader</p>
+                    </div>
+                    <div class="assistive-link-card"><a href="http://www.freedomscientific.com" target="_blank"
+                            rel="noopener noreferrer">Freedom Scientific</a>
+                        <p class="bilingual-text" data-en="JAWS Screen Reader" data-hi="जॉज़ स्क्रीन रीडर">JAWS Screen
+                            Reader</p>
+                    </div>
+                    <div class="assistive-link-card"><a href="http://www.gwmicro.com" target="_blank"
+                            rel="noopener noreferrer">GW Micro</a>
+                        <p class="bilingual-text" data-en="Window-Eyes" data-hi="विंडो-आइज">Window-Eyes</p>
+                    </div>
+                    <div class="assistive-link-card"><a href="http://www.spectronicsinoz.com" target="_blank"
+                            rel="noopener noreferrer">Spectronics</a>
+                        <p class="bilingual-text" data-en="Assistive Technology Solutions"
+                            data-hi="सहायक प्रौद्योगिकी समाधान">Assistive Technology Solutions</p>
+                    </div>
+                    <div class="assistive-link-card"><a href="https://www.nvaccess.org/" target="_blank"
+                            rel="noopener noreferrer">NV Access</a>
+                        <p class="bilingual-text" data-en="NVDA Screen Reader" data-hi="एनवीडीए स्क्रीन रीडर">NVDA
+                            Screen Reader</p>
+                    </div>
+                    <div class="assistive-link-card"><a href="https://www.apple.com/in/accessibility/" target="_blank"
+                            rel="noopener noreferrer">Apple Accessibility</a>
+                        <p class="bilingual-text" data-en="VoiceOver & iOS Tools" data-hi="वॉइसओवर और आईओएस उपकरण">
+                            VoiceOver & iOS Tools</p>
+                    </div>
+                </div>
+
+                <!-- Standards and Guidelines Section -->
+                <h3 class="bilingual-text" style="color: #003366; margin: 1.8rem 0 0.8rem 0;"
+                    data-en="Standards & Guidelines Followed" data-hi="अनुसरण किए गए मानक और दिशानिर्देश">Standards &
+                    Guidelines Followed</h3>
+                <div class="compliance-notice" style="background: #e6f7ec; border-left-color: #2e7d32;">
+                    <p class="bilingual-text"
+                        data-en="✅ <strong>WCAG 2.0 Level AA</strong> - Web Content Accessibility Guidelines<br>✅ <strong>GIGW 3.0 (Guidelines for Indian Government Websites)</strong><br>✅ <strong>Rights of Persons with Disabilities Act (RPwD), 2016</strong><br>✅ <strong>ISO/IEC 40500:2012 (International Standard for Web Accessibility)</strong><br>✅ <strong>Section 508 Compliance (US) - adopted for best practices</strong>"
+                        data-hi="✅ <strong>डब्ल्यूसीएजी 2.0 लेवल एए</strong> - वेब कंटेंट एक्सेसिबिलिटी गाइडलाइंस<br>✅ <strong>जीआईजीडब्ल्यू 3.0 (भारतीय सरकारी वेबसाइटों के लिए दिशानिर्देश)</strong><br>✅ <strong>दिव्यांगजन अधिकार अधिनियम (आरपीडब्ल्यूडी), 2016</strong><br>✅ <strong>आईएसओ/आईईसी 40500:2012 (वेब पहुँच के लिए अंतर्राष्ट्रीय मानक)</strong><br>✅ <strong>सेक्शन 508 अनुपालन (यूएस) - सर्वोत्तम प्रथाओं के लिए अपनाया गया</strong>">
+                        Standards & Guidelines</p>
+                </div>
+
+                <!-- Department Specific Note -->
+                <div style="background: #f0f4fa; padding: 1rem 1.5rem; border-radius: 12px; margin: 1.5rem 0;">
+                    <p class="bilingual-text"
+                        data-en="<strong>CPP-IPR (Centre for Plasma Physics - Institute for Plasma Research), Department of Atomic Energy</strong> is committed to providing an inclusive digital experience for all citizens, including persons with disabilities. We continuously work towards improving the accessibility of our web resources."
+                        data-hi="<strong>सीपीपी-आईपीआर (प्लाज्मा भौतिकी केंद्र - प्लाज्मा अनुसंधान संस्थान), परमाणु ऊर्जा विभाग</strong> सभी नागरिकों, जिसमें दिव्यांगजन भी शामिल हैं, के लिए एक समावेशी डिजिटल अनुभव प्रदान करने के लिए प्रतिबद्ध है। हम अपने वेब संसाधनों की पहुँच में सुधार की दिशा में निरंतर काम कर रहे हैं।">
+                        Department Commitment</p>
+                </div>
+
+                <!-- Keyboard Shortcuts -->
+                <div style="border-top: 1px solid #e2e8f0; padding-top: 1.5rem; margin-top: 0.5rem;">
+                    <h4 class="bilingual-text" style="color: #003366;"
+                        data-en="Keyboard Shortcuts for Screen Reader Users"
+                        data-hi="स्क्रीन रीडर उपयोगकर्ताओं के लिए कीबोर्ड शॉर्टकट">Keyboard Shortcuts for Screen Reader
+                        Users</h4>
+                    <ul style="margin-left: 1.5rem; line-height: 1.6;">
+                        <li class="bilingual-text"
+                            data-en="<kbd>Tab</kbd> / <kbd>Shift + Tab</kbd> - Move to next/previous interactive element"
+                            data-hi="<kbd>Tab</kbd> / <kbd>Shift + Tab</kbd> - अगले/पिछले इंटरैक्टिव तत्व पर जाएं">
+                            <kbd>Tab</kbd> / <kbd>Shift + Tab</kbd> - Move to next/previous interactive element
+                        </li>
+                        <li class="bilingual-text" data-en="<kbd>Enter</kbd> - Activate a link or button"
+                            data-hi="<kbd>Enter</kbd> - लिंक या बटन सक्रिय करें"><kbd>Enter</kbd> - Activate a link or
+                            button</li>
+                        <li class="bilingual-text" data-en="<kbd>H</kbd> - Jump to next heading (in NVDA/JAWS)"
+                            data-hi="<kbd>H</kbd> - अगले शीर्षक पर जाएं (एनवीडीए/जॉज़ में)"><kbd>H</kbd> - Jump to next
+                            heading (in NVDA/JAWS)</li>
+                        <li class="bilingual-text" data-en="<kbd>D</kbd> - Jump to next landmark region"
+                            data-hi="<kbd>D</kbd> - अगले लैंडमार्क क्षेत्र पर जाएं"><kbd>D</kbd> - Jump to next landmark
+                            region</li>
+                        <li class="bilingual-text"
+                            data-en="<kbd>Ctrl + +</kbd> / <kbd>Ctrl + -</kbd> - Increase / decrease text zoom"
+                            data-hi="<kbd>Ctrl + +</kbd> / <kbd>Ctrl + -</kbd> - टेक्स्ट ज़ूम बढ़ाएं/घटाएं"><kbd>Ctrl +
+                                +</kbd> / <kbd>Ctrl + -</kbd> - Increase / decrease text zoom</li>
+                        <li class="bilingual-text" data-en="<kbd>Insert + F7</kbd> - List of links (NVDA/JAWS)"
+                            data-hi="<kbd>Insert + F7</kbd> - लिंक की सूची (एनवीडीए/जॉज़)"><kbd>Insert + F7</kbd> - List
+                            of links (NVDA/JAWS)</li>
+                        <li class="bilingual-text" data-en="<kbd>Insert + F6</kbd> - List of headings"
+                            data-hi="<kbd>Insert + F6</kbd> - शीर्षकों की सूची"><kbd>Insert + F6</kbd> - List of
+                            headings</li>
+                    </ul>
+                    <p class="footer-note" style="margin-top: 1rem;">
+                        <span class="bilingual-text" data-en="Last Updated: April 2026 | CPP-IPR, DAE"
+                            data-hi="अंतिम अद्यतन: अप्रैल 2026 | सीपीपी-आईपीआर, डीएई">Last Updated: April 2026 |
+                            CPP-IPR, DAE</span>
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER (Imported from UI fragment) -->
+    <div id="footer-container"></div>
+
+    <!-- Fragment Loader Script -->
+    <script>
+        // Function to load HTML fragments (header, footer, etc.)
+        function loadFragment(url, containerId) {
+            return fetch(url)
+                .then(res => {
+                    if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
+                    return res.text();
+                })
+                .then(html => {
+                    const container = document.getElementById(containerId);
+                    if (container) {
+                        container.innerHTML = html;
+                        // Re-evaluate any scripts inside the loaded fragment
+                        container.querySelectorAll('script').forEach(oldScript => {
+                            const newScript = document.createElement('script');
+                            if (oldScript.src) {
+                                newScript.src = oldScript.src;
+                            } else {
+                                newScript.textContent = oldScript.textContent;
+                            }
+                            oldScript.replaceWith(newScript);
+                        });
+                    }
+                })
+                .catch(err => {
+                    console.error('Error loading fragment:', url, err);
+                    if (containerId === 'header-container') {
+                        const container = document.getElementById(containerId);
+                        if (container) container.innerHTML = '<div style="background: #003366; color: white; padding: 10px; text-align: center;"><strong>CPP-IPR | DAE</strong> - Navigation (Header unavailable)</div>';
+                    }
+                    if (containerId === 'footer-container') {
+                        const container = document.getElementById(containerId);
+                        if (container) container.innerHTML = '<div style="background: #2c3e50; color: white; text-align: center; padding: 15px;">© CPP-IPR, Department of Atomic Energy. All Rights Reserved.</div>';
+                    }
+                });
+        }
+
+        // Load header and footer
+        function initFragments() {
+            loadFragment('/UI/header.html', 'header-container');
+            loadFragment('/UI/footer.html', 'footer-container');
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initFragments);
+        } else {
+            initFragments();
+        }
+
+        // Apply bilingual functionality using the existing bilingual.js
+        document.addEventListener('DOMContentLoaded', function () {
+            // Add screen reader announcements
+            const announcer = document.createElement('div');
+            announcer.setAttribute('aria-live', 'polite');
+            announcer.classList.add('sr-only');
+            document.body.appendChild(announcer);
+            announcer.textContent = 'Screen Reader Access page loaded. CPP-IPR, Department of Atomic Energy accessibility information is available.';
+
+            // Set table headers with scope for better accessibility
+            const tables = document.querySelectorAll('.accessibility-table');
+            tables.forEach(table => {
+                const ths = table.querySelectorAll('thead th');
+                ths.forEach((th, idx) => { th.setAttribute('scope', 'col'); });
+                const tbodyRows = table.querySelectorAll('tbody tr');
+                tbodyRows.forEach(row => {
+                    const firstCell = row.querySelector('td:first-child');
+                    if (firstCell) firstCell.setAttribute('scope', 'row');
+                });
+            });
+
+            // Add target="_blank" warning for screen readers
+            document.querySelectorAll('a[target="_blank"]').forEach(link => {
+                if (!link.querySelector('.sr-only')) {
+                    const warningSpan = document.createElement('span');
+                    warningSpan.className = 'sr-only';
+                    warningSpan.textContent = ' (opens in new tab)';
+                    link.appendChild(warningSpan);
+                }
+            });
+        });
+    </script>
+
+    <!-- Bilingual JS - Import from UI folder -->
+    <script src="/UI/bilingual.js"></script>
+
+    <style>
+        @media print {
+            .skip-link {
+                display: none;
+            }
+
+            .screen-reader-content {
+                box-shadow: none;
+                padding: 0;
+            }
+
+            .accessibility-table th,
+            .accessibility-table td {
+                border: 1px solid #000;
+            }
+        }
+
+        @media (forced-colors: active) {
+            .accessibility-table th {
+                background-color: CanvasText;
+                color: Canvas;
+            }
+
+            .compliance-notice {
+                border: 2px solid ButtonText;
+            }
+        }
+    </style>
+
+</body>
+
+</html>
