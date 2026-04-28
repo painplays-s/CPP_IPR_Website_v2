@@ -168,7 +168,8 @@
     <div class="header-row">
       <div class="header-left">
         <h1>Admin Dashboard</h1>
-        <a href="{{ url_for('admin_home.logout') }}" class="logout-btn"
+        <!-- CORRECTED: Changed from admin_home.logout to admin_auth.admin_logout -->
+        <a href="{{ url_for('admin_auth.admin_logout') }}" class="logout-btn"
           onclick="return confirm('Are you sure you want to logout?')">
           Logout
         </a>

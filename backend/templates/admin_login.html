@@ -87,6 +87,80 @@
       box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.3);
     }
 
+    /* CAPTCHA Styles */
+    .captcha-container {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .captcha-display {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+      margin-bottom: 0.75rem;
+      position: relative;
+    }
+
+    .captcha-code {
+      font-family: 'Courier New', 'Monaco', monospace;
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: 6px;
+      color: #ffffff;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      background: rgba(0, 0, 0, 0.2);
+      display: inline-block;
+      padding: 0.35rem 1rem;
+      border-radius: 6px;
+      user-select: none;
+    }
+
+    .captcha-controls {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 0.5rem;
+    }
+
+    .refresh-captcha {
+      background: #e2e8f0;
+      border: none;
+      padding: 0.4rem 0.75rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #1e293b;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .refresh-captcha:hover {
+      background: #cbd5e1;
+    }
+
+    .captcha-hint {
+      font-size: 0.7rem;
+      color: #64748b;
+    }
+
+    .captcha-input {
+      margin-top: 0.5rem;
+    }
+
+    .captcha-input input {
+      font-family: 'Courier New', monospace;
+      font-size: 1rem;
+      letter-spacing: 1px;
+    }
+
     .login-button {
       width: 100%;
       padding: 0.65rem 0.6rem;
@@ -191,6 +265,12 @@
       opacity: 0.6;
       pointer-events: none;
     }
+
+    /* CAPTCHA error specific */
+    .captcha-error {
+      border-color: #dc2626 !important;
+      background-color: #fef2f2 !important;
+    }
   </style>
 </head>
 
@@ -202,8 +282,10 @@
   <!-- Page Content -->
   <main>
     <div class="login-wrapper">
-      <h1 class="login-title">Admin Login</h1>
-      <p class="login-subtitle">
+      <h1 class="login-title bilingual-title" data-en="Admin Login" data-hi="एडमिन लॉगिन">Admin Login</h1>
+      <p class="login-subtitle bilingual-text"
+        data-en="Please enter your credentials to access the administrator panel."
+        data-hi="कृपया एडमिनिस्ट्रेटर पैनल तक पहुँचने के लिए अपना क्रेडेंशियल दर्ज करें।">
         Please enter your credentials to access the administrator panel.
       </p>
 
@@ -212,7 +294,8 @@
       {% if locked %}
       {% for message in locked %}
       <div class="lock-message" id="lock-message">
-        <strong>🔒 ACCOUNT LOCKED</strong><br>
+        <strong class="bilingual-text" data-en="🔒 ACCOUNT LOCKED" data-hi="🔒 खाता लॉक है">🔒 ACCOUNT
+          LOCKED</strong><br>
         {{ message }}
       </div>
       {% endfor %}
@@ -245,22 +328,46 @@
       {% endif %}
       {% endwith %}
 
-      <!-- Server-side login form -->
+      <!-- Server-side login form with CAPTCHA -->
       <form id="admin-login-form" method="POST" action="{{ url_for('admin_auth.admin_login') }}">
         <div class="form-group">
-          <label for="username">Username / उपयोगकर्ता नाम</label>
+          <label for="username" class="bilingual-text" data-en="Username" data-hi="उपयोगकर्ता नाम">Username</label>
           <input type="text" id="username" name="username" autocomplete="username" required {% if locked %}disabled
             class="locked-input" {% endif %}>
         </div>
 
         <div class="form-group">
-          <label for="password">Password / पासवर्ड</label>
+          <label for="password" class="bilingual-text" data-en="Password" data-hi="पासवर्ड">Password</label>
           <input type="password" id="password" name="password" autocomplete="current-password" required {% if locked
             %}disabled class="locked-input" {% endif %}>
         </div>
 
-        <button type="submit" class="login-button" {% if locked %}disabled{% endif %}>
-          Login / लॉगिन
+        <!-- CAPTCHA Section -->
+        <div class="captcha-container">
+          <div class="captcha-display">
+            <span id="captcha-code" class="captcha-code">XXXX</span>
+          </div>
+          <div class="captcha-controls">
+            <button type="button" class="refresh-captcha" id="refresh-captcha">
+              🔄 <span class="bilingual-text" data-en="Refresh CAPTCHA" data-hi="रीफ्रेश CAPTCHA">Refresh CAPTCHA</span>
+            </button>
+            <span class="captcha-hint bilingual-text" data-en="(Case sensitive)" data-hi="(केस सेंसिटिव)">(Case
+              sensitive)</span>
+          </div>
+          <div class="captcha-input">
+            <input type="text" id="captcha-input" name="captcha_input" class="bilingual-placeholder"
+              data-en-placeholder="Enter CAPTCHA code" data-hi-placeholder="CAPTCHA कोड दर्ज करें"
+              placeholder="Enter CAPTCHA code" autocomplete="off" required {% if locked %}disabled class="locked-input"
+              {% endif %}>
+          </div>
+        </div>
+
+        <!-- Hidden field to store the generated CAPTCHA value -->
+        <input type="hidden" id="captcha_value" name="captcha_value">
+
+        <button type="submit" class="login-button bilingual-text" data-en="Login" data-hi="लॉगिन" {% if locked
+          %}disabled{% endif %}>
+          Login
         </button>
 
       </form>
@@ -302,45 +409,283 @@
     loadFragment('/UI/footer.html', 'footer-container');
   </script>
 
-  <!-- Auto-focus on username field and auto-hide messages -->
+  <!-- CAPTCHA and Form Validation Scripts with Bilingual Support -->
   <script>
+    // Prevent duplicate form submissions
+    let isSubmitting = false;
+
+    // CAPTCHA Generation Functions
+    function generateRandomString(length) {
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
+      let result = '';
+      for (let i = 0; i < length; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return result;
+    }
+
+    function addNoiseToCaptcha(captchaText) {
+      const captchaSpan = document.getElementById('captcha-code');
+      if (captchaSpan) {
+        const rotation = (Math.random() - 0.5) * 3;
+        captchaSpan.style.transform = `rotate(${rotation}deg)`;
+      }
+      return captchaText;
+    }
+
+    function generateCaptcha() {
+      const length = 6;
+      const rawCaptcha = generateRandomString(length);
+      addNoiseToCaptcha(rawCaptcha);
+      return rawCaptcha;
+    }
+
+    function displayCaptcha() {
+      const captchaValue = generateCaptcha();
+      const captchaSpan = document.getElementById('captcha-code');
+      const hiddenCaptcha = document.getElementById('captcha_value');
+
+      if (captchaSpan) {
+        captchaSpan.textContent = captchaValue;
+      }
+      if (hiddenCaptcha) {
+        hiddenCaptcha.value = captchaValue;
+      }
+
+      const captchaInput = document.getElementById('captcha-input');
+      if (captchaInput && !captchaInput.disabled) {
+        captchaInput.value = '';
+        captchaInput.classList.remove('captcha-error');
+      }
+    }
+
+    // Get current language for error messages
+    function getCurrentLanguage() {
+      return localStorage.getItem('preferred-language') || 'en';
+    }
+
+    // Validate CAPTCHA before form submission
+    function validateCaptcha() {
+      const userInput = document.getElementById('captcha-input');
+      const hiddenCaptcha = document.getElementById('captcha_value');
+
+      if (!userInput || !hiddenCaptcha) {
+        return false;
+      }
+
+      if (userInput.disabled) {
+        return true;
+      }
+
+      const userValue = userInput.value.trim();
+      const actualValue = hiddenCaptcha.value;
+      const lang = getCurrentLanguage();
+
+      if (userValue === '') {
+        userInput.classList.add('captcha-error');
+        const errorMsg = lang === 'hi'
+          ? 'कृपया CAPTCHA कोड दर्ज करें'
+          : 'Please enter the CAPTCHA code';
+        showTemporaryMessage(errorMsg, 'error');
+        return false;
+      }
+
+      if (userValue !== actualValue) {
+        userInput.classList.add('captcha-error');
+        const errorMsg = lang === 'hi'
+          ? 'अमान्य CAPTCHA कोड। कृपया पुनः प्रयास करें।'
+          : 'Invalid CAPTCHA code. Please try again.';
+        showTemporaryMessage(errorMsg, 'error');
+        setTimeout(() => {
+          displayCaptcha();
+        }, 500);
+        return false;
+      }
+
+      userInput.classList.remove('captcha-error');
+      return true;
+    }
+
+    // Helper to show temporary messages
+    function showTemporaryMessage(message, type) {
+      const existingMsg = document.getElementById('temp-captcha-msg');
+      if (existingMsg) {
+        existingMsg.remove();
+      }
+
+      const messageDiv = document.createElement('div');
+      messageDiv.id = 'temp-captcha-msg';
+      messageDiv.className = type === 'error' ? 'error-message' : 'success-message';
+      messageDiv.textContent = message;
+
+      const form = document.getElementById('admin-login-form');
+      const loginButton = form.querySelector('.login-button');
+      form.insertBefore(messageDiv, loginButton);
+
+      setTimeout(() => {
+        if (messageDiv) {
+          messageDiv.style.transition = 'opacity 0.5s ease';
+          messageDiv.style.opacity = '0';
+          setTimeout(() => {
+            if (messageDiv && messageDiv.parentNode) messageDiv.remove();
+          }, 500);
+        }
+      }, 3000);
+    }
+
+    // Update placeholder based on language
+    function updatePlaceholder() {
+      const captchaInput = document.getElementById('captcha-input');
+      if (captchaInput) {
+        const lang = getCurrentLanguage();
+        const placeholder = captchaInput.getAttribute(lang === 'hi' ? 'data-hi-placeholder' : 'data-en-placeholder');
+        if (placeholder) {
+          captchaInput.placeholder = placeholder;
+        }
+      }
+    }
+
+    // Apply bilingual translations to the page
+    function applyPageTranslations() {
+      const lang = getCurrentLanguage();
+
+      // Update bilingual-title elements
+      document.querySelectorAll('.bilingual-title').forEach(el => {
+        const text = el.getAttribute(lang === 'hi' ? 'data-hi' : 'data-en');
+        if (text) el.textContent = text;
+      });
+
+      // Update bilingual-text elements
+      document.querySelectorAll('.bilingual-text:not(button)').forEach(el => {
+        const text = el.getAttribute(lang === 'hi' ? 'data-hi' : 'data-en');
+        if (text) el.textContent = text;
+      });
+
+      // Update buttons with bilingual-text
+      document.querySelectorAll('button.bilingual-text').forEach(el => {
+        const text = el.getAttribute(lang === 'hi' ? 'data-hi' : 'data-en');
+        if (text) el.textContent = text;
+      });
+
+      // Update placeholder
+      updatePlaceholder();
+    }
+
+    // Handle form submission with CAPTCHA validation
+    function setupFormValidation() {
+      const form = document.getElementById('admin-login-form');
+      if (!form) return;
+
+      const submitButton = form.querySelector('.login-button');
+
+      form.addEventListener('submit', function (event) {
+        if (isSubmitting) {
+          event.preventDefault();
+          return false;
+        }
+
+        const usernameField = document.getElementById('username');
+        if (usernameField && usernameField.disabled) {
+          return true;
+        }
+
+        if (!validateCaptcha()) {
+          event.preventDefault();
+          return false;
+        }
+
+        isSubmitting = true;
+
+        if (submitButton) {
+          submitButton.disabled = true;
+          const lang = getCurrentLanguage();
+          submitButton.textContent = lang === 'hi' ? 'लॉग इन हो रहा है...' : 'Logging in...';
+        }
+
+        return true;
+      });
+    }
+
+    // Reset submitting flag
+    function resetSubmittingFlag() {
+      isSubmitting = false;
+      const submitButton = document.querySelector('.login-button');
+      if (submitButton && !submitButton.disabled) {
+        const lang = getCurrentLanguage();
+        submitButton.textContent = lang === 'hi' ? 'लॉगिन' : 'Login';
+      }
+    }
+
+    // Initialize
     document.addEventListener('DOMContentLoaded', function () {
-      // Auto-focus on username field
+      displayCaptcha();
+      applyPageTranslations();
+
+      const refreshBtn = document.getElementById('refresh-captcha');
+      if (refreshBtn) {
+        refreshBtn.addEventListener('click', function (e) {
+          e.preventDefault();
+          displayCaptcha();
+        });
+      }
+
+      setupFormValidation();
+
+      const captchaInput = document.getElementById('captcha-input');
+      if (captchaInput) {
+        captchaInput.addEventListener('input', function () {
+          this.classList.remove('captcha-error');
+          const tempMsg = document.getElementById('temp-captcha-msg');
+          if (tempMsg) {
+            tempMsg.remove();
+          }
+        });
+      }
+
       const usernameField = document.getElementById('username');
       if (usernameField && !usernameField.disabled) {
         usernameField.focus();
       }
 
-      // Auto-hide flash messages after 5 seconds (except lock messages)
       const flashMessages = document.getElementById('flash-messages');
       const attemptsMessage = document.getElementById('attempts-message');
-      const lockMessage = document.getElementById('lock-message');
 
-      // Hide flash messages (errors, warnings, success) after 5 seconds
       if (flashMessages) {
         setTimeout(function () {
           flashMessages.style.transition = 'opacity 0.5s ease';
           flashMessages.style.opacity = '0';
           setTimeout(function () {
-            flashMessages.style.display = 'none';
+            if (flashMessages) flashMessages.style.display = 'none';
           }, 500);
         }, 5000);
       }
 
-      // Hide attempts counter after 5 seconds
       if (attemptsMessage) {
         setTimeout(function () {
           attemptsMessage.style.transition = 'opacity 0.5s ease';
           attemptsMessage.style.opacity = '0';
           setTimeout(function () {
-            attemptsMessage.style.display = 'none';
+            if (attemptsMessage) attemptsMessage.style.display = 'none';
           }, 500);
         }, 5000);
       }
 
-      // Lock message stays forever (doesn't auto-hide)
+      resetSubmittingFlag();
+
+      window.addEventListener('pageshow', function () {
+        resetSubmittingFlag();
+      });
+
+      // Listen for language change events
+      window.addEventListener('languageChanged', function (e) {
+        applyPageTranslations();
+        resetSubmittingFlag();
+      });
     });
   </script>
+
+  <!-- INCLUDE BILINGUAL LOGIC -->
+  <script src="/UI/bilingual.js"></script>
 
 </body>
 
